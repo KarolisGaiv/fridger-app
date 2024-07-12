@@ -19,16 +19,16 @@ export interface GroceryList {
   quantity: number
 }
 
-export interface MealPlans {
-  id: Generated<number>
-  planName: string
-  userId: number
-}
-
-export interface Meals {
+export interface Meal {
   calories: number
   id: Generated<number>
   name: string
+}
+
+export interface MealPlan {
+  id: Generated<number>
+  planName: string
+  userId: number
 }
 
 export interface User {
@@ -42,7 +42,7 @@ export interface User {
 export interface DB {
   fridgeContent: FridgeContent
   groceryList: GroceryList
-  mealPlans: MealPlans
-  meals: Meals
+  meal: Meal
+  mealPlan: MealPlan
   user: User
 }
