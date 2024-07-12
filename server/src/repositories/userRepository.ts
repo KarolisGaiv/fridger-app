@@ -16,6 +16,16 @@ export function userRepository(db: Database) {
         .returning(userKeysPublic)
         .executeTakeFirstOrThrow()
     },
+
+    async findByEmail(email: string): Promise<Selectable<User> | undefined> {
+      const user = await db
+        .selectFrom('user')
+        .select(userKeysAll)
+        .where('email', '=', email)
+        .executeTakeFirst()
+
+      return user
+    },
   }
 }
 

@@ -21,7 +21,6 @@ export const userSchema = z.object({
  */
 export const userKeysAll = Object.keys(userSchema.shape) as (keyof User)[]
 
-
 /**
  * Represents a readonly tuple of keys that define which user properties are considered public.
  * These keys are constants and cannot be modified.
@@ -29,14 +28,12 @@ export const userKeysAll = Object.keys(userSchema.shape) as (keyof User)[]
  */
 export const userKeysPublic = ['id', 'firstName', 'lastName'] as const
 
-
 /**
  * Represents a subset of user information that is safe to expose publicly.
  * This type ensures that only specific properties of the User object are included.
  * @typedef {Pick<Selectable<User>, (typeof userKeysPublic)[number]>} UserPublic
  */
 export type UserPublic = Pick<Selectable<User>, (typeof userKeysPublic)[number]>
-
 
 export const authUserSchema = userSchema.pick({ id: true })
 export type AuthUser = z.infer<typeof authUserSchema>
