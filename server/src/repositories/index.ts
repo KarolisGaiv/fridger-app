@@ -1,5 +1,5 @@
 import type { Database } from '@server/database'
-import { userRepository } from '@server/repositories/userRepository';
+import { userRepository } from '@server/repositories/userRepository'
 
 export type RepositoryFactory = <T>(db: Database) => T
 

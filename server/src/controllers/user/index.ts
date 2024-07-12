@@ -1,6 +1,6 @@
-import { router } from "@server/trpc";
-import register from "./register";
+import { router } from '@server/trpc'
+import register from './register'
 
 export default router({
-    register
+  register,
 })

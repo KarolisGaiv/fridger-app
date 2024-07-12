@@ -6,29 +6,99 @@ import { selectAll } from '@tests/utils/records'
 import { random } from '@tests/utils/random'
 import userRouter from '..'
 
-
 const db = await wrapInRollbacks(createTestDatabase())
 const createCaller = createCallerFactory(userRouter)
 const { register } = createCaller({ db })
 
-it("should save a user", async () => {
-    const user = fakeUser()
-    const response = await register(user)
+it('should save a user', async () => {
+  const user = fakeUser()
+  const response = await register(user)
 
-    const [userCreated] = await selectAll(db, 'user', (query) =>
-        query('email', '=', user.email)
-      )
+  const [userCreated] = await selectAll(db, 'user', (query) =>
+    query('email', '=', user.email)
+  )
 
-    expect(userCreated).toMatchObject({
-        id: expect.any(Number),
+  expect(userCreated).toMatchObject({
+    id: expect.any(Number),
     ...user,
     password: expect.not.stringContaining(user.password),
-    })
+  })
 
-    expect(userCreated.password).toHaveLength(60)
+  expect(userCreated.password).toHaveLength(60)
 
   expect(response).toEqual({
     id: userCreated.id,
   })
+})
 
+it('should require a valid email', async () => {
+  await expect(
+    register(
+      fakeUser({
+        email: 'invalid-email',
+      })
+    )
+  ).rejects.toThrow(/email/i) // throw error including "email"
+})
+
+it('should require a password with at least 8 characters', async () => {
+  await expect(
+    register(
+      fakeUser({
+        password: 'pas.123',
+      })
+    )
+  ).rejects.toThrow(/password/i) // throws out some error complaining about "password"
+})
+
+it('throws an error for invalid email', async () => {
+  await expect(
+    register(
+      fakeUser({
+        email: 'not-an-email',
+      })
+    )
+  ).rejects.toThrow(/email/)
+})
+
+it('stores lowercased email', async () => {
+  const user = fakeUser()
+
+  await register({
+    ...user,
+    email: user.email.toUpperCase(),
+  })
+
+  // get user with original lowercase email
+  const userSaved = await selectAll(db, 'user', (eb) =>
+    eb('email', '=', user.email)
+  )
+
+  expect(userSaved).toHaveLength(1)
+})
+
+it('stores email with trimmed whitespace', async () => {
+  const user = fakeUser()
+  await register({
+    ...user,
+    email: ` \t ${user.email}\t `, // tabs and spaces
+  })
+
+  const userSaved = await selectAll(db, 'user', (eb) =>
+    eb('email', '=', user.email)
+  )
+
+  expect(userSaved).toHaveLength(1)
+})
+
+it('throws an error for duplicate email', async () => {
+  const email = random.email()
+
+  // signup once
+  await register(fakeUser({ email }))
+
+  // expect that the second signup will throw an error
+  await expect(register(fakeUser({ email }))).rejects.toThrow(
+    /email already exists/i
+  )
 })

@@ -7,30 +7,31 @@ import { userRepository } from '@server/repositories/userRepository'
 import { assertError } from '@server/utils/errors'
 import { userSchema } from '@server/entities/user'
 
-
 export default publicProcedure
-    .use(
-        provideRepos({
-            userRepository
-        })
-    )
-    .input(
-        userSchema.pick({
-            email: true,
-            password: true,
-            firstName: true,
-            lastName: true
-        })
-    )
-    .mutation(async ({input: user, ctx: {repos: databaseRepositories }}) => {
-        const passwordHash = await hash(user.password, config.auth.passwordCost)
+  .use(
+    provideRepos({
+      userRepository,
+    })
+  )
+  .input(
+    userSchema.pick({
+      // not including ID as it is generated automatically and user does not provide it when registering
+      email: true,
+      password: true,
+      firstName: true,
+      lastName: true,
+    })
+  )
+  .mutation(async ({ input: user, ctx: { repos: databaseRepositories } }) => {
+    // enrcypt provided password
+    const passwordHash = await hash(user.password, config.auth.passwordCost)
 
-        const userCreated = await databaseRepositories.userRepository
-            .create({
-                ...user,
-                password: passwordHash
-            })
-            // handling errors using the Promise.catch method
+    const userCreated = await databaseRepositories.userRepository
+      .create({
+        ...user,
+        password: passwordHash,
+      })
+      // handling errors using the Promise.catch method
       .catch((error: unknown) => {
         assertError(error)
 
@@ -46,5 +47,5 @@ export default publicProcedure
         throw error
       })
 
-      return {id: userCreated.id}
-    })
+    return { id: userCreated.id }
+  })
