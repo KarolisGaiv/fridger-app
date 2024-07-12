@@ -8,7 +8,7 @@ export const userSchema = z.object({
   email: z.string().trim().toLowerCase().email(),
   password: z
     .string()
-    .min(8, 'Password must me at least 8 characters long')
+    .min(8, 'Password must be at least 8 characters long')
     .max(20, 'Password cannot be longer than 20 characters'),
   firstName: z.string().min(1).max(60),
   lastName: z.string().min(1).max(60),
