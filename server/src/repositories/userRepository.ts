@@ -31,9 +31,10 @@ export function userRepository(db: Database) {
 
 /**
  * Represents the type of an object returned by the userRepository function.
- * This type includes methods like 'create' to interact with user data.
+ * This type includes methods like 'create' and 'findByEmail' to interact with user data.
  * @typedef {Object} UserRepository
  * @property {Function} create - Method to add a new user to the database.
+ * @property {Function} findByEmail - Method to find user in the database by email
  * @returns {Promise<UserPublic>} A promise that, when resolved, gives back a user's information.
  */
 export type UserRepository = ReturnType<typeof userRepository>
