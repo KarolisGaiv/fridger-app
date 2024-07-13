@@ -65,3 +65,38 @@ describe('findAll', () => {
     expect(meals).toHaveLength(3)
   })
 })
+
+describe("updateMeal", async () => {
+  const meal = {
+    name: 'pancakes',
+    calories: 650,
+  }
+  beforeAll(async () => {
+    await insertAll(db, 'meal', meal)
+  })
+
+  afterAll(async () => {
+    await clearTables(db, ['meal'])
+  })
+
+  it("should update meal sucessfully", async () => {
+    const updateData = {
+      calories: 550
+    }
+    await repository.updateMeal("pancakes", updateData)
+    const updatedMeal = await repository.findByName(meal.name)
+    expect(updatedMeal?.calories).toBe(updateData.calories)
+    expect(updatedMeal?.name).toBe("pancakes")
+  })
+
+  it("should not update other meals if specific meal not found", async () => {
+    const updateData = {
+      calories: 550
+    }
+
+    await repository.updateMeal("no meal exist", updateData)
+    const existingMeal = await repository.findByName(meal.name)
+    expect(existingMeal?.calories).toBe(meal.calories)
+    expect(existingMeal?.name).toBe(meal.name)
+  })
+})

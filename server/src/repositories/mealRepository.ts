@@ -34,6 +34,14 @@ export function mealRepository(db: Database) {
         .orderBy('id', 'asc')
         .execute()
     },
+
+    async updateMeal(mealName: string, updates: Partial<Insertable<MealPublic>>): Promise<void> {
+        await db
+          .updateTable("meal")
+          .set(updates)
+          .where("name", "=", mealName)
+          .execute()
+    }
   }
 }
 
