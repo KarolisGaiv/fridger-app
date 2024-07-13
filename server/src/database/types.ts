@@ -30,6 +30,13 @@ export interface Meal {
   name: string
 }
 
+export interface MealIngredient {
+  id: Generated<number>
+  ingredientId: number
+  mealId: number
+  quantity: number
+}
+
 export interface MealPlan {
   id: Generated<number>
   planName: string
@@ -49,6 +56,7 @@ export interface DB {
   groceryList: GroceryList
   ingredient: Ingredient
   meal: Meal
+  mealIngredient: MealIngredient
   mealPlan: MealPlan
   user: User
 }
