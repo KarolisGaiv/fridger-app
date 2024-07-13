@@ -25,6 +25,14 @@ export function mealRepository(db: Database) {
         .executeTakeFirst()
 
         return meal
+    },
+
+    async findAll(): Promise<MealPublic[]> {
+      return db
+        .selectFrom("meal")
+        .select(mealKeysAll)
+        .orderBy("id", "asc")
+        .execute()
     }
   }
 }
