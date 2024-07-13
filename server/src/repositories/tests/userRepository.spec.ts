@@ -35,8 +35,8 @@ describe('findByEmail', () => {
     })
   })
 
-  it("should return nothing if user is not found by email", async () => {
-    const userFound = await repository.findByEmail("nonexisting@email.com")
+  it('should return nothing if user is not found by email', async () => {
+    const userFound = await repository.findByEmail('nonexisting@email.com')
 
     expect(userFound).not.toBeDefined()
   })
