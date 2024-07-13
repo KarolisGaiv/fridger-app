@@ -19,21 +19,21 @@ export function mealRepository(db: Database) {
 
     async findByName(name: string): Promise<Selectable<Meal> | undefined> {
       const meal = await db
-        .selectFrom("meal")
+        .selectFrom('meal')
         .select(mealKeysAll)
-        .where("name", "=", name)
+        .where('name', '=', name)
         .executeTakeFirst()
 
-        return meal
+      return meal
     },
 
     async findAll(): Promise<MealPublic[]> {
       return db
-        .selectFrom("meal")
+        .selectFrom('meal')
         .select(mealKeysAll)
-        .orderBy("id", "asc")
+        .orderBy('id', 'asc')
         .execute()
-    }
+    },
   }
 }
 
