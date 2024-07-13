@@ -16,6 +16,16 @@ export function mealRepository(db: Database) {
         .returning(mealKeysPublic)
         .executeTakeFirstOrThrow()
     },
+
+    async findByName(name: string): Promise<Selectable<Meal> | undefined> {
+      const meal = await db
+        .selectFrom("meal")
+        .select(mealKeysAll)
+        .where("name", "=", name)
+        .executeTakeFirst()
+
+        return meal
+    }
   }
 }
 
