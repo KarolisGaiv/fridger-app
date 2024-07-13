@@ -2,8 +2,7 @@ import { createTestDatabase } from '@tests/utils/database'
 import { fakeMeal } from '@server/entities/tests/fakes'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { selectAll, clearTables, insertAll } from '@tests/utils/records'
-import { random } from '@tests/utils/random'
+import { selectAll } from '@tests/utils/records'
 import mealRouter from '..'
 
 const db = await wrapInRollbacks(createTestDatabase())

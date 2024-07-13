@@ -1,5 +1,4 @@
 import { publicProcedure } from '@server/trpc'
-import config from '@server/config'
 import { TRPCError } from '@trpc/server'
 import provideRepos from '@server/trpc/provideRepos'
 import { mealRepository } from '@server/repositories/mealRepository'
