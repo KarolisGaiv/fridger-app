@@ -100,3 +100,34 @@ describe("updateMeal", async () => {
     expect(existingMeal?.name).toBe(meal.name)
   })
 })
+
+describe("delete", () => {
+  const meal = {
+    name: 'pancakes',
+    calories: 650,
+  }
+  beforeAll(async () => {
+    await insertAll(db, 'meal', meal)
+  })
+
+  afterAll(async () => {
+    await clearTables(db, ['meal'])
+  })
+
+  it("should delete meal", async () => {
+    await repository.delete("pancakes")
+    const database = await repository.findAll()
+    expect(database).toHaveLength(0)
+  })
+
+  it("should do nothing if meal was not found", async () => {
+    await repository.delete("KEBAB")
+    const database = await repository.findAll()
+    expect(database).toHaveLength(1)
+    expect(database[0]).toMatchObject({
+      name: meal.name,
+      calories: meal.calories
+    })
+  })
+
+})

@@ -41,6 +41,13 @@ export function mealRepository(db: Database) {
           .set(updates)
           .where("name", "=", mealName)
           .execute()
+    },
+
+    async delete(name: string): Promise<void> {
+      await db
+        .deleteFrom("meal")
+        .where("name", "=", name)
+        .execute()
     }
   }
 }
