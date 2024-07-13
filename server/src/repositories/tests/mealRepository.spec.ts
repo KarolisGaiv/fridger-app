@@ -115,13 +115,13 @@ describe('delete', () => {
   })
 
   it('should delete meal', async () => {
-    await repository.delete('pancakes')
+    await repository.deleteMeal('pancakes')
     const database = await repository.findAll()
     expect(database).toHaveLength(0)
   })
 
   it('should do nothing if meal was not found', async () => {
-    await repository.delete('KEBAB')
+    await repository.deleteMeal('KEBAB')
     const database = await repository.findAll()
     expect(database).toHaveLength(1)
     expect(database[0]).toMatchObject({

@@ -49,7 +49,7 @@ export function mealRepository(db: Database) {
       return result
     },
 
-    async delete(name: string): Promise<void> {
+    async deleteMeal(name: string): Promise<void> {
       await db.deleteFrom('meal').where('name', '=', name).execute()
     },
   }

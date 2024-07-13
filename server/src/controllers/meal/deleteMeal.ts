@@ -1,0 +1,29 @@
+import { publicProcedure } from '@server/trpc'
+import { TRPCError } from '@trpc/server'
+import provideRepos from '@server/trpc/provideRepos'
+import { mealRepository } from '@server/repositories/mealRepository'
+import { mealSchema } from '@server/entities/meal'
+
+export default publicProcedure
+  .use(
+    provideRepos({
+      mealRepository,
+    })
+  )
+  .input(
+    mealSchema.pick({
+      name: true,
+    })
+  )
+  .mutation(async ({ input, ctx: { repos } }) => {
+    const mealToDelete = await repos.mealRepository.findByName(input.name)
+
+    if (!mealToDelete) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Meal with this name not found',
+      })
+    }
+
+    await repos.mealRepository.deleteMeal(input.name)
+  })
