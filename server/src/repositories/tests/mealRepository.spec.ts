@@ -66,7 +66,7 @@ describe('findAll', () => {
   })
 })
 
-describe("updateMeal", async () => {
+describe('updateMeal', async () => {
   const meal = {
     name: 'pancakes',
     calories: 650,
@@ -79,29 +79,29 @@ describe("updateMeal", async () => {
     await clearTables(db, ['meal'])
   })
 
-  it("should update meal sucessfully", async () => {
+  it('should update meal sucessfully', async () => {
     const updateData = {
-      calories: 550
+      calories: 550,
     }
-    await repository.updateMeal("pancakes", updateData)
+    await repository.updateMeal('pancakes', updateData)
     const updatedMeal = await repository.findByName(meal.name)
     expect(updatedMeal?.calories).toBe(updateData.calories)
-    expect(updatedMeal?.name).toBe("pancakes")
+    expect(updatedMeal?.name).toBe('pancakes')
   })
 
-  it("should not update other meals if specific meal not found", async () => {
+  it('should not update other meals if specific meal not found', async () => {
     const updateData = {
-      calories: 550
+      calories: 550,
     }
 
-    await repository.updateMeal("no meal exist", updateData)
+    await repository.updateMeal('no meal exist', updateData)
     const existingMeal = await repository.findByName(meal.name)
     expect(existingMeal?.calories).toBe(meal.calories)
     expect(existingMeal?.name).toBe(meal.name)
   })
 })
 
-describe("delete", () => {
+describe('delete', () => {
   const meal = {
     name: 'pancakes',
     calories: 650,
@@ -114,20 +114,19 @@ describe("delete", () => {
     await clearTables(db, ['meal'])
   })
 
-  it("should delete meal", async () => {
-    await repository.delete("pancakes")
+  it('should delete meal', async () => {
+    await repository.delete('pancakes')
     const database = await repository.findAll()
     expect(database).toHaveLength(0)
   })
 
-  it("should do nothing if meal was not found", async () => {
-    await repository.delete("KEBAB")
+  it('should do nothing if meal was not found', async () => {
+    await repository.delete('KEBAB')
     const database = await repository.findAll()
     expect(database).toHaveLength(1)
     expect(database[0]).toMatchObject({
       name: meal.name,
-      calories: meal.calories
+      calories: meal.calories,
     })
   })
-
 })

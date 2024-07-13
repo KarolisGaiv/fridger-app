@@ -35,28 +35,28 @@ export function mealRepository(db: Database) {
         .execute()
     },
 
-    async updateMeal(mealName: string, updates: Partial<Insertable<MealPublic>>): Promise<void> {
-        await db
-          .updateTable("meal")
-          .set(updates)
-          .where("name", "=", mealName)
-          .execute()
+    async updateMeal(
+      mealName: string,
+      updates: Partial<Insertable<MealPublic>>
+    ): Promise<void> {
+      await db
+        .updateTable('meal')
+        .set(updates)
+        .where('name', '=', mealName)
+        .execute()
     },
 
     async delete(name: string): Promise<void> {
-      await db
-        .deleteFrom("meal")
-        .where("name", "=", name)
-        .execute()
-    }
+      await db.deleteFrom('meal').where('name', '=', name).execute()
+    },
   }
 }
 
 /**
  * Represents the type of an object returned by the mealRepository function.
  * This type includes methods like 'create' to interact with meal data.
- * @typedef {Object} UserRepository
+ * @typedef {Object} MealRepository
  * @property {Function} create - Method to add a new meal to the database.
- * @returns {Promise<UserPublic>} A promise that, when resolved, gives back a meal's information.
+ * @returns {Promise<MealPublic>} A promise that, when resolved, gives back a meal's information.
  */
 export type MealRepository = ReturnType<typeof mealRepository>
