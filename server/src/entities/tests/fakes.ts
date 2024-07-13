@@ -1,4 +1,4 @@
-import type { Article, Comment, User } from '@server/database/types'
+import type { Article, Comment, Meal, User } from '@server/database/types'
 import type { Insertable } from 'kysely'
 import { random } from '@tests/utils/random'
 import type { AuthUser } from '../user'
@@ -61,3 +61,12 @@ export const fakeComment = <T extends Partial<Insertable<Comment>>>(
     ...overrides,
     createdAt: new Date(),
   }) satisfies Insertable<Comment>
+
+export const fakeMeal = <T extends Partial<Insertable<Meal>>>(
+  overrides: T = {} as T
+) =>
+  ({
+    calories: randomId(),
+    name: random.string(),
+    ...overrides,
+  }) satisfies Insertable<Meal>
