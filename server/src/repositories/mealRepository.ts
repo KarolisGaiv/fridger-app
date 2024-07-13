@@ -38,12 +38,15 @@ export function mealRepository(db: Database) {
     async updateMeal(
       mealName: string,
       updates: Partial<Insertable<MealPublic>>
-    ): Promise<void> {
-      await db
+    ): Promise<MealPublic | undefined> {
+      const result = await db
         .updateTable('meal')
         .set(updates)
         .where('name', '=', mealName)
-        .execute()
+        .returning(mealKeysPublic)
+        .executeTakeFirst()
+
+      return result
     },
 
     async delete(name: string): Promise<void> {
