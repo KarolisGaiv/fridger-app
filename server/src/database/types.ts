@@ -19,6 +19,11 @@ export interface GroceryList {
   quantity: number
 }
 
+export interface Ingredient {
+  id: Generated<number>
+  name: string
+}
+
 export interface Meal {
   calories: number
   id: Generated<number>
@@ -42,6 +47,7 @@ export interface User {
 export interface DB {
   fridgeContent: FridgeContent
   groceryList: GroceryList
+  ingredient: Ingredient
   meal: Meal
   mealPlan: MealPlan
   user: User
