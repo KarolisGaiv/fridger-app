@@ -101,3 +101,36 @@ describe('find meal ingredient funcionalities', () => {
     })
   })
 })
+
+describe('updateMealIngredient', () => {
+  it('should update a meal ingredient successfully', async () => {
+    await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
+
+    const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
+    const [ingredient1] = await insertAll(db, 'ingredient', [
+      fakeIngredient(),
+      fakeIngredient(),
+    ])
+
+    const [mealIngredient] = await insertAll(db, 'mealIngredient', {
+      mealId: meal1.id,
+      ingredientId: ingredient1.id,
+      quantity: 200,
+    })
+
+    const updates = {
+      quantity: 300,
+    }
+
+    const updatedIngredient = await repository.updateMealIngredient(
+      mealIngredient.id,
+      updates
+    )
+
+    expect(updatedIngredient).toMatchObject({
+      mealId: meal1.id,
+      ingredientId: ingredient1.id,
+      quantity: updates.quantity,
+    })
+  })
+})

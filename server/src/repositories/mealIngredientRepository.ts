@@ -1,6 +1,11 @@
 import type { Database } from '@server/database'
 import type { DB, MealIngredient } from '@server/database/types'
-import type { Insertable, Selectable, ExpressionBuilder } from 'kysely'
+import type {
+  Insertable,
+  Selectable,
+  Updateable,
+  ExpressionBuilder,
+} from 'kysely'
 import { jsonObjectFrom } from 'kysely/helpers/postgres'
 import {
   type MealIngredientPublic,
@@ -40,13 +45,19 @@ export function mealIngredientRepository(db: Database) {
         .execute()
     },
 
-    //   async updateMealIngredient(id: number, updates: Updateable<MealIngredient>): Promise<void> {
-    //     await db
-    //       .updateTable('meal_ingredient')
-    //       .set(updates)
-    //       .where('id', '=', id)
-    //       .execute();
-    //   },
+    async updateMealIngredient(
+      id: number,
+      updates: Partial<Insertable<MealIngredient>>
+    ): Promise<MealIngredientPublic | undefined> {
+      const result = await db
+        .updateTable('mealIngredient')
+        .set(updates)
+        .where('id', '=', id)
+        .returning(mealIngredientKeysPublic)
+        .executeTakeFirst()
+
+      return result
+    },
 
     //   async deleteMealIngredient(id: number): Promise<void> {
     //     await db
