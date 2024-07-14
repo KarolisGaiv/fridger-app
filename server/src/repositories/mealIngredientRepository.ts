@@ -57,8 +57,6 @@ export function mealIngredientRepository(db: Database) {
     //       .where('mealId', '=', mealId)
     //       .execute();
     //   },
-
-    
   }
 }
 
