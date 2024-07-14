@@ -30,11 +30,25 @@ export function ingredientRepository(db: Database) {
     },
 
     async findAll(): Promise<IngredientPublic[]> {
-        return db
-          .selectFrom("ingredient")
-          .select(ingredientKeys)
-          .orderBy('id', 'asc')
-          .execute()
-      },
+      return db
+        .selectFrom('ingredient')
+        .select(ingredientKeys)
+        .orderBy('id', 'asc')
+        .execute()
+    },
+
+    async updateIngredient(
+      ingredientName: string,
+      updates: Partial<Insertable<IngredientPublic>>
+    ): Promise<IngredientPublic | undefined> {
+      const result = await db
+        .updateTable('ingredient')
+        .set(updates)
+        .where('name', '=', ingredientName)
+        .returning(ingredientKeyPublic)
+        .executeTakeFirst()
+
+      return result
+    },
   }
 }
