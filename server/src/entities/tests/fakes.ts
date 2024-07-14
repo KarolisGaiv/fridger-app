@@ -1,10 +1,4 @@
-import type {
-  Article,
-  Comment,
-  Meal,
-  User,
-  Ingredient,
-} from '@server/database/types'
+import type { Meal, User, Ingredient } from '@server/database/types'
 import type { Insertable } from 'kysely'
 import { random } from '@tests/utils/random'
 import type { AuthUser } from '../user'

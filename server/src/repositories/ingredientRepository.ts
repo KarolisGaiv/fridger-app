@@ -52,11 +52,10 @@ export function ingredientRepository(db: Database) {
     },
 
     async deleteIngredient(name: string): Promise<void> {
-        await db.deleteFrom("ingredient").where("name", "=", name).execute()
-    }
+      await db.deleteFrom('ingredient').where('name', '=', name).execute()
+    },
   }
 }
-
 
 /**
  * Represents a repository object for managing ingredients in the database.

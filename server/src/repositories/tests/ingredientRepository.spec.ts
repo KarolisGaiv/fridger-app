@@ -102,29 +102,29 @@ describe('updateIngredient', async () => {
 })
 
 describe('delete', () => {
-    const ingredient = {
-      name: 'banana',
-    }
-    beforeAll(async () => {
-      await insertAll(db, 'ingredient', ingredient)
-    })
-  
-    afterAll(async () => {
-      await clearTables(db, ['ingredient'])
-    })
-  
-    it('should delete meal', async () => {
-      await repository.deleteIngredient('banana')
-      const database = await repository.findAll()
-      expect(database).toHaveLength(0)
-    })
-  
-    it('should do nothing if meal was not found', async () => {
-      await repository.deleteIngredient('fdsaf')
-      const database = await repository.findAll()
-      expect(database).toHaveLength(1)
-      expect(database[0]).toMatchObject({
-        name: ingredient.name,
-      })
+  const ingredient = {
+    name: 'banana',
+  }
+  beforeAll(async () => {
+    await insertAll(db, 'ingredient', ingredient)
+  })
+
+  afterAll(async () => {
+    await clearTables(db, ['ingredient'])
+  })
+
+  it('should delete meal', async () => {
+    await repository.deleteIngredient('banana')
+    const database = await repository.findAll()
+    expect(database).toHaveLength(0)
+  })
+
+  it('should do nothing if meal was not found', async () => {
+    await repository.deleteIngredient('fdsaf')
+    const database = await repository.findAll()
+    expect(database).toHaveLength(1)
+    expect(database[0]).toMatchObject({
+      name: ingredient.name,
     })
   })
+})
