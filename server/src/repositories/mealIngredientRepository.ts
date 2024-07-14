@@ -20,13 +20,15 @@ export function mealIngredientRepository(db: Database) {
         .executeTakeFirstOrThrow()
     },
 
-    //   async getMealIngredientById(id: number): Promise<Selectable<MealIngredient> | undefined> {
-    //     return db
-    //       .selectFrom('meal_ingredient')
-    //       .select(mealIngredientKeysPublic)
-    //       .where('id', '=', id)
-    //       .executeTakeFirst();
-    //   },
+    async findMealIngredientById(
+      id: number
+    ): Promise<Selectable<MealIngredientPublic> | undefined> {
+      return db
+        .selectFrom('mealIngredient')
+        .select(mealIngredientKeysPublic)
+        .where('id', '=', id)
+        .executeTakeFirst()
+    },
 
     //   async getIngredientsByMealId(mealId: number): Promise<Selectable<MealIngredient>[]> {
     //     return db
