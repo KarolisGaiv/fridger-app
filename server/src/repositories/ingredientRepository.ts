@@ -1,6 +1,5 @@
 import type { Database } from '@server/database'
 import type { Ingredient } from '@server/database/types'
-import Selectable from 'kysely'
 import {
   type IngredientPublic,
   ingredientKeys,
@@ -17,5 +16,15 @@ export function ingredientRepository(db: Database) {
         .returning(ingredientKeyPublic)
         .executeTakeFirstOrThrow()
     },
+
+    async findByName(name: string): Promise<Selectable<Ingredient> | undefined> {
+        const ingredient = await db
+          .selectFrom("ingredient")
+          .select(ingredientKeys)
+          .where('name', '=', name)
+          .executeTakeFirst()
+  
+        return ingredient
+      },
   }
 }

@@ -18,3 +18,30 @@ describe('create', () => {
     })
   })
 })
+
+describe('findByName', () => {
+    const ingredient = {
+      name: 'milk',
+    }
+    beforeAll(async () => {
+      await insertAll(db, 'ingredient', ingredient)
+    })
+  
+    afterAll(async () => {
+      await clearTables(db, ['ingredient'])
+    })
+  
+    it('should find ingredient by name', async () => {
+      const foundIngredient = await repository.findByName(ingredient.name)
+  
+      expect(foundIngredient).toMatchObject({
+        name: ingredient.name,
+      })
+    })
+  
+    it('should return nothing if ingredient is not found by name', async () => {
+      const foundIngredient = await repository.findByName('nonExistingINGR')
+  
+      expect(foundIngredient).toBeUndefined()
+    })
+  })
