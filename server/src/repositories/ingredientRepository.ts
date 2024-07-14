@@ -17,14 +17,24 @@ export function ingredientRepository(db: Database) {
         .executeTakeFirstOrThrow()
     },
 
-    async findByName(name: string): Promise<Selectable<Ingredient> | undefined> {
-        const ingredient = await db
+    async findByName(
+      name: string
+    ): Promise<Selectable<Ingredient> | undefined> {
+      const ingredient = await db
+        .selectFrom('ingredient')
+        .select(ingredientKeys)
+        .where('name', '=', name)
+        .executeTakeFirst()
+
+      return ingredient
+    },
+
+    async findAll(): Promise<IngredientPublic[]> {
+        return db
           .selectFrom("ingredient")
           .select(ingredientKeys)
-          .where('name', '=', name)
-          .executeTakeFirst()
-  
-        return ingredient
+          .orderBy('id', 'asc')
+          .execute()
       },
   }
 }
