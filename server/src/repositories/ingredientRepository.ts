@@ -50,5 +50,23 @@ export function ingredientRepository(db: Database) {
 
       return result
     },
+
+    async deleteIngredient(name: string): Promise<void> {
+        await db.deleteFrom("ingredient").where("name", "=", name).execute()
+    }
   }
 }
+
+
+/**
+ * Represents a repository object for managing ingredients in the database.
+ * This type includes methods to interact with ingredient data in the database.
+ * @typedef {Object} IngredientRepository
+ * @property {Function} create - Method to add a new ingredient to the database.
+ * @property {Function} findByName - Method to find an ingredient by name in the database.
+ * @property {Function} findAll - Method to retrieve all ingredients from the database.
+ * @property {Function} updateIngredient - Method to update an ingredient in the database.
+ * @property {Function} deleteIngredient - Method to delete an ingredient from the database.
+ * @returns {Promise<IngredientPublic>} A promise that, when resolved, returns information about an ingredient.
+ */
+export type IngredientRepository = ReturnType<typeof ingredientRepository>

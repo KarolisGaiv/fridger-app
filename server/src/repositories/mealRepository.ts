@@ -60,6 +60,10 @@ export function mealRepository(db: Database) {
  * This type includes methods like 'create' to interact with meal data.
  * @typedef {Object} MealRepository
  * @property {Function} create - Method to add a new meal to the database.
+ * @property {Function} findByName - Method to find meal in the database.
+ * @property {Function} findAll - Method to find all meals in the database.
+ * @property {Function} updateMeal - Method to update a meal in the database.
+ * @property {Function} deleteMeal - Method to delete a new meal 
  * @returns {Promise<MealPublic>} A promise that, when resolved, gives back a meal's information.
  */
 export type MealRepository = ReturnType<typeof mealRepository>
