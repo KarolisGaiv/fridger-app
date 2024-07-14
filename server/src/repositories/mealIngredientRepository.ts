@@ -63,12 +63,12 @@ export function mealIngredientRepository(db: Database) {
       await db.deleteFrom('mealIngredient').where('id', '=', id).execute()
     },
 
-    //   async deleteIngredientsByMealId(mealId: number): Promise<void> {
-    //     await db
-    //       .deleteFrom('meal_ingredient')
-    //       .where('mealId', '=', mealId)
-    //       .execute();
-    //   },
+    async deleteIngredientsByMealId(mealId: number): Promise<void> {
+      await db
+        .deleteFrom('mealIngredient')
+        .where('mealId', '=', mealId)
+        .execute()
+    },
   }
 }
 

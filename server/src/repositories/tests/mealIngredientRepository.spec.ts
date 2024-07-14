@@ -162,3 +162,80 @@ describe('deleteMealIngredient', () => {
     await expect(repository.deleteMealIngredient(999)).resolves.not.toThrow()
   })
 })
+
+describe('deleteIngredientsByMealId', () => {
+  let mealId: number
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  let ingredientIds: number[]
+
+  beforeEach(async () => {
+    await clearTables(db, ['meal', 'ingredient', 'mealIngredient'])
+
+    // Insert a meal
+    const [meal] = await insertAll(db, 'meal', [
+      { name: 'Pasta', calories: 400 },
+    ])
+    mealId = meal.id
+
+    // Insert ingredients
+    const [ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
+      { name: 'Tomato' },
+      { name: 'Cheese' },
+    ])
+    ingredientIds = [ingredient1.id, ingredient2.id]
+
+    // Insert meal ingredients
+    await insertAll(db, 'mealIngredient', [
+      { mealId, ingredientId: ingredient1.id, quantity: 200 },
+      { mealId, ingredientId: ingredient2.id, quantity: 300 },
+    ])
+  })
+
+  it('should delete ingredients associated with the specified meal ID', async () => {
+    await repository.deleteIngredientsByMealId(mealId)
+
+    // Verify that meal ingredients associated with the meal ID are deleted
+    const ingredients = await repository.findIngredientsByMealId(mealId)
+    expect(ingredients).toHaveLength(0)
+  })
+
+  it('should not delete ingredients associated with other meals', async () => {
+    const [anotherMeal] = await insertAll(db, 'meal', [
+      { name: 'Salad', calories: 300 },
+    ])
+    const [anotherIngredient] = await insertAll(db, 'ingredient', [
+      { name: 'Lettuce' },
+    ])
+
+    // Insert a meal ingredient associated with another meal
+    await insertAll(db, 'mealIngredient', [
+      {
+        mealId: anotherMeal.id,
+        ingredientId: anotherIngredient.id,
+        quantity: 150,
+      },
+    ])
+
+    await repository.deleteIngredientsByMealId(mealId)
+
+    // Verify that the meal ingredient associated with another meal remains
+    const ingredients = await repository.findIngredientsByMealId(anotherMeal.id)
+    expect(ingredients).toHaveLength(1)
+    expect(ingredients[0]).toMatchObject({
+      mealId: anotherMeal.id,
+      ingredientId: anotherIngredient.id,
+    })
+  })
+
+  it('should handle non-existent meal ID gracefully', async () => {
+    const nonExistentMealId = 999
+
+    await expect(
+      repository.deleteIngredientsByMealId(nonExistentMealId)
+    ).resolves.not.toThrow()
+
+    // Verify that no meal ingredients were deleted
+    const ingredients = await repository.findIngredientsByMealId(mealId)
+    expect(ingredients).toHaveLength(2)
+  })
+})
