@@ -134,3 +134,31 @@ describe('updateMealIngredient', () => {
     })
   })
 })
+
+describe('deleteMealIngredient', () => {
+  it('should delete a meal ingredient', async () => {
+    await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
+    const [meal] = await insertAll(db, 'meal', [
+      { name: 'Pasta', calories: 400 },
+    ])
+    const [ingredient] = await insertAll(db, 'ingredient', [{ name: 'Tomato' }])
+
+    const [mealIngredient] = await insertAll(db, 'mealIngredient', [
+      {
+        mealId: meal.id,
+        ingredientId: ingredient.id,
+        quantity: 200,
+      },
+    ])
+
+    await repository.deleteMealIngredient(mealIngredient.id)
+    const deletedMealIngredient = await repository.findMealIngredientById(
+      mealIngredient.id
+    )
+    expect(deletedMealIngredient).toBeUndefined()
+  })
+
+  it('should not throw an error if meal ingredient is not found', async () => {
+    await expect(repository.deleteMealIngredient(999)).resolves.not.toThrow()
+  })
+})

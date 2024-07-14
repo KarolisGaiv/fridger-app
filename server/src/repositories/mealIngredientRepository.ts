@@ -59,12 +59,9 @@ export function mealIngredientRepository(db: Database) {
       return result
     },
 
-    //   async deleteMealIngredient(id: number): Promise<void> {
-    //     await db
-    //       .deleteFrom('meal_ingredient')
-    //       .where('id', '=', id)
-    //       .execute();
-    //   },
+    async deleteMealIngredient(id: number): Promise<void> {
+      await db.deleteFrom('mealIngredient').where('id', '=', id).execute()
+    },
 
     //   async deleteIngredientsByMealId(mealId: number): Promise<void> {
     //     await db
