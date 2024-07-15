@@ -58,8 +58,47 @@ describe('findById', () => {
   })
 
   it('should return undefined for non-existent ID', async () => {
-    const nonExistentId = 999 // Assuming 999 does not exist in your test data
+    const nonExistentId = 999 // Assuming 999 does not exist in test data
     const foundGroceryList = await repository.findById(nonExistentId)
     expect(foundGroceryList).toBeUndefined()
+  })
+})
+
+describe('findByMealPlanId', () => {
+  it('should retrieve all grocery list items by meal plan ID', async () => {
+    const groceryListItems = [
+      { mealPlanId: mealPlan.id, product: 'Apples', quantity: 5 },
+      { mealPlanId: mealPlan.id, product: 'Bananas', quantity: 10 },
+    ]
+
+    await insertAll(db, 'groceryList', groceryListItems)
+    const foundGroceryLists = await repository.findByMealPlanId(mealPlan.id)
+
+    expect(foundGroceryLists).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          mealPlanId: mealPlan.id,
+          product: 'Apples',
+          quantity: 5,
+        }),
+        expect.objectContaining({
+          mealPlanId: mealPlan.id,
+          product: 'Bananas',
+          quantity: 10,
+        }),
+      ])
+    )
+  })
+
+  it('should return an empty array for a meal plan ID with no grocery list items', async () => {
+    const anotherMealPlan = await insertAll(db, 'mealPlan', [
+      fakeMealPlan({ userId: user.id }),
+    ])
+
+    const foundGroceryLists = await repository.findByMealPlanId(
+      anotherMealPlan[0].id
+    )
+
+    expect(foundGroceryLists).toEqual([])
   })
 })

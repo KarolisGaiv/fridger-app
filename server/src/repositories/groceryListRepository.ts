@@ -27,5 +27,33 @@ export function groceryListRepository(db: Database) {
         .where('id', '=', id)
         .executeTakeFirst()
     },
+
+    async findByMealPlanId(
+      mealPlanId: number
+    ): Promise<Selectable<GroceryList>[]> {
+      return db
+        .selectFrom('groceryList')
+        .select(groceryListKeysAll)
+        .where('mealPlanId', '=', mealPlanId)
+        .execute()
+    },
+
+    // async update(
+    //   groceryListId: number,
+    //   updates: Partial<Insertable<GroceryList>>
+    // ): Promise<GroceryListPublic | undefined> {
+    //   const result = await db
+    //     .updateTable('groceryList')
+    //     .set(updates)
+    //     .where('id', '=', groceryListId)
+    //     .returning(groceryListKeysPublic)
+    //     .executeTakeFirst()
+
+    //   return result
+    // },
+
+    // async deleteById(id: number): Promise<void> {
+    //   await db.deleteFrom('groceryList').where('id', '=', id).execute()
+    // },
   }
 }
