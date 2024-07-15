@@ -61,7 +61,6 @@ describe('find meal ingredient funcionalities', () => {
 
   describe('findIngredientsByMealId', () => {
     it('should find ingredients by meal id', async () => {
-
       const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
       const [ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
         fakeIngredient(),
@@ -93,7 +92,6 @@ describe('find meal ingredient funcionalities', () => {
     })
 
     it('should return an empty array if no ingredients are found for the meal', async () => {
-
       const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
 
       const ingredients = await repository.findIngredientsByMealId(meal1.id)
@@ -105,7 +103,6 @@ describe('find meal ingredient funcionalities', () => {
 
 describe('updateMealIngredient', () => {
   it('should update a meal ingredient successfully', async () => {
-
     const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
     const [ingredient1] = await insertAll(db, 'ingredient', [
       fakeIngredient(),
@@ -168,7 +165,6 @@ describe('deleteIngredientsByMealId', () => {
   let ingredientIds: number[]
 
   beforeEach(async () => {
-
     // Insert a meal
     const [meal] = await insertAll(db, 'meal', [
       { name: 'Pasta', calories: 400 },
