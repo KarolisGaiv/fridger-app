@@ -10,7 +10,7 @@ let mealPlan: any
 
 const db = await wrapInRollbacks(createTestDatabase())
 const createCaller = createCallerFactory(groceryListRouter)
-const { findById } = createCaller({ db })
+const { findByMealPlanId } = createCaller({ db })
 
 async function createFakeGroceryList() {
   const list = {
@@ -34,25 +34,27 @@ afterEach(async () => {
 })
 
 describe('findById', () => {
-  it('should retrieve a grocery list by ID', async () => {
+  it('should retrieve a grocery list by meal plan ID', async () => {
     const fakeGroceryList = await createFakeGroceryList()
-    const result = await findById({ id: fakeGroceryList.id })
+    const result = await findByMealPlanId({ mealPlanId: mealPlan.id })
 
     expect(result).toEqual(
-      expect.objectContaining({
-        id: fakeGroceryList.id,
-        mealPlanId: fakeGroceryList.mealPlanId,
-        product: fakeGroceryList.product,
-        quantity: fakeGroceryList.quantity,
-      })
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: fakeGroceryList.id,
+          mealPlanId: fakeGroceryList.mealPlanId,
+          product: fakeGroceryList.product,
+          quantity: fakeGroceryList.quantity,
+        }),
+      ])
     )
   })
 
   it('should throw an error if the grocery list item is not found', async () => {
     const nonExistentId = 999 // Assuming 999 does not exist in your test data
 
-    await expect(findById({ id: nonExistentId })).rejects.toThrow(
-      /list not found/i
-    )
+    await expect(
+      findByMealPlanId({ mealPlanId: nonExistentId })
+    ).rejects.toThrow(/list not found/i)
   })
 })
