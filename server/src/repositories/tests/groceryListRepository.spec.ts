@@ -102,3 +102,23 @@ describe('findByMealPlanId', () => {
     expect(foundGroceryLists).toEqual([])
   })
 })
+
+describe('update', () => {
+  it('should update a grocery list item', async () => {
+    const fakeListId = await createFakeGroceryList()
+    const updates = { product: 'Updated Product', quantity: 99 }
+
+    const updatedGroceryList = await repository.update(fakeListId, updates)
+
+    expect(updatedGroceryList).toEqual(expect.objectContaining(updates))
+  })
+
+  it('should return undefined for non-existent grocery list item ID', async () => {
+    const nonExistentId = 999 // Assuming 999 does not exist in test data
+    const updates = { product: 'Updated Product', quantity: 99 }
+
+    const updatedGroceryList = await repository.update(nonExistentId, updates)
+
+    expect(updatedGroceryList).toBeUndefined()
+  })
+})

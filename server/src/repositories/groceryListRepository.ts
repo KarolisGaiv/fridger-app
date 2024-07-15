@@ -38,19 +38,19 @@ export function groceryListRepository(db: Database) {
         .execute()
     },
 
-    // async update(
-    //   groceryListId: number,
-    //   updates: Partial<Insertable<GroceryList>>
-    // ): Promise<GroceryListPublic | undefined> {
-    //   const result = await db
-    //     .updateTable('groceryList')
-    //     .set(updates)
-    //     .where('id', '=', groceryListId)
-    //     .returning(groceryListKeysPublic)
-    //     .executeTakeFirst()
+    async update(
+      groceryListId: number,
+      updates: Partial<Insertable<GroceryList>>
+    ): Promise<GroceryListPublic | undefined> {
+      const result = await db
+        .updateTable('groceryList')
+        .set(updates)
+        .where('id', '=', groceryListId)
+        .returning(groceryListKeysPublic)
+        .executeTakeFirst()
 
-    //   return result
-    // },
+      return result
+    },
 
     // async deleteById(id: number): Promise<void> {
     //   await db.deleteFrom('groceryList').where('id', '=', id).execute()
