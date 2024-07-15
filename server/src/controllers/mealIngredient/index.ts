@@ -3,7 +3,8 @@ import create from './create'
 import findById from './findById'
 import findIngredientsByMealId from './findIngredientsByMeal'
 import updateMealIngredient from './update'
-import deleteIngredientsByMealId from './deleteByMeal'
+import deleteIngredientsByMealId from './deleteByMealId'
+import deleteById from './deleteById'
 
 export default router({
   create,
@@ -11,4 +12,5 @@ export default router({
   findIngredientsByMealId,
   updateMealIngredient,
   deleteIngredientsByMealId,
+  deleteById,
 })
