@@ -3,7 +3,7 @@ import type { Selectable } from 'kysely'
 import type { GroceryList } from '@server/database/types'
 import { idSchema } from './shared'
 
-const groceryListSchema = z.object({
+export const groceryListSchema = z.object({
   id: idSchema,
   mealPlanId: z.number(),
   product: z.string(),
