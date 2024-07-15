@@ -46,13 +46,13 @@ export function mealIngredientRepository(db: Database) {
     },
 
     async updateMealIngredient(
-      id: number,
+      mealIngredientId: number,
       updates: Partial<Insertable<MealIngredient>>
     ): Promise<MealIngredientPublic | undefined> {
       const result = await db
         .updateTable('mealIngredient')
         .set(updates)
-        .where('id', '=', id)
+        .where('id', '=', mealIngredientId)
         .returning(mealIngredientKeysPublic)
         .executeTakeFirst()
 
