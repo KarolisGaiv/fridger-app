@@ -2,7 +2,6 @@ import { publicProcedure } from '@server/trpc'
 import { TRPCError } from '@trpc/server'
 import provideRepos from '@server/trpc/provideRepos'
 import { mealIngredientRepository } from '@server/repositories/mealIngredientRepository'
-import { mealRepository } from '@server/repositories/mealRepository'
 import { mealIngredientSchema } from '@server/entities/mealIngredient'
 import { z } from 'zod'
 
@@ -10,7 +9,6 @@ export default publicProcedure
   .use(
     provideRepos({
       mealIngredientRepository,
-      mealRepository,
     })
   )
   .input(
