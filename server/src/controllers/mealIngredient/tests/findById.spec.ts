@@ -10,34 +10,38 @@ const createCaller = createCallerFactory(mealIngredientRouter)
 const { findById } = createCaller({ db })
 
 beforeAll(async () => {
-    await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
-  })
+  await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
+})
 
-  afterEach(async () => {
-    await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
-  })
+afterEach(async () => {
+  await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
+})
 
-  describe('findMealIngredientById', () => {
-    it('should find a meal ingredient by its ID', async () => {
-      const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
-      const [ingredient1] = await insertAll(db, 'ingredient', [fakeIngredient()])
+describe('findMealIngredientById', () => {
+  it('should find a meal ingredient by its ID', async () => {
+    const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
+    const [ingredient1] = await insertAll(db, 'ingredient', [fakeIngredient()])
 
-      const [mealIngredient] = await insertAll(db, 'mealIngredient', [{
+    const [mealIngredient] = await insertAll(db, 'mealIngredient', [
+      {
         mealId: meal1.id,
         ingredientId: ingredient1.id,
         quantity: 350,
-      }])
+      },
+    ])
 
-      const result = await findById({ id: mealIngredient.id })
+    const result = await findById({ id: mealIngredient.id })
 
-      expect(result).toMatchObject({
-        mealId: meal1.id,
-        ingredientId: ingredient1.id,
-        quantity: 350,
-      })
-    })
-
-    it('should throw a NOT_FOUND error if meal ingredient does not exist', async () => {
-        await expect(findById({id: 489489498})).rejects.toThrowError(/no results/i)
+    expect(result).toMatchObject({
+      mealId: meal1.id,
+      ingredientId: ingredient1.id,
+      quantity: 350,
     })
   })
+
+  it('should throw a NOT_FOUND error if meal ingredient does not exist', async () => {
+    await expect(findById({ id: 489489498 })).rejects.toThrowError(
+      /no results/i
+    )
+  })
+})

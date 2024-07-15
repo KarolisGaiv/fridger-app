@@ -27,6 +27,16 @@ export function mealRepository(db: Database) {
       return meal
     },
 
+    async findById(id: number): Promise<Selectable<Meal> | undefined> {
+      const meal = await db
+        .selectFrom('meal')
+        .select(mealKeysAll)
+        .where('id', '=', id)
+        .executeTakeFirst()
+
+      return meal
+    },
+
     async findAll(): Promise<MealPublic[]> {
       return db
         .selectFrom('meal')
