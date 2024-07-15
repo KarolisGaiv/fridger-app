@@ -3,6 +3,7 @@ import { userRepository } from '@server/repositories/userRepository'
 import { mealRepository } from '@server/repositories/mealRepository'
 import { ingredientRepository } from '@server/repositories/ingredientRepository'
 import { mealIngredientRepository } from '@server/repositories/mealIngredientRepository'
+import { groceryListRepository } from '@server/repositories/groceryListRepository'
 
 export type RepositoryFactory = <T>(db: Database) => T
 
@@ -12,6 +13,7 @@ const repositories = {
   mealRepository,
   ingredientRepository,
   mealIngredientRepository,
+  groceryListRepository,
 }
 
 export type RepositoriesFactories = typeof repositories

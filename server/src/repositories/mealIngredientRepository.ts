@@ -1,5 +1,5 @@
 import type { Database } from '@server/database'
-import type { DB, MealIngredient } from '@server/database/types'
+import type { MealIngredient } from '@server/database/types'
 import type {
   Insertable,
   Selectable,

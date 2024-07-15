@@ -3,6 +3,7 @@ import type {
   User,
   Ingredient,
   MealIngredient,
+  MealPlan,
 } from '@server/database/types'
 import type { Insertable } from 'kysely'
 import { random } from '@tests/utils/random'
@@ -95,3 +96,12 @@ export const fakeMealIngredient = <
     quantity: randomId(),
     ...overrides,
   }) satisfies Insertable<MealIngredient>
+
+export const fakeMealPlan = <T extends Partial<Insertable<MealPlan>>>(
+  overrides: T = {} as T
+) =>
+  ({
+    planName: random.string(),
+    userId: randomId(),
+    ...overrides,
+  }) satisfies Insertable<MealPlan>
