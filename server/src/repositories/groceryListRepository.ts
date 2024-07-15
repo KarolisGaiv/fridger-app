@@ -19,5 +19,13 @@ export function groceryListRepository(db: Database) {
         .returning(groceryListKeysPublic)
         .executeTakeFirstOrThrow()
     },
+
+    async findById(id: number): Promise<Selectable<GroceryList> | undefined> {
+      return db
+        .selectFrom('groceryList')
+        .select(groceryListKeysAll)
+        .where('id', '=', id)
+        .executeTakeFirst()
+    },
   }
 }

@@ -6,8 +6,18 @@ import { groceryListRepository } from '../groceryListRepository'
 
 const db = await wrapInRollbacks(createTestDatabase())
 const repository = groceryListRepository(db)
-let user: any // Adjust type as per your User type
-let mealPlan: any // Adjust type as per your MealPlan type
+let user: any
+let mealPlan: any
+
+async function createFakeGroceryList() {
+  const list = {
+    mealPlanId: mealPlan.id,
+    product: 'snake oil',
+    quantity: 30,
+  }
+  const [data] = await insertAll(db, 'groceryList', [list])
+  return data.id
+}
 
 beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
@@ -23,8 +33,6 @@ afterEach(async () => {
 
 describe('create', () => {
   it('should create a new grocery list item', async () => {
-    // const [user] = await insertAll(db, "user", [fakeUser()])
-    // const [mealPlan] = await insertAll(db, "mealPlan", [fakeMealPlan({userId: user.id})])
     const newGroceryList = {
       mealPlanId: mealPlan.id,
       product: 'Apples',
@@ -34,5 +42,24 @@ describe('create', () => {
     const createdGroceryList = await repository.create(newGroceryList)
 
     expect(createdGroceryList).toEqual(expect.objectContaining(newGroceryList))
+  })
+})
+
+describe('findById', () => {
+  it('should retrieve a grocery list item by ID', async () => {
+    const fakeListId = await createFakeGroceryList()
+    const foundGroceryList = await repository.findById(fakeListId)
+    expect(foundGroceryList).toEqual(
+      expect.objectContaining({
+        product: 'snake oil',
+        quantity: 30,
+      })
+    )
+  })
+
+  it('should return undefined for non-existent ID', async () => {
+    const nonExistentId = 999 // Assuming 999 does not exist in your test data
+    const foundGroceryList = await repository.findById(nonExistentId)
+    expect(foundGroceryList).toBeUndefined()
   })
 })
