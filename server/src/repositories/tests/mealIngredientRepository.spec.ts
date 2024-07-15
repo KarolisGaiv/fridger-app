@@ -7,9 +7,12 @@ import { mealIngredientRepository } from '../mealIngredientRepository'
 const db = await wrapInRollbacks(createTestDatabase())
 const repository = mealIngredientRepository(db)
 
+beforeAll(async () => {
+  await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
+})
+
 describe('create', () => {
   it('should create a new meal ingredient', async () => {
-    await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
     const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
     const [ingredient1] = await insertAll(db, 'ingredient', [fakeIngredient()])
 
@@ -58,7 +61,6 @@ describe('find meal ingredient funcionalities', () => {
 
   describe('findIngredientsByMealId', () => {
     it('should find ingredients by meal id', async () => {
-      await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
 
       const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
       const [ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
@@ -91,7 +93,6 @@ describe('find meal ingredient funcionalities', () => {
     })
 
     it('should return an empty array if no ingredients are found for the meal', async () => {
-      await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
 
       const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
 
@@ -104,7 +105,6 @@ describe('find meal ingredient funcionalities', () => {
 
 describe('updateMealIngredient', () => {
   it('should update a meal ingredient successfully', async () => {
-    await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
 
     const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
     const [ingredient1] = await insertAll(db, 'ingredient', [
@@ -137,7 +137,6 @@ describe('updateMealIngredient', () => {
 
 describe('deleteMealIngredient', () => {
   it('should delete a meal ingredient', async () => {
-    await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
     const [meal] = await insertAll(db, 'meal', [
       { name: 'Pasta', calories: 400 },
     ])
@@ -169,7 +168,6 @@ describe('deleteIngredientsByMealId', () => {
   let ingredientIds: number[]
 
   beforeEach(async () => {
-    await clearTables(db, ['meal', 'ingredient', 'mealIngredient'])
 
     // Insert a meal
     const [meal] = await insertAll(db, 'meal', [
