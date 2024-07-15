@@ -122,3 +122,18 @@ describe('update', () => {
     expect(updatedGroceryList).toBeUndefined()
   })
 })
+
+describe('deleteById', () => {
+  it('should delete a grocery list item by ID', async () => {
+    const fakeListId = await createFakeGroceryList()
+    await repository.deleteById(fakeListId)
+
+    const foundGroceryList = await repository.findById(fakeListId)
+    expect(foundGroceryList).toBeUndefined()
+  })
+
+  it('should not throw an error when deleting a non-existent ID', async () => {
+    const nonExistentId = 999 // Assuming 999 does not exist in test data
+    await expect(repository.deleteById(nonExistentId)).resolves.not.toThrow()
+  })
+})

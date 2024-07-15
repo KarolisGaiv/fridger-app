@@ -52,8 +52,8 @@ export function groceryListRepository(db: Database) {
       return result
     },
 
-    // async deleteById(id: number): Promise<void> {
-    //   await db.deleteFrom('groceryList').where('id', '=', id).execute()
-    // },
+    async deleteById(id: number): Promise<void> {
+      await db.deleteFrom('groceryList').where('id', '=', id).execute()
+    },
   }
 }
