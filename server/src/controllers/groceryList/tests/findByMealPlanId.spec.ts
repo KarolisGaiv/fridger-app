@@ -30,7 +30,6 @@ beforeEach(async () => {
   ])
 })
 
-
 describe('findById', () => {
   it('should retrieve a grocery list by meal plan ID', async () => {
     const fakeGroceryList = await createFakeGroceryList()
