@@ -129,3 +129,29 @@ describe('update', () => {
     expect(updatedMealPlan).toBeUndefined()
   })
 })
+
+describe('deleteById', () => {
+  it('should delete an existing meal plan', async () => {
+    const mealPlan = {
+      userId: user.id,
+      planName: 'Plan to delete',
+    }
+    const [insertedMealPlan] = await insertAll(db, 'mealPlan', [mealPlan])
+
+    await repository.deleteById(insertedMealPlan.id)
+
+    const foundMealPlan = await repository.findById(insertedMealPlan.id)
+    expect(foundMealPlan).toBeUndefined()
+  })
+
+  it('should not throw an error if trying to delete a non-existent meal plan', async () => {
+    const nonExistentId = 999
+
+    // Ensure that no error is thrown
+    await expect(repository.deleteById(nonExistentId)).resolves.not.toThrow()
+
+    // Additional check: ensure no meal plan with nonExistentId exists
+    const foundMealPlan = await repository.findById(nonExistentId)
+    expect(foundMealPlan).toBeUndefined()
+  })
+})

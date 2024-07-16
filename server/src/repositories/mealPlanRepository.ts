@@ -45,6 +45,10 @@ export function mealPlanRepository(db: Database) {
         .executeTakeFirst()
       return result
     },
+
+    async deleteById(id: number): Promise<void> {
+      await db.deleteFrom('mealPlan').where('id', '=', id).execute()
+    },
   }
 }
 
