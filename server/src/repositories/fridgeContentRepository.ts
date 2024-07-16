@@ -38,5 +38,12 @@ export function fridgeContentRepository(db: Database) {
 
       return result
     },
+
+    async deleteByUserId(userId: number): Promise<void> {
+      await db
+        .deleteFrom('fridgeContent')
+        .where('userId', '=', userId)
+        .execute()
+    },
   }
 }

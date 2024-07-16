@@ -190,3 +190,20 @@ describe('findByMealPlan', () => {
     expect(result).toHaveLength(0)
   })
 })
+
+describe('deleteByUserId', () => {
+  it('should delete fridge content for a specific user', async () => {
+    await insertMealPlanWithFridgeContent(10)
+    await insertMealPlanWithFridgeContent(30)
+    await insertMealPlanWithFridgeContent(30)
+
+    const userData = await repository.findByUser(user.id)
+    expect(userData).toHaveLength(4)
+
+    await repository.deleteByUserId(user.id)
+
+    // Check if fridge content is deleted
+    const result = await repository.findByUser(user.id)
+    expect(result).toHaveLength(0)
+  })
+})
