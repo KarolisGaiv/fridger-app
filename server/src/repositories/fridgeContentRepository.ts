@@ -5,7 +5,7 @@ import {
   fridgeContentKeysPublic,
   fridgeContentKeysAll,
 } from '@server/entities/fridgeContent'
-import type { Insertable, Selectable } from 'kysely'
+import type { Insertable } from 'kysely'
 
 export function fridgeContentRepository(db: Database) {
   return {
@@ -23,7 +23,7 @@ export function fridgeContentRepository(db: Database) {
       const result = await db
         .selectFrom('fridgeContent')
         .where('userId', '=', userId)
-        .select(fridgeContentKeysPublic)
+        .select(fridgeContentKeysAll)
         .execute()
 
       return result

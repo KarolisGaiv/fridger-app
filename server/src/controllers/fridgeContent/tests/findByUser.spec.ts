@@ -36,60 +36,33 @@ beforeEach(async () => {
   ])
   ;[ingredient] = await insertAll(db, 'ingredient', [fakeIngredient()])
   groceryListId = await createFakeGroceryList()
-})
 
-it('allows adding fridge content', async () => {
-  // arrange
-  const content = {
+  const data = {
     mealPlan: mealPlan.id,
     ingredientId: ingredient.id,
-    existingQuantity: 32,
+    existingQuantity: 57,
     groceryListId,
+    userId: realUser.id,
   }
-  const { create } = createCaller(authContext({ db }, realUser))
 
-  // act
-  const result = await create(content)
-
-  // assert
-  expect(result).toBeDefined()
-  expect(result).toEqual(
-    expect.objectContaining({
-      ingredientId: content.ingredientId,
-      existingQuantity: content.existingQuantity,
-    })
-  )
+  await insertAll(db, 'fridgeContent', data)
 })
 
-it('prevents unauthenticated user from adding fridge content', async () => {
-  // arrange
-  const content = {
-    mealPlan: mealPlan.id,
-    ingredientId: ingredient.id,
-    existingQuantity: 32,
-    groceryListId,
-  }
-  const { create } = createCaller({
+it('finds users fridge content', async () => {
+  const { findByUser } = createCaller(authContext({ db }, realUser))
+
+  const result = await findByUser()
+  expect(result).toHaveLength(1)
+})
+
+it('prevents unauthenticated user to get fridge content', async () => {
+  const { findByUser } = createCaller({
     db,
     req: {
-      // no Auth header
+      // no auth header
       header: () => undefined,
     } as any,
   })
 
-  // act & assert
-  await expect(create(content)).rejects.toThrow(/Unauthenticated/i)
-})
-
-it('throws an error if a required field is missing', async () => {
-  // arrange
-  const content = {
-    mealPlan: mealPlan.id,
-    existingQuantity: 32,
-    groceryListId,
-  }
-  const { create } = createCaller(authContext({ db }, realUser))
-
-  // act & assert
-  await expect(create(content)).rejects.toThrow()
+  await expect(findByUser()).rejects.toThrow(/unauthenticated/i)
 })
