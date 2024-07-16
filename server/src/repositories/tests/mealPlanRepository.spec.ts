@@ -33,3 +33,25 @@ describe('create', () => {
     )
   })
 })
+
+describe('findById', () => {
+  it('should retrieve a meal plan by ID', async () => {
+    const mealPlan = {
+      userId: user.id,
+      planName: 'Test Meal Plan',
+    }
+    const [insertedMealPlan] = await insertAll(db, 'mealPlan', [mealPlan])
+
+    const foundMealPlan = await repository.findById(insertedMealPlan.id)
+
+    expect(foundMealPlan).toEqual(expect.objectContaining(mealPlan))
+  })
+
+  it('should return undefined if meal plan ID does not exist', async () => {
+    const nonExistentId = 999
+
+    const foundMealPlan = await repository.findById(nonExistentId)
+
+    expect(foundMealPlan).toBeUndefined()
+  })
+})

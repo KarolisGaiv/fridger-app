@@ -6,7 +6,6 @@ import {
   mealPlanKeysPublic,
 } from '@server/entities/mealPlan'
 import type { Insertable, Selectable } from 'kysely'
-import { MealPlanPublic } from '../entities/mealPlan'
 
 export function mealPlanRepository(db: Database) {
   return {
@@ -16,6 +15,14 @@ export function mealPlanRepository(db: Database) {
         .values(mealPlan)
         .returning(mealPlanKeysPublic)
         .executeTakeFirstOrThrow()
+    },
+
+    async findById(id: number): Promise<Selectable<MealPlan> | undefined> {
+      return db
+        .selectFrom('mealPlan')
+        .select(mealPlanKeysAll)
+        .where('id', '=', id)
+        .executeTakeFirst()
     },
   }
 }
