@@ -26,6 +26,21 @@ async function createFakeGroceryList() {
   return data.id
 }
 
+async function insertMealPlanWithFridgeContent(quantity: number) {
+  ;[mealPlan] = await insertAll(db, 'mealPlan', [
+    fakeMealPlan({ userId: user.id }),
+  ])
+  const fridgeContent = {
+    userId: user.id,
+    groceryListId,
+    ingredientId: ingredient.id,
+    mealPlan: mealPlan.id,
+    existingQuantity: quantity,
+  }
+  await insertAll(db, 'fridgeContent', [fridgeContent])
+  return mealPlan
+}
+
 beforeEach(async () => {
   await clearTables(db, [
     'fridgeContent',
@@ -43,6 +58,18 @@ beforeEach(async () => {
   ;[ingredient] = await insertAll(db, 'ingredient', [fakeIngredient()])
 
   groceryListId = await createFakeGroceryList()
+
+  const fridgeContents = [
+    {
+      userId: user.id,
+      groceryListId,
+      ingredientId: ingredient.id,
+      mealPlan: mealPlan.id,
+      existingQuantity: 10,
+    },
+  ]
+
+  await insertAll(db, 'fridgeContent', fridgeContents)
 })
 
 describe('create', () => {
@@ -107,26 +134,58 @@ describe('findByUser', () => {
 
     const result = await repository.findByUser(user.id)
 
-    // Assuming we inserted 2 fridge contents
-    expect(result).toHaveLength(2)
+    expect(result).toHaveLength(3)
 
     // Assert the structure and contents of the returned fridge content
-    expect(result[0]).toEqual(
-      expect.objectContaining({
-        ingredientId: ingredient.id,
-        existingQuantity: 10,
-      })
-    )
     expect(result[1]).toEqual(
       expect.objectContaining({
         ingredientId: ingredient.id,
-        existingQuantity: 30,
+        existingQuantity: fridgeContent.existingQuantity,
+      })
+    )
+    expect(result[2]).toEqual(
+      expect.objectContaining({
+        ingredientId: ingredient.id,
+        existingQuantity: fridgeContent2.existingQuantity,
       })
     )
   })
 
   it('should return an empty array if no fridge content is found for the user', async () => {
+    await clearTables(db, ['fridgeContent'])
     const result = await repository.findByUser(user.id)
+
+    expect(result).toHaveLength(0)
+  })
+})
+
+describe('findByMealPlan', () => {
+  it('should return fridge content for specific meal plans', async () => {
+    // Insert fridge content for multiple meal plans
+    const mealPlan1 = await insertMealPlanWithFridgeContent(10)
+    const mealPlan2 = await insertMealPlanWithFridgeContent(20)
+
+    // Retrieve fridge content for each meal plan
+    const result1 = await repository.findByMealPlan(mealPlan1.id)
+    const result2 = await repository.findByMealPlan(mealPlan2.id)
+
+    expect(result1).toHaveLength(1) // Assuming inserted 1 fridge content for meal plan 1
+    expect(result1[0]).toMatchObject({
+      ingredientId: ingredient.id,
+      existingQuantity: 10,
+      mealPlan: mealPlan1.id,
+    })
+
+    expect(result2).toHaveLength(1) // Assuming inserted 1 fridge content for meal plan 2
+    expect(result2[0]).toMatchObject({
+      ingredientId: ingredient.id,
+      existingQuantity: 20, // Assuming different quantity for meal plan 2
+      mealPlan: mealPlan2.id,
+    })
+  })
+
+  it('should return an empty array if no fridge content is found for the meal plan', async () => {
+    const result = await repository.findByMealPlan(999) // Non-existent meal plan ID
 
     expect(result).toHaveLength(0)
   })
