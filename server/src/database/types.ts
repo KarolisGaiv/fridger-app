@@ -9,6 +9,8 @@ export interface FridgeContent {
   existingQuantity: number | null
   groceryListId: number | null
   id: Generated<number>
+  ingredientId: number
+  mealPlan: number
   userId: number
 }
 
