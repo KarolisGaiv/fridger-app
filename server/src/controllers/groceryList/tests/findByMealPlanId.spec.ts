@@ -23,15 +23,13 @@ async function createFakeGroceryList() {
 }
 
 beforeEach(async () => {
+  await clearTables(db, ['groceryList', 'mealPlan', 'user'])
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   ;[mealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id }),
   ])
 })
 
-afterEach(async () => {
-  await clearTables(db, ['groceryList', 'mealPlan', 'user'])
-})
 
 describe('findById', () => {
   it('should retrieve a grocery list by meal plan ID', async () => {
