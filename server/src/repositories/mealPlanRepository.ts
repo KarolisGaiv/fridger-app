@@ -24,6 +24,14 @@ export function mealPlanRepository(db: Database) {
         .where('id', '=', id)
         .executeTakeFirst()
     },
+
+    async findByUserId(userId: number): Promise<Selectable<MealPlan>[]> {
+      return db
+        .selectFrom('mealPlan')
+        .select(mealPlanKeysAll)
+        .where('userId', '=', userId)
+        .execute()
+    },
   }
 }
 

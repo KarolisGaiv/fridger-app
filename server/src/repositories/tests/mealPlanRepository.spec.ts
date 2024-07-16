@@ -27,7 +27,6 @@ describe('create', () => {
     const mealPlan = {
       userId: user.id,
     }
-    // const result = await repository.create(mealPlan)
     await expect(repository.create(mealPlan)).rejects.toThrowError(
       /violates not-null constraint/
     )
@@ -53,5 +52,41 @@ describe('findById', () => {
     const foundMealPlan = await repository.findById(nonExistentId)
 
     expect(foundMealPlan).toBeUndefined()
+  })
+})
+
+describe('findByUserId', () => {
+  it('should retrieve all meal plans for a specific user', async () => {
+    const [user2] = await insertAll(db, 'user', [fakeUser()])
+
+    const mealPlansUser1 = [
+      { userId: user.id, planName: 'Plan 1' },
+      { userId: user.id, planName: 'Plan 2' },
+    ]
+
+    const mealPlansUser2 = [
+      { userId: user2.id, planName: 'Plan 3' },
+      { userId: user2.id, planName: 'Plan 4' },
+    ]
+
+    await insertAll(db, 'mealPlan', [...mealPlansUser1, ...mealPlansUser2])
+
+    const foundMealPlans = await repository.findByUserId(user.id)
+
+    expect(foundMealPlans.length).toBe(mealPlansUser1.length)
+    expect(foundMealPlans).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining(mealPlansUser1[0]),
+        expect.objectContaining(mealPlansUser1[1]),
+      ])
+    )
+  })
+
+  it('should return an empty array if the user has no meal plans', async () => {
+    const [userWithNoPlans] = await insertAll(db, 'user', [fakeUser()])
+
+    const foundMealPlans = await repository.findByUserId(userWithNoPlans.id)
+
+    expect(foundMealPlans).toEqual([])
   })
 })
