@@ -57,3 +57,5 @@ export function groceryListRepository(db: Database) {
     },
   }
 }
+
+export type GroceryListRepository = ReturnType<typeof groceryListRepository>
