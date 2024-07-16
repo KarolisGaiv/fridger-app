@@ -25,12 +25,25 @@ export function mealPlanRepository(db: Database) {
         .executeTakeFirst()
     },
 
-    async findByUserId(userId: number): Promise<Selectable<MealPlan>[]> {
+    async findByUserId(userId: number): Promise<Selectable<MealPlanPublic>[]> {
       return db
         .selectFrom('mealPlan')
-        .select(mealPlanKeysAll)
+        .select(mealPlanKeysPublic)
         .where('userId', '=', userId)
         .execute()
+    },
+
+    async update(
+      id: number,
+      updates: Partial<Insertable<MealPlan>>
+    ): Promise<MealPlanPublic | undefined> {
+      const result = await db
+        .updateTable('mealPlan')
+        .set(updates)
+        .where('id', '=', id)
+        .returning(mealPlanKeysPublic)
+        .executeTakeFirst()
+      return result
     },
   }
 }

@@ -90,3 +90,42 @@ describe('findByUserId', () => {
     expect(foundMealPlans).toEqual([])
   })
 })
+
+describe('update', () => {
+  it('should update an existing meal plan', async () => {
+    const initialMealPlan = {
+      userId: user.id,
+      planName: 'Initial Plan Name',
+    }
+    const [insertedMealPlan] = await insertAll(db, 'mealPlan', [
+      initialMealPlan,
+    ])
+
+    const updates = {
+      planName: 'Updated Plan Name',
+    }
+
+    const updatedMealPlan = await repository.update(
+      insertedMealPlan.id,
+      updates
+    )
+
+    expect(updatedMealPlan).toEqual(
+      expect.objectContaining({
+        userId: insertedMealPlan.userId,
+        planName: updates.planName,
+      })
+    )
+  })
+
+  it('should return undefined if trying to update a non-existent meal plan', async () => {
+    const nonExistentId = 999
+    const updates = {
+      planName: 'Updated Plan Name',
+    }
+
+    const updatedMealPlan = await repository.update(nonExistentId, updates)
+
+    expect(updatedMealPlan).toBeUndefined()
+  })
+})
