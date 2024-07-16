@@ -18,5 +18,14 @@ export function fridgeContentRepository(db: Database) {
         .returning(fridgeContentKeysPublic)
         .executeTakeFirstOrThrow()
     },
+    async findByUser(userId: number): Promise<FridgeContentPublic[]> {
+      const result = await db
+        .selectFrom('fridgeContent')
+        .where('userId', '=', userId)
+        .select(fridgeContentKeysPublic)
+        .execute()
+
+      return result
+    },
   }
 }

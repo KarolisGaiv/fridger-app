@@ -29,11 +29,10 @@ async function createFakeGroceryList() {
 beforeEach(async () => {
   await clearTables(db, [
     'fridgeContent',
-    'meal',
     'ingredient',
-    'mealIngredient',
     'mealPlan',
     'user',
+    'groceryList',
   ])
 
   // Insert fake data into related tables
@@ -83,5 +82,52 @@ describe('create', () => {
     await expect(repository.create(fridgeContent)).rejects.toThrow(
       /violates not-null constraint/i
     )
+  })
+})
+
+describe('findByUser', () => {
+  it('should return fridge content for a specific user', async () => {
+    const fridgeContent = {
+      userId: user.id,
+      groceryListId,
+      ingredientId: ingredient.id,
+      mealPlan: mealPlan.id,
+      existingQuantity: 10,
+    }
+
+    const fridgeContent2 = {
+      userId: user.id,
+      groceryListId,
+      ingredientId: ingredient.id,
+      mealPlan: mealPlan.id,
+      existingQuantity: 30,
+    }
+
+    await insertAll(db, 'fridgeContent', [fridgeContent, fridgeContent2])
+
+    const result = await repository.findByUser(user.id)
+
+    // Assuming we inserted 2 fridge contents
+    expect(result).toHaveLength(2)
+
+    // Assert the structure and contents of the returned fridge content
+    expect(result[0]).toEqual(
+      expect.objectContaining({
+        ingredientId: ingredient.id,
+        existingQuantity: 10,
+      })
+    )
+    expect(result[1]).toEqual(
+      expect.objectContaining({
+        ingredientId: ingredient.id,
+        existingQuantity: 30,
+      })
+    )
+  })
+
+  it('should return an empty array if no fridge content is found for the user', async () => {
+    const result = await repository.findByUser(user.id)
+
+    expect(result).toHaveLength(0)
   })
 })
