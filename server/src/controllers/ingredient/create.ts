@@ -1,11 +1,11 @@
-import { publicProcedure } from '@server/trpc'
+import { authenticatedProcedure } from '@server/trpc/authenticateProcedure'
 import { TRPCError } from '@trpc/server'
 import provideRepos from '@server/trpc/provideRepos'
 import { ingredientRepository } from '@server/repositories/ingredientRepository'
 import { assertError } from '@server/utils/errors'
 import { ingredientSchema } from '@server/entities/ingredient'
 
-export default publicProcedure
+export default authenticatedProcedure
   .use(
     provideRepos({
       ingredientRepository,
