@@ -1,45 +1,64 @@
+import { authContext } from '@tests/utils/context'
 import { createCallerFactory } from '@server/trpc'
 import { createTestDatabase } from '@tests/utils/database'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { insertAll, clearTables } from '@tests/utils/records'
-import { fakeUser } from '@server/entities/tests/fakes'
+import { fakeUser, fakeMealPlan } from '@server/entities/tests/fakes'
 import mealPlanRouter from '..'
 
 const db = await wrapInRollbacks(createTestDatabase())
 const createCaller = createCallerFactory(mealPlanRouter)
-const { findByUserId } = createCaller({ db })
 let user: any
 
 beforeEach(async () => {
   await clearTables(db, ['mealPlan', 'user'])
   ;[user] = await insertAll(db, 'user', [fakeUser()])
+  await insertAll(db, 'mealPlan', [
+    fakeMealPlan({ userId: user.id, planName: 'User Plan' }),
+    fakeMealPlan({ userId: user.id }),
+    fakeMealPlan({ userId: user.id }),
+  ])
 })
 
 describe('findByUserId', () => {
   it('should retrieve all meal plans for a specific user', async () => {
-    const mealPlans = [
-      { userId: user.id, planName: 'Plan 1' },
-      { userId: user.id, planName: 'Plan 2' },
-    ]
+    // arrange
+    const { findByUserId } = createCaller(authContext({ db }, user))
 
-    await insertAll(db, 'mealPlan', mealPlans)
+    // act
+    const result = await findByUserId()
 
-    const result = await findByUserId({ userId: user.id })
-
-    expect(result.length).toBe(mealPlans.length)
-    expect(result).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining(mealPlans[0]),
-        expect.objectContaining(mealPlans[1]),
-      ])
-    )
+    // assert
+    expect(result).toBeDefined()
+    expect(result).toHaveLength(3)
+    expect(result[0]).toMatchObject({
+      planName: 'User Plan',
+      userId: user.id,
+    })
   })
 
-  it('should throw an error if the user has no meal plans', async () => {
-    const [userWithNoPlans] = await insertAll(db, 'user', [fakeUser()])
+  it('returns empty array if user has no meal plans', async () => {
+    await clearTables(db, ['mealPlan'])
+    const { findByUserId } = createCaller(authContext({ db }, user))
 
-    await expect(
-      findByUserId({ userId: userWithNoPlans.id })
-    ).rejects.toThrowError(/No meal plans found for this user/)
+    const result = await findByUserId()
+
+    expect(result).toBeDefined()
+    expect(result).toHaveLength(0)
+    expect(result).toStrictEqual([])
+  })
+
+  it('prevents unauth user from using method', async () => {
+    // arrange
+    const { findByUserId } = createCaller({
+      db,
+      req: {
+        // no Auth header
+        header: () => undefined,
+      } as any,
+    })
+
+    // act & assert
+    await expect(findByUserId()).rejects.toThrowError(/unauthenticated/i)
   })
 })
