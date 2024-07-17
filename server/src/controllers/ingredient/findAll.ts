@@ -1,8 +1,8 @@
-import { publicProcedure } from '@server/trpc'
+import { authenticatedProcedure } from '@server/trpc/authenticateProcedure'
 import provideRepos from '@server/trpc/provideRepos'
 import { ingredientRepository } from '@server/repositories/ingredientRepository'
 
-export default publicProcedure
+export default authenticatedProcedure
   .use(
     provideRepos({
       ingredientRepository,
