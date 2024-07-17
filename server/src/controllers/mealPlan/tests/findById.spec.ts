@@ -1,3 +1,4 @@
+import { authContext } from '@tests/utils/context'
 import { createCallerFactory } from '@server/trpc'
 import { createTestDatabase } from '@tests/utils/database'
 import { wrapInRollbacks } from '@tests/utils/transactions'
@@ -7,7 +8,6 @@ import mealPlanRouter from '..'
 
 const db = await wrapInRollbacks(createTestDatabase())
 const createCaller = createCallerFactory(mealPlanRouter)
-const { findById } = createCaller({ db })
 let user: any
 
 beforeEach(async () => {
@@ -16,23 +16,64 @@ beforeEach(async () => {
 })
 
 describe('findById', () => {
-  it('should retrieve a meal plan by ID', async () => {
-    const mealPlan = {
+  it('should retrieve the meal plan for a specific user', async () => {
+    // Arrange
+    const mealPlanData = {
       userId: user.id,
-      planName: 'Test Meal Plan',
+      planName: 'User Plan',
     }
-    const [insertedMealPlan] = await insertAll(db, 'mealPlan', [mealPlan])
+    const [mealPlan] = await insertAll(db, 'mealPlan', [mealPlanData])
 
-    const result = await findById({ id: insertedMealPlan.id })
+    const { findById } = createCaller(authContext({ db }, user))
 
-    expect(result).toEqual(expect.objectContaining(mealPlan))
+    // Act
+    const result = await findById({ id: mealPlan.id })
+
+    // Assert
+    expect(result).toBeDefined()
+    expect(result.id).toEqual(mealPlan.id)
+    expect(result.planName).toEqual('User Plan')
   })
 
-  it('should throw an error if meal plan ID does not exist', async () => {
-    const nonExistentId = 999
+  it('should throw a FORBIDDEN error if authenticated user does not own the meal plan', async () => {
+    // Arrange
+    const mealPlanData = {
+      userId: user.id,
+      planName: 'User Plan',
+    }
+    const [mealPlan] = await insertAll(db, 'mealPlan', [mealPlanData])
 
-    await expect(findById({ id: nonExistentId })).rejects.toThrowError(
-      /Meal plan not found/
+    const otherUser = await insertAll(db, 'user', [fakeUser()])
+
+    const { findById } = createCaller(authContext({ db }, otherUser[0]))
+
+    // Act & Assert
+    await expect(findById({ id: mealPlan.id })).rejects.toThrowError(
+      /not authorized to access this meal plan/i
     )
+  })
+
+  it('should throw an error if meal plan is not found', async () => {
+    // Arrange
+    const { findById } = createCaller(authContext({ db }, user))
+
+    // Act & Assert
+    await expect(findById({ id: 999 })).rejects.toThrowError(
+      /meal plan not found/i
+    )
+  })
+
+  it('should prevent unauthorized user from accessing meal plan', async () => {
+    // arrange
+    const { findById } = createCaller({
+      db,
+      req: {
+        // no Auth header
+        header: () => undefined,
+      } as any,
+    })
+
+    // act & assert
+    await expect(findById({ id: 56 })).rejects.toThrowError(/unauthenticated/i)
   })
 })
