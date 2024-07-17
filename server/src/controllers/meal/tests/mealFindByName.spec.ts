@@ -11,7 +11,6 @@ const createCaller = createCallerFactory(mealRouter)
 let user: any
 
 beforeEach(async () => {
-  // await clearTables(db, ['meal'])
   ;[user] = await insertAll(db, 'user', [fakeUser()])
 })
 
