@@ -69,7 +69,7 @@ it('should throw error if more properties are provided than name or calories', a
 
 it('prevents unauth user from using method', async () => {
   // arrange
-  const { findAll } = createCaller({
+  const { updateMeal } = createCaller({
     db,
     req: {
       // no Auth header
@@ -78,5 +78,5 @@ it('prevents unauth user from using method', async () => {
   })
 
   // act & assert
-  await expect(findAll()).rejects.toThrowError(/unauthenticated/i)
+  await expect(updateMeal({ mealName: 'pizza', updateInfo: { calories: 420 } })).rejects.toThrowError(/unauthenticated/i)
 })

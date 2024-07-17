@@ -38,3 +38,17 @@ it('should delete meal', async () => {
   meals = await selectAll(db, 'meal')
   expect(meals).toHaveLength(0)
 })
+
+it('prevents unauth user from using method', async () => {
+  // arrange
+  const { deleteMeal } = createCaller({
+    db,
+    req: {
+      // no Auth header
+      header: () => undefined,
+    } as any,
+  })
+
+  // act & assert
+  await expect(deleteMeal({ name: 'pizza' })).rejects.toThrowError(/unauthenticated/i)
+})

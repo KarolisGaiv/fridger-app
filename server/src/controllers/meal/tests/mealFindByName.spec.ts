@@ -35,7 +35,7 @@ it('throws error if meal is not found', async () => {
 
 it('prevents unauth user from using method', async () => {
   // arrange
-  const { findAll } = createCaller({
+  const { findByName } = createCaller({
     db,
     req: {
       // no Auth header
@@ -44,5 +44,5 @@ it('prevents unauth user from using method', async () => {
   })
 
   // act & assert
-  await expect(findAll()).rejects.toThrowError(/unauthenticated/i)
+  await expect(findByName({ name: 'Jude' })).rejects.toThrowError(/unauthenticated/i)
 })
