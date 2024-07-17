@@ -40,7 +40,5 @@ it('prevents unauth user from using method', async () => {
   })
 
   // act & assert
-  await expect(findAll()).rejects.toThrowError(
-    /unauthenticated/i
-  )
+  await expect(findAll()).rejects.toThrowError(/unauthenticated/i)
 })

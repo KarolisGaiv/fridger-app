@@ -52,5 +52,7 @@ it('prevents unauth user from using method', async () => {
   })
 
   // act & assert
-  await expect(updateIngredient({ingredientToUpdate: "eggs", newName: "bacon"})).rejects.toThrowError(/Unauthenticated/i)
+  await expect(
+    updateIngredient({ ingredientToUpdate: 'eggs', newName: 'bacon' })
+  ).rejects.toThrowError(/Unauthenticated/i)
 })
