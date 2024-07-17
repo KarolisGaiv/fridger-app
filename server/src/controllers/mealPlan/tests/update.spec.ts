@@ -3,7 +3,7 @@ import { createCallerFactory } from '@server/trpc'
 import { createTestDatabase } from '@tests/utils/database'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { insertAll, clearTables } from '@tests/utils/records'
-import { fakeUser } from '@server/entities/tests/fakes'
+import { fakeUser, fakeMealPlan } from '@server/entities/tests/fakes'
 import mealPlanRouter from '..'
 
 const db = await wrapInRollbacks(createTestDatabase())
@@ -42,7 +42,24 @@ describe('updateMealPlan', () => {
     ).rejects.toThrowError(/meal plan not found/i)
   })
 
-  it('should throw a FORBIDDEN error if authenticated user does not own the meal plan', async () => {
+  it('should throw a FORBIDDEN error if trying to update a meal plan not owned by the authenticated user', async () => {
+    // Arrange
+    const [otherUser] = await insertAll(db, 'user', [fakeUser()])
+    const [otherUserMealPlan] = await insertAll(db, 'mealPlan', [
+      fakeMealPlan({ userId: otherUser.id }),
+    ])
+    const { update } = createCaller(authContext({ db }, user))
+
+    // Act & Assert
+    await expect(
+      update({
+        id: otherUserMealPlan.id,
+        updates: { planName: 'Updated Plan' },
+      })
+    ).rejects.toThrowError(/Not authorized to access this meal plan/i)
+  })
+
+  it('prevents unauth user from using method', async () => {
     // arrange
     const { update } = createCaller({
       db,
