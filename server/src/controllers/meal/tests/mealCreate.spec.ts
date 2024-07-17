@@ -3,7 +3,7 @@ import { createTestDatabase } from '@tests/utils/database'
 import { fakeMeal, fakeUser } from '@server/entities/tests/fakes'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables } from '@tests/utils/records'
+import { insertAll } from '@tests/utils/records'
 import mealRouter from '..'
 
 const db = await wrapInRollbacks(createTestDatabase())
@@ -11,7 +11,6 @@ const createCaller = createCallerFactory(mealRouter)
 let user: any
 
 beforeEach(async () => {
-  await clearTables(db, ['user'])
   ;[user] = await insertAll(db, 'user', [fakeUser()])
 })
 
