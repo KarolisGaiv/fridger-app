@@ -10,10 +10,10 @@ export default authenticatedProcedure
       mealIngredientRepository,
     })
   )
-  .input(mealIngredientSchema.pick({ ingredientId: true }))
+  .input(mealIngredientSchema.pick({ id: true }))
   .query(async ({ input, ctx: { repos } }) => {
     const result = await repos.mealIngredientRepository.findMealIngredientById(
-      input.ingredientId
+      input.id
     )
 
     if (!result) {

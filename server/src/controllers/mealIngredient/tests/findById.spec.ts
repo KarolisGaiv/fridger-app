@@ -37,7 +37,7 @@ describe('findMealIngredientById', () => {
 
     // act
     const { findById } = createCaller(authContext({ db }, user))
-    const result = await findById({ ingredientId: ingredient.id })
+    const result = await findById({ id: mealIngredient.id })
 
     // assert
     expect(result).toMatchObject({
@@ -47,9 +47,9 @@ describe('findMealIngredientById', () => {
     })
   })
 
-  it('should throw error if ingredient nor found', async () => {
+  it('should throw error if ingredient not found', async () => {
     const { findById } = createCaller(authContext({ db }, user))
-    await expect(findById({ ingredientId: 489489498 })).rejects.toThrowError(
+    await expect(findById({ id: 489489498 })).rejects.toThrowError(
       /no results/i
     )
   })
@@ -65,8 +65,8 @@ describe('findMealIngredientById', () => {
     })
 
     // act & assert
-    await expect(
-      findById({ ingredientId: ingredient.id })
-    ).rejects.toThrowError(/unauthenticated/i)
+    await expect(findById({ id: ingredient.id })).rejects.toThrowError(
+      /unauthenticated/i
+    )
   })
 })

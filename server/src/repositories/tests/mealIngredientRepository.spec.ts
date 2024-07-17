@@ -1,7 +1,7 @@
 import { createTestDatabase } from '@tests/utils/database'
 import { fakeMeal, fakeIngredient } from '@server/entities/tests/fakes'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables } from '@tests/utils/records'
+import { insertAll, clearTables, selectAll } from '@tests/utils/records'
 import { mealIngredientRepository } from '../mealIngredientRepository'
 
 const db = await wrapInRollbacks(createTestDatabase())
@@ -47,6 +47,7 @@ describe('find meal ingredient funcionalities', () => {
       })
 
       const res = await repository.findMealIngredientById(fakeIngr.id)
+      // console.log(res);
       expect(res).toMatchObject({
         mealId: meal1.id,
         ingredientId: ingredient1.id,
