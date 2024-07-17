@@ -1,61 +1,84 @@
+import { authContext } from '@tests/utils/context'
 import { createTestDatabase } from '@tests/utils/database'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables } from '@tests/utils/records'
-import { fakeMeal, fakeIngredient } from '@server/entities/tests/fakes'
+import { insertAll } from '@tests/utils/records'
+import {
+  fakeMeal,
+  fakeIngredient,
+  fakeUser,
+} from '@server/entities/tests/fakes'
 import mealIngredientRouter from '..'
 
 const db = await wrapInRollbacks(createTestDatabase())
 const createCaller = createCallerFactory(mealIngredientRouter)
-const { updateMealIngredient } = createCaller({ db })
+let user: any
+let meal: any
 
 beforeEach(async () => {
-  await clearTables(db, ['meal', 'ingredient', 'mealIngredient'])
+  ;[user] = await insertAll(db, 'user', [fakeUser()])
+  ;[meal] = await insertAll(db, 'meal', [fakeMeal()])
 })
 
-afterEach(async () => {
-  await clearTables(db, ['meal', 'ingredient', 'mealIngredient'])
-})
+describe('updateMealIngredient', () => {
+  it('should update a meal ingredient successfully', async () => {
+    const [ingredient1] = await insertAll(db, 'ingredient', [fakeIngredient()])
 
-it('should update a meal ingredient successfully', async () => {
-  const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
-  const [ingredient1] = await insertAll(db, 'ingredient', [fakeIngredient()])
+    const initialMealIngredient = {
+      mealId: meal.id,
+      ingredientId: ingredient1.id,
+      quantity: 200,
+    }
 
-  const initialMealIngredient = {
-    mealId: meal1.id,
-    ingredientId: ingredient1.id,
-    quantity: 200,
-  }
+    const updatedInfo = {
+      quantity: 300,
+    }
 
-  const updatedInfo = {
-    quantity: 300,
-  }
+    const [insertedMealIngredient] = await insertAll(db, 'mealIngredient', [
+      initialMealIngredient,
+    ])
 
-  const [insertedMealIngredient] = await insertAll(db, 'mealIngredient', [
-    initialMealIngredient,
-  ])
-
-  const result = await updateMealIngredient({
-    mealIngredientId: insertedMealIngredient.id,
-    updateInfo: updatedInfo,
-  })
-
-  expect(result).toMatchObject({
-    mealId: meal1.id,
-    ingredientId: ingredient1.id,
-    quantity: updatedInfo.quantity,
-  })
-})
-
-it('should throw a NOT_FOUND error if the meal ingredient does not exist', async () => {
-  const updatedInfo = {
-    quantity: 300,
-  }
-
-  await expect(
-    updateMealIngredient({
-      mealIngredientId: 999, // Assuming a non-existent ID
+    const { updateMealIngredient } = createCaller(authContext({ db }, user))
+    const result = await updateMealIngredient({
+      mealIngredientId: insertedMealIngredient.id,
       updateInfo: updatedInfo,
     })
-  ).rejects.toThrowError(/meal ingredient does not exist/i)
+
+    expect(result).toMatchObject({
+      mealId: meal.id,
+      ingredientId: ingredient1.id,
+      quantity: updatedInfo.quantity,
+    })
+  })
+
+  it('should throw a NOT_FOUND error if the meal ingredient does not exist', async () => {
+    const updatedInfo = {
+      quantity: 300,
+    }
+
+    const { updateMealIngredient } = createCaller(authContext({ db }, user))
+    await expect(
+      updateMealIngredient({
+        mealIngredientId: 999, // Assuming a non-existent ID
+        updateInfo: updatedInfo,
+      })
+    ).rejects.toThrowError(/meal ingredient does not exist/i)
+  })
+
+  it('prevents unauth user from using procedure', async () => {
+    const { updateMealIngredient } = createCaller({
+      db,
+      req: {
+        // no Auth header
+        header: () => undefined,
+      } as any,
+    })
+
+    await expect(
+      updateMealIngredient({
+        mealIngredientId: 2,
+        updateInfo: { quantity: 300 },
+      })
+    ).rejects.toThrowError(/unauthenticated/i)
+  })
 })
