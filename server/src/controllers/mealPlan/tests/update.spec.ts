@@ -1,3 +1,4 @@
+import { authContext } from '@tests/utils/context'
 import { createCallerFactory } from '@server/trpc'
 import { createTestDatabase } from '@tests/utils/database'
 import { wrapInRollbacks } from '@tests/utils/transactions'
@@ -7,7 +8,6 @@ import mealPlanRouter from '..'
 
 const db = await wrapInRollbacks(createTestDatabase())
 const createCaller = createCallerFactory(mealPlanRouter)
-const { update } = createCaller({ db })
 let user: any
 let mealPlan: any
 
@@ -19,20 +19,42 @@ beforeEach(async () => {
 })
 
 describe('updateMealPlan', () => {
-  it('should update an existing meal plan', async () => {
-    const updates = { planName: 'Updated Plan' }
+  it('should update meal plan', async () => {
+    // arrange
+    const { update } = createCaller(authContext({ db }, user))
+    const updates = { planName: 'Updated plan' }
+    expect(mealPlan.planName).toBe('Initial Plan')
 
+    // act
     const result = await update({ id: mealPlan.id, updates })
 
-    expect(result).toEqual(expect.objectContaining({ ...updates }))
+    // assert
+    expect(result.planName).toBe('Updated plan')
   })
 
-  it('should throw an error if the meal plan does not exist', async () => {
-    const nonExistentId = 999
-    const updates = { planName: 'Non-existent Plan' }
+  it('should throw a NOT_FOUND error if meal plan is not found', async () => {
+    // Arrange
+    const { update } = createCaller(authContext({ db }, user))
 
-    await expect(update({ id: nonExistentId, updates })).rejects.toThrowError(
-      /Meal plan not found/i
-    )
+    // Act & Assert
+    await expect(
+      update({ id: 999, updates: { planName: 'Updated Plan' } })
+    ).rejects.toThrowError(/meal plan not found/i)
+  })
+
+  it('should throw a FORBIDDEN error if authenticated user does not own the meal plan', async () => {
+    // arrange
+    const { update } = createCaller({
+      db,
+      req: {
+        // no Auth header
+        header: () => undefined,
+      } as any,
+    })
+
+    // act & assert
+    await expect(
+      update({ id: 999, updates: { planName: 'Updated Plan' } })
+    ).rejects.toThrowError(/unauthenticated/i)
   })
 })
