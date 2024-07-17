@@ -1,11 +1,11 @@
-import { publicProcedure } from '@server/trpc'
+import { authenticatedProcedure } from '@server/trpc/authenticateProcedure'
 import { TRPCError } from '@trpc/server'
 import provideRepos from '@server/trpc/provideRepos'
 import { assertError } from '@server/utils/errors'
 import { mealIngredientRepository } from '@server/repositories/mealIngredientRepository'
 import { mealIngredientSchema } from '@server/entities/mealIngredient'
 
-export default publicProcedure
+export default authenticatedProcedure
   .use(
     provideRepos({
       mealIngredientRepository,
@@ -25,7 +25,7 @@ export default publicProcedure
         if (error.message.includes('duplicate key')) {
           throw new TRPCError({
             code: 'BAD_REQUEST',
-            message: 'Meal already exist',
+            message: 'Ingredient already exist',
             cause: error,
           })
         }
