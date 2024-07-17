@@ -1,11 +1,11 @@
-import { publicProcedure } from '@server/trpc'
+import { authenticatedProcedure } from '@server/trpc/authenticateProcedure'
 import { TRPCError } from '@trpc/server'
 import provideRepos from '@server/trpc/provideRepos'
 import { mealIngredientRepository } from '@server/repositories/mealIngredientRepository'
 import { mealRepository } from '@server/repositories/mealRepository'
 import { mealIngredientSchema } from '@server/entities/mealIngredient'
 
-export default publicProcedure
+export default authenticatedProcedure
   .use(
     provideRepos({
       mealIngredientRepository,
@@ -18,7 +18,7 @@ export default publicProcedure
     })
   )
   .query(async ({ input, ctx: { repos } }) => {
-    const meal = await repos.mealRepository?.findById(input.mealId)
+    const meal = await repos.mealRepository.findById(input.mealId)
 
     if (!meal) {
       throw new TRPCError({
