@@ -31,7 +31,7 @@ it('should return all ingredients', async () => {
 
 it('prevents unauth user from using method', async () => {
   // arrange
-  const { create } = createCaller({
+  const { findAll } = createCaller({
     db,
     req: {
       // no Auth header
@@ -40,7 +40,7 @@ it('prevents unauth user from using method', async () => {
   })
 
   // act & assert
-  await expect(create(fakeIngredient())).rejects.toThrowError(
+  await expect(findAll()).rejects.toThrowError(
     /unauthenticated/i
   )
 })

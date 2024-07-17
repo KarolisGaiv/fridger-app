@@ -37,7 +37,7 @@ it('throws error if ingredient is not found', async () => {
 
 it('prevents unauth user from using method', async () => {
   // arrange
-  const { create } = createCaller({
+  const { findByName } = createCaller({
     db,
     req: {
       // no Auth header
@@ -46,7 +46,7 @@ it('prevents unauth user from using method', async () => {
   })
 
   // act & assert
-  await expect(create(fakeIngredient())).rejects.toThrowError(
+  await expect(findByName({ name: 'non existing' })).rejects.toThrowError(
     /unauthenticated/i
   )
 })
