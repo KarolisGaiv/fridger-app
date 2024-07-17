@@ -31,7 +31,7 @@ export function mealIngredientRepository(db: Database) {
       return db
         .selectFrom('mealIngredient')
         .select(mealIngredientKeysPublic)
-        .where('id', '=', id)
+        .where('ingredientId', '=', id)
         .executeTakeFirst()
     },
 

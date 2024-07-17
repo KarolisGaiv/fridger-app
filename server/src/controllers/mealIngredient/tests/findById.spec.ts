@@ -1,47 +1,72 @@
+import { authContext } from '@tests/utils/context'
 import { createTestDatabase } from '@tests/utils/database'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { insertAll, clearTables } from '@tests/utils/records'
-import { fakeMeal, fakeIngredient } from '@server/entities/tests/fakes'
+import {
+  fakeMeal,
+  fakeIngredient,
+  fakeUser,
+} from '@server/entities/tests/fakes'
 import mealIngredientRouter from '..'
 
 const db = await wrapInRollbacks(createTestDatabase())
 const createCaller = createCallerFactory(mealIngredientRouter)
-const { findById } = createCaller({ db })
+let user: any
+let meal: any
+let ingredient: any
 
-beforeAll(async () => {
-  await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
-})
-
-afterEach(async () => {
-  await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
+beforeEach(async () => {
+  await clearTables(db, ['meal', 'ingredient'])
+  ;[user] = await insertAll(db, 'user', [fakeUser()])
+  ;[meal] = await insertAll(db, 'meal', [fakeMeal()])
+  ;[ingredient] = await insertAll(db, 'ingredient', [fakeIngredient()])
 })
 
 describe('findMealIngredientById', () => {
-  it('should find a meal ingredient by its ID', async () => {
-    const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
-    const [ingredient1] = await insertAll(db, 'ingredient', [fakeIngredient()])
-
+  it("should find ingredient by it's id", async () => {
+    // arrange
+    const mealIngredientData = {
+      mealId: meal.id,
+      ingredientId: ingredient.id,
+      quantity: 200,
+    }
     const [mealIngredient] = await insertAll(db, 'mealIngredient', [
-      {
-        mealId: meal1.id,
-        ingredientId: ingredient1.id,
-        quantity: 350,
-      },
+      mealIngredientData,
     ])
 
-    const result = await findById({ id: mealIngredient.id })
+    // act
+    const { findById } = createCaller(authContext({ db }, user))
+    const result = await findById({ ingredientId: ingredient.id })
 
+    // assert
     expect(result).toMatchObject({
-      mealId: meal1.id,
-      ingredientId: ingredient1.id,
-      quantity: 350,
+      mealId: mealIngredient.mealId,
+      ingredientId: mealIngredient.ingredientId,
+      quantity: mealIngredient.quantity,
     })
   })
 
-  it('should throw a NOT_FOUND error if meal ingredient does not exist', async () => {
-    await expect(findById({ id: 489489498 })).rejects.toThrowError(
+  it('should throw error if ingredient nor found', async () => {
+    const { findById } = createCaller(authContext({ db }, user))
+    await expect(findById({ ingredientId: 489489498 })).rejects.toThrowError(
       /no results/i
     )
+  })
+
+  it('prevents unauth user from using procedure', async () => {
+    // arrange
+    const { findById } = createCaller({
+      db,
+      req: {
+        // no Auth header
+        header: () => undefined,
+      } as any,
+    })
+
+    // act & assert
+    await expect(
+      findById({ ingredientId: ingredient.id })
+    ).rejects.toThrowError(/unauthenticated/i)
   })
 })
