@@ -50,5 +50,7 @@ it('prevents unauth user from using method', async () => {
   })
 
   // act & assert
-  await expect(deleteMeal({ name: 'pizza' })).rejects.toThrowError(/unauthenticated/i)
+  await expect(deleteMeal({ name: 'pizza' })).rejects.toThrowError(
+    /unauthenticated/i
+  )
 })

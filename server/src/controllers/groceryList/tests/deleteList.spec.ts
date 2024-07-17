@@ -1,4 +1,5 @@
 import { createTestDatabase } from '@tests/utils/database'
+import { authContext } from '@tests/utils/context'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { insertAll, clearTables, selectAll } from '@tests/utils/records'
@@ -11,7 +12,6 @@ let groceryList: any
 
 const db = await wrapInRollbacks(createTestDatabase())
 const createCaller = createCallerFactory(groceryListRouter)
-const { deleteList } = createCaller({ db })
 
 async function createFakeGroceryList() {
   const list = {
@@ -37,12 +37,32 @@ afterEach(async () => {
 
 describe('deleteById', () => {
   it('should delete an existing grocery list item', async () => {
+    // arrange
     const beforeDeletion = await selectAll(db, 'groceryList')
     expect(beforeDeletion).toHaveLength(1)
+    const { deleteList } = createCaller(authContext({ db }, user))
 
+    // act
     await expect(deleteList({ id: groceryList.id })).resolves.toBeUndefined()
 
+    // assert
     const deletedItems = await selectAll(db, 'groceryList')
     expect(deletedItems).toHaveLength(0)
+  })
+
+  it('prevents unauth user from using method', async () => {
+    // arrange
+    const { deleteList } = createCaller({
+      db,
+      req: {
+        // no Auth header
+        header: () => undefined,
+      } as any,
+    })
+
+    // act & assert
+    await expect(deleteList({ id: 189 })).rejects.toThrowError(
+      /unauthenticated/i
+    )
   })
 })

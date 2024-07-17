@@ -1,11 +1,11 @@
-import { publicProcedure } from '@server/trpc'
+import { authenticatedProcedure } from '@server/trpc/authenticateProcedure'
 import { TRPCError } from '@trpc/server'
 import provideRepos from '@server/trpc/provideRepos'
 import { groceryListRepository } from '@server/repositories/groceryListRepository'
 import { groceryListSchema } from '@server/entities/groceryList'
 import { z } from 'zod'
 
-export default publicProcedure
+export default authenticatedProcedure
   .use(
     provideRepos({
       groceryListRepository,

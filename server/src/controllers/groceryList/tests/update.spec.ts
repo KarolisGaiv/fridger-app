@@ -1,4 +1,5 @@
 import { createTestDatabase } from '@tests/utils/database'
+import { authContext } from '@tests/utils/context'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { insertAll, clearTables } from '@tests/utils/records'
@@ -11,7 +12,6 @@ let groceryList: any
 
 const db = await wrapInRollbacks(createTestDatabase())
 const createCaller = createCallerFactory(groceryListRouter)
-const { update } = createCaller({ db })
 
 async function createFakeGroceryList() {
   const list = {
@@ -34,16 +34,20 @@ beforeEach(async () => {
 
 describe('update', () => {
   it('should update an existing grocery list item', async () => {
+    // arrange
     const updates = {
       product: 'Oranges',
       quantity: 10,
     }
+    const { update } = createCaller(authContext({ db }, user))
 
+    // act
     const updatedGroceryList = await update({
       groceryListId: groceryList.id,
       updateInfo: updates,
     })
 
+    // assert
     expect(updatedGroceryList).toEqual(
       expect.objectContaining({
         mealPlanId: groceryList.mealPlanId,
@@ -55,6 +59,7 @@ describe('update', () => {
 
   it('should throw an error if the grocery list item is not found', async () => {
     const nonExistentId = 999 // Assuming 999 does not exist in your test data
+    const { update } = createCaller(authContext({ db }, user))
 
     await expect(
       update({
@@ -62,5 +67,21 @@ describe('update', () => {
         updateInfo: { product: 'Oranges' },
       })
     ).rejects.toThrow(/list not found/i)
+  })
+
+  it('prevents unauth user from using method', async () => {
+    // arrange
+    const { update } = createCaller({
+      db,
+      req: {
+        // no Auth header
+        header: () => undefined,
+      } as any,
+    })
+
+    // act & assert
+    await expect(
+      update({ groceryListId: 289, updateInfo: { product: 'egg' } })
+    ).rejects.toThrowError(/unauthenticated/i)
   })
 })
