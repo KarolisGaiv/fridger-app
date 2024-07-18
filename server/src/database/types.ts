@@ -36,6 +36,7 @@ export interface MealIngredient {
   id: Generated<number>
   ingredientId: number
   mealId: number
+  mealPlan: number | null
   quantity: number
 }
 
