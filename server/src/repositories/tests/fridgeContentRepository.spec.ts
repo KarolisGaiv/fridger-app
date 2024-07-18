@@ -1,6 +1,6 @@
 import { createTestDatabase } from '@tests/utils/database'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables } from '@tests/utils/records'
+import { insertAll, clearTables, selectAll } from '@tests/utils/records'
 import {
   fakeUser,
   fakeIngredient,
@@ -207,4 +207,40 @@ describe('deleteByUserId', () => {
     const result = await repository.findByUser(user.id)
     expect(result).toHaveLength(0)
   })
+})
+
+describe("findByUserAndProduct", () => {
+  it("should find existing item in users fridge", async () => {
+    // Arrange
+    const fridgeContent = {
+      userId: user.id,
+      groceryListId,
+      ingredientId: ingredient.id,
+      mealPlan: mealPlan.id,
+      existingQuantity: 10,
+    };
+
+    await repository.create(fridgeContent);
+
+    // Act
+    const result = await repository.findByUserAndProduct(user.id, ingredient.id);
+
+    // Assert
+    expect(result).toBeDefined();
+    expect(result).toMatchObject({
+      ingredientId: ingredient.id,
+      existingQuantity: 10,
+    });
+  })
+
+  it("should return null if item is not found in user's fridge", async () => {
+    // Arrange - Ensure no existing fridge content for user and product
+    await clearTables(db, ['fridgeContent']);
+
+    // Act
+    const result = await repository.findByUserAndProduct(user.id, ingredient.id);
+
+    // Assert
+    expect(result).toBeNull();
+  });
 })

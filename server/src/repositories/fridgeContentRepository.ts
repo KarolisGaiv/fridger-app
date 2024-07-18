@@ -45,5 +45,16 @@ export function fridgeContentRepository(db: Database) {
         .where('userId', '=', userId)
         .execute()
     },
+
+    async findByUserAndProduct(userId: number, productId: number) {
+      const [result] = await db
+        .selectFrom("fridgeContent")
+        .where("userId", "=", userId)
+        .where("ingredientId", "=", productId)
+        .select(fridgeContentKeysAll)
+        .execute()
+
+        return result || null
+    }
   }
 }
