@@ -209,8 +209,8 @@ describe('deleteByUserId', () => {
   })
 })
 
-describe("findByUserAndProduct", () => {
-  it("should find existing item in users fridge", async () => {
+describe('findByUserAndProduct', () => {
+  it('should find existing item in users fridge', async () => {
     // Arrange
     const fridgeContent = {
       userId: user.id,
@@ -218,29 +218,47 @@ describe("findByUserAndProduct", () => {
       ingredientId: ingredient.id,
       mealPlan: mealPlan.id,
       existingQuantity: 10,
-    };
+    }
 
-    await repository.create(fridgeContent);
+    await repository.create(fridgeContent)
 
     // Act
-    const result = await repository.findByUserAndProduct(user.id, ingredient.id);
+    const result = await repository.findByUserAndProduct(user.id, ingredient.id)
 
     // Assert
-    expect(result).toBeDefined();
+    expect(result).toBeDefined()
     expect(result).toMatchObject({
       ingredientId: ingredient.id,
       existingQuantity: 10,
-    });
+    })
   })
 
   it("should return null if item is not found in user's fridge", async () => {
     // Arrange - Ensure no existing fridge content for user and product
-    await clearTables(db, ['fridgeContent']);
+    await clearTables(db, ['fridgeContent'])
 
     // Act
-    const result = await repository.findByUserAndProduct(user.id, ingredient.id);
+    const result = await repository.findByUserAndProduct(user.id, ingredient.id)
 
     // Assert
-    expect(result).toBeNull();
-  });
+    expect(result).toBeNull()
+  })
+})
+
+describe('updateQuantity', () => {
+  it('should update quantity of existing fridge content item', async () => {
+    // Arrange
+    const newQuantity = 15
+    const [oldFridgeContent] = await selectAll(db, 'fridgeContent')
+
+    // Act
+    await repository.updateQuantity(ingredient.id, newQuantity)
+
+    // Assert
+    const [fridgeContent] = await selectAll(db, 'fridgeContent')
+    const newFridgeQuantity = fridgeContent.existingQuantity
+
+    expect(oldFridgeContent.existingQuantity).not.toEqual(newFridgeQuantity)
+    expect(fridgeContent?.existingQuantity).toEqual(newQuantity)
+  })
 })

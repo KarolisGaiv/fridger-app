@@ -48,13 +48,24 @@ export function fridgeContentRepository(db: Database) {
 
     async findByUserAndProduct(userId: number, productId: number) {
       const [result] = await db
-        .selectFrom("fridgeContent")
-        .where("userId", "=", userId)
-        .where("ingredientId", "=", productId)
+        .selectFrom('fridgeContent')
+        .where('userId', '=', userId)
+        .where('ingredientId', '=', productId)
         .select(fridgeContentKeysAll)
         .execute()
 
-        return result || null
-    }
+      return result || null
+    },
+
+    async updateQuantity(
+      productId: number,
+      newQuantity: number
+    ): Promise<void> {
+      await db
+        .updateTable('fridgeContent')
+        .set({ existingQuantity: newQuantity })
+        .where('ingredientId', '=', productId)
+        .executeTakeFirstOrThrow()
+    },
   }
 }
