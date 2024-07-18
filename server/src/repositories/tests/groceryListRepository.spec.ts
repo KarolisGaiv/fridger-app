@@ -39,9 +39,9 @@ describe('create', () => {
       quantity: 5,
     }
 
-    const createdGroceryList = await repository.create(newGroceryList)
+    const createdGroceryList = await repository.create([newGroceryList])
 
-    expect(createdGroceryList).toEqual(expect.objectContaining(newGroceryList))
+    expect(createdGroceryList).toEqual([newGroceryList])
   })
 })
 
