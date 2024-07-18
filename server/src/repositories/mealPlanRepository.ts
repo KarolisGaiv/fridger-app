@@ -25,10 +25,10 @@ export function mealPlanRepository(db: Database) {
         .executeTakeFirst()
     },
 
-    async findByUserId(userId: number): Promise<Selectable<MealPlanPublic>[]> {
+    async findByUserId(userId: number): Promise<Selectable<MealPlan>[]> {
       return db
         .selectFrom('mealPlan')
-        .select(mealPlanKeysPublic)
+        .select(mealPlanKeysAll)
         .where('userId', '=', userId)
         .execute()
     },

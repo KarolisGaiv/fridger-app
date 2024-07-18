@@ -10,8 +10,5 @@ export async function up(db: Kysely<any>) {
 }
 
 export async function down(db: Kysely<any>) {
-  await db.schema
-    .alterTable('fridge_content')
-    .dropColumn('meal_plan')
-    .execute()
+  await db.schema.alterTable('fridge_content').dropColumn('meal_plan').execute()
 }

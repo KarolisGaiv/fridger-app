@@ -45,6 +45,21 @@ export function mealIngredientRepository(db: Database) {
         .execute()
     },
 
+    async findIngredientsByMealPlanId(
+      mealPlanId: number
+    ): Promise<Selectable<MealIngredientPublic>[]> {
+      return db
+        .selectFrom('mealIngredient')
+        .innerJoin('meal', 'meal.id', 'mealIngredient.mealId')
+        .where('mealIngredient.mealPlan', '=', mealPlanId)
+        .select([
+          'mealIngredient.ingredientId',
+          'mealIngredient.quantity',
+          'mealIngredient.mealId',
+        ])
+        .execute()
+    },
+
     async updateMealIngredient(
       mealIngredientId: number,
       updates: Partial<Insertable<MealIngredient>>
