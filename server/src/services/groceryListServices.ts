@@ -1,13 +1,11 @@
 import type { Database } from '@server/database'
 import { mealPlanRepository } from '@server/repositories/mealPlanRepository'
-import { GroceryListRepository } from '@server/repositories/groceryListRepository'
 import { mealIngredientRepository } from '@server/repositories/mealIngredientRepository'
 import { TRPCError } from '@trpc/server'
 
 export function groceryListServices(db: Database) {
   const mealPlanRepo = mealPlanRepository(db)
   const mealIngredientRepo = mealIngredientRepository(db)
-  // const groceryListRepo = groceryListRepository(db);
 
   return {
     async generateGroceryList(userId: number) {
