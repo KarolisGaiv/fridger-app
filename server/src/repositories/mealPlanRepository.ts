@@ -10,11 +10,23 @@ import type { Insertable, Selectable } from 'kysely'
 export function mealPlanRepository(db: Database) {
   return {
     async create(mealPlan: Insertable<MealPlan>): Promise<MealPlanPublic> {
-      return db
+      const newMealPlan = await db
         .insertInto('mealPlan')
         .values(mealPlan)
-        .returning(mealPlanKeysPublic)
+        .returning(mealPlanKeysAll)
         .executeTakeFirstOrThrow()
+
+      // Ensure only one meal plan is active per user
+      if (mealPlan.isActive) {
+        await db
+          .updateTable('mealPlan')
+          .set({ isActive: false }) // deactivate other meal plans
+          .where('userId', '=', mealPlan.userId)
+          .where('id', '!=', newMealPlan.id) // Exclude the current meal plan
+          .execute()
+      }
+
+      return newMealPlan
     },
 
     async findById(id: number): Promise<Selectable<MealPlan> | undefined> {

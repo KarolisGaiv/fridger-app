@@ -25,11 +25,10 @@
 //             const ingredients = await db
 //                 .selectFrom("mealIngredient")
 
-
 //             /*
 //             this will be authenticated procedure
 //             1. get user's meal plan id. authUser will contain userID. How to connect these things to get meal_plan id?
-//             2. get meal ingredients with their quantities by meal_plan id. 
+//             2. get meal ingredients with their quantities by meal_plan id.
 //             3. loop over received result from step 3 and return the list
 //             */
 //         }

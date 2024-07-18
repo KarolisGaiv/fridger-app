@@ -1,7 +1,7 @@
 import { createTestDatabase } from '@tests/utils/database'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { fakeUser } from '@server/entities/tests/fakes'
-import { insertAll, clearTables } from '@tests/utils/records'
+import { insertAll, clearTables, selectAll } from '@tests/utils/records'
 import { mealPlanRepository } from '../mealPlanRepository'
 
 const db = await wrapInRollbacks(createTestDatabase())
@@ -21,6 +21,60 @@ describe('create', () => {
     }
     const createdMealPlan = await repository.create(mealPlan)
     expect(createdMealPlan).toEqual(expect.objectContaining(mealPlan))
+  })
+
+  it('should deactivate other active meal plans for the same user', async () => {
+    // Create an active meal plan
+    const activeMealPlan = {
+      userId: user.id,
+      planName: 'Active Meal Plan',
+      isActive: true,
+    }
+    const createdActiveMealPlan = await repository.create(activeMealPlan)
+
+    // Create a new meal plan that should activate and deactivate others
+    const newMealPlan = {
+      userId: user.id,
+      planName: 'New Meal Plan',
+      isActive: true,
+    }
+    const createdMealPlan = await repository.create(newMealPlan)
+
+    // Verify that the new meal plan is active
+    expect(createdMealPlan.isActive).toBe(true)
+
+    // Fetch the previously active meal plan from the database to verify its current state
+    const fetchedActivePlan = await repository.findById(
+      createdActiveMealPlan.id
+    )
+
+    // Verify that the previously active meal plan is now inactive
+    expect(fetchedActivePlan?.isActive).toBe(false)
+  })
+
+  it('should not deactivate other meal plans if new plan is inactive', async () => {
+    // Create an active meal plan
+    const activeMealPlan = {
+      userId: user.id,
+      planName: 'Active Meal Plan',
+      isActive: true,
+    }
+    const oldPlan = await repository.create(activeMealPlan)
+
+    // Create a new meal plan that is inactive
+    const newMealPlan = {
+      userId: user.id,
+      planName: 'Inactive Meal Plan',
+      isActive: false,
+    }
+    const createdMealPlan = await repository.create(newMealPlan)
+
+    // Verify that the new meal plan is inactive
+    expect(createdMealPlan.isActive).toBe(false)
+
+    // Verify that the previous active meal plan remains active
+    const previousActivePlan = await repository.findById(oldPlan.id)
+    expect(previousActivePlan?.isActive).toBe(true)
   })
 
   it('throws error if missing plan name', async () => {

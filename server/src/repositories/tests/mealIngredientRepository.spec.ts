@@ -52,7 +52,6 @@ describe('find meal ingredient funcionalities', () => {
       })
 
       const res = await repository.findMealIngredientById(fakeIngr.id)
-      // console.log(res);
       expect(res).toMatchObject({
         mealId: meal1.id,
         ingredientId: ingredient1.id,
