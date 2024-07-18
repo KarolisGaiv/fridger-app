@@ -6,6 +6,7 @@ import SuperJSON from 'superjson'
 import { ZodError } from 'zod'
 import { fromZodError } from 'zod-validation-error'
 import type { Repositories } from '@server/repositories'
+import type { Services } from '@server/services'
 
 export type Context = {
   db: Database
@@ -13,6 +14,7 @@ export type Context = {
   res?: Response
   authUser?: AuthUser
   repos?: Partial<Repositories>
+  services?: Partial<Services>
 }
 
 export type ContextMinimal = Pick<Context, 'db'>

@@ -34,11 +34,13 @@ describe('create', () => {
 
     // assert
     expect(result).toEqual({
-      result: expect.objectContaining({
-        mealPlanId: mealPlan.id,
-        product: 'Apples',
-        quantity: 5,
-      }),
+      result: [
+        expect.objectContaining({
+          mealPlanId: mealPlan.id,
+          product: 'Apples',
+          quantity: 5,
+        }),
+      ],
     })
   })
 

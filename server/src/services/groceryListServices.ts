@@ -1,7 +1,8 @@
-import type { Database } from '@server/database'
+import type { Database, GroceryList } from '@server/database'
 import { mealPlanRepository } from '@server/repositories/mealPlanRepository'
 import { mealIngredientRepository } from '@server/repositories/mealIngredientRepository'
 import { TRPCError } from '@trpc/server'
+import type { Insertable } from 'kysely'
 
 export function groceryListServices(db: Database) {
   const mealPlanRepo = mealPlanRepository(db)
@@ -31,7 +32,16 @@ export function groceryListServices(db: Database) {
         activeMealPlan.id
       )
 
-      return ingredients
+      // transform ingredients into grocery list format
+      const groceryListItems: Insertable<GroceryList>[] = ingredients.map(
+        (ingredient) => ({
+          mealPlanId: activeMealPlan.id,
+          product: ingredient.ingredientName,
+          quantity: ingredient.quantity,
+        })
+      )
+
+      return groceryListItems
     },
   }
 }

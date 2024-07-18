@@ -4,6 +4,7 @@ import findById from './findById'
 import findByMealPlanId from './findByMealPlanId'
 import update from './update'
 import deleteList from './deleteList'
+import generateGroceryList from './generateGroceryList'
 
 export default router({
   create,
@@ -11,4 +12,5 @@ export default router({
   findByMealPlanId,
   update,
   deleteList,
+  generateGroceryList,
 })

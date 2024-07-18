@@ -13,6 +13,10 @@ import {
   mealIngredientKeysPublic,
 } from '@server/entities/mealIngredient'
 
+interface MealIngredientWithMealName extends Selectable<MealIngredientPublic> {
+  ingredientName: string
+}
+
 export function mealIngredientRepository(db: Database) {
   return {
     async create(
@@ -47,15 +51,17 @@ export function mealIngredientRepository(db: Database) {
 
     async findIngredientsByMealPlanId(
       mealPlanId: number
-    ): Promise<Selectable<MealIngredientPublic>[]> {
+    ): Promise<Selectable<MealIngredientWithMealName>[]> {
       return db
         .selectFrom('mealIngredient')
         .innerJoin('meal', 'meal.id', 'mealIngredient.mealId')
+        .innerJoin('ingredient', 'ingredient.id', 'mealIngredient.ingredientId')
         .where('mealIngredient.mealPlan', '=', mealPlanId)
         .select([
           'mealIngredient.ingredientId',
           'mealIngredient.quantity',
           'mealIngredient.mealId',
+          'ingredient.name as ingredientName',
         ])
         .execute()
     },

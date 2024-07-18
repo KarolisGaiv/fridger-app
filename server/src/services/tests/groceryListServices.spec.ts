@@ -65,12 +65,12 @@ it('should generate a grocery list for the user based on the active meal plan', 
   expect(groceryList).toEqual(
     expect.arrayContaining([
       expect.objectContaining({
-        ingredientId: ingredient1.id,
         quantity: 200,
+        product: ingredient1.name,
       }),
       expect.objectContaining({
-        ingredientId: ingredient2.id,
         quantity: 300,
+        product: ingredient2.name,
       }),
     ])
   )

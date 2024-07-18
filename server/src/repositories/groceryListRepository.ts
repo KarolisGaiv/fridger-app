@@ -11,13 +11,13 @@ import type { Insertable, Selectable } from 'kysely'
 export function groceryListRepository(db: Database) {
   return {
     async create(
-      groceryList: Insertable<GroceryList>
-    ): Promise<GroceryListPublic> {
+      groceryList: { quantity: number; product: string }[]
+    ): Promise<GroceryListPublic[]> {
       return db
         .insertInto('groceryList')
         .values(groceryList)
         .returning(groceryListKeysPublic)
-        .executeTakeFirstOrThrow()
+        .execute()
     },
 
     async findById(id: number): Promise<Selectable<GroceryList> | undefined> {
