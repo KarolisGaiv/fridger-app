@@ -42,6 +42,7 @@ export interface MealIngredient {
 
 export interface MealPlan {
   id: Generated<number>
+  isActive: Generated<boolean | null>
   planName: string
   userId: number
 }
