@@ -8,6 +8,7 @@ export const groceryListSchema = z.object({
   mealPlanId: z.number(),
   product: z.string(),
   quantity: z.number(),
+  ingredientId: z.number(),
 })
 
 export const groceryListKeysAll = Object.keys(

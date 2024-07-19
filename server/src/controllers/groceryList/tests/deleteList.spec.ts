@@ -3,12 +3,17 @@ import { authContext } from '@tests/utils/context'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { insertAll, clearTables, selectAll } from '@tests/utils/records'
-import { fakeUser, fakeMealPlan } from '@server/entities/tests/fakes'
+import {
+  fakeUser,
+  fakeMealPlan,
+  fakeIngredient,
+} from '@server/entities/tests/fakes'
 import groceryListRouter from '..'
 
 let user: any
 let mealPlan: any
 let groceryList: any
+let ingredient: any
 
 const db = await wrapInRollbacks(createTestDatabase())
 const createCaller = createCallerFactory(groceryListRouter)
@@ -18,6 +23,7 @@ async function createFakeGroceryList() {
     mealPlanId: mealPlan.id,
     product: 'Apples',
     quantity: 5,
+    ingredientId: ingredient.id,
   }
   const [data] = await insertAll(db, 'groceryList', [list])
   return { id: data.id, ...list }
@@ -28,6 +34,7 @@ beforeEach(async () => {
   ;[mealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id }),
   ])
+  ;[ingredient] = await insertAll(db, 'ingredient', fakeIngredient())
   groceryList = await createFakeGroceryList()
 })
 
