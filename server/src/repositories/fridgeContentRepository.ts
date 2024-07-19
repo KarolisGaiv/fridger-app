@@ -46,11 +46,11 @@ export function fridgeContentRepository(db: Database) {
         .execute()
     },
 
-    async findByUserAndProduct(userId: number, productId: number) {
+    async findByUserAndProduct(userId: number, ingredientId: number) {
       const [result] = await db
         .selectFrom('fridgeContent')
         .where('userId', '=', userId)
-        .where('ingredientId', '=', productId)
+        .where('ingredientId', '=', ingredientId)
         .select(fridgeContentKeysAll)
         .execute()
 

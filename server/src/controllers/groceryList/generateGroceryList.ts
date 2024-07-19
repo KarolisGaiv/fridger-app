@@ -50,6 +50,7 @@ export default authenticatedProcedure
     const groceryList = await services.groceryListServices.generateGroceryList(
       authUser.id
     )
+
     const savedGroceryList =
       await repos.groceryListRepository.create(groceryList)
 

@@ -38,6 +38,7 @@ export function groceryListServices(db: Database) {
           mealPlanId: activeMealPlan.id,
           product: ingredient.ingredientName,
           quantity: ingredient.quantity,
+          ingredientId: ingredient.ingredientId,
         })
       )
 

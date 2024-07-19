@@ -16,6 +16,7 @@ export interface FridgeContent {
 
 export interface GroceryList {
   id: Generated<number>
+  ingredientId: number
   mealPlanId: number | null
   product: string
   quantity: number

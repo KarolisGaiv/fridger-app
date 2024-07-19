@@ -1,34 +1,43 @@
-// import type {database} from "@server/database"
-// import { fridgeContentRepository } from '@server/repositories/fridgeContentRepository';
-// import {groceryListKeysAll, groceryListKeysPublic, type groceryListKeysPublic} from "@server/entities/groceryList"
-// import { TRPCError } from '@trpc/server';
+import type { Database } from '@server/database'
+import { fridgeContentRepository } from '@server/repositories/fridgeContentRepository'
 
-// export function fridgeContentService(db: Database) {
-//     const frideContentRepo = fridgeContentRepository(db)
+interface GroceryListItem {
+  mealPlanId: number
+  ingredientId: number
+  quantity: number
+}
 
-//     return {
-//         async placeItemsIntoFridge(groceryListItems: [], user): Promise<void> {
-//             try {
-//                 await Promise.all(groceryListItems.map(async (item) => {
-//                     // check if item already exist in the fridge
-//                     const existingItem = await frideContentRepo.findByUserAndProduct(user, item.product)
+export function fridgeContentService(db: Database) {
+  const frideContentRepo = fridgeContentRepository(db)
 
-//                     if (existingItem) {
-//                         await frideContentRepo.updateQuantity(existingItem.id, existingItem.quantity + item.quantity)
-//                     } else {
-//                         await frideContentRepo.create({
-//                             ingredientId: item.product,
-//                             existingQuantity: item.quantity
-//                         })
-//                     }
-//                 }))
-//             } catch (error) {
-//               throw new TRPCError({
-//                 code: 'INTERNAL_ERROR',
-//                 message: 'Failed to place items into fridge.',
-//               });
-//             }
-//           },
-//     }
+  return {
+    async placeItemsIntoFridge(
+      groceryListItems: GroceryListItem[],
+      user: any
+    ): Promise<void> {
+      await Promise.all(
+        groceryListItems.map(async (item) => {
+          // check if item already exist in the fridge
+          const existingItem = await frideContentRepo.findByUserAndProduct(
+            user,
+            item.ingredientId
+          )
 
-// };
+          if (existingItem) {
+            await frideContentRepo.updateQuantity(
+              existingItem.ingredientId,
+              existingItem.existingQuantity + item.quantity
+            )
+          } else {
+            await frideContentRepo.create({
+              userId: user,
+              mealPlan: item.mealPlanId,
+              ingredientId: item.ingredientId,
+              existingQuantity: item.quantity,
+            })
+          }
+        })
+      )
+    },
+  }
+}
