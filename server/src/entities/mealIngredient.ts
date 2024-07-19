@@ -8,7 +8,6 @@ export const mealIngredientSchema = z.object({
   ingredientId: idSchema,
   mealId: idSchema,
   quantity: z.number(),
-  mealPlan: z.number(),
 })
 
 export const mealIngredientKeysAll = Object.keys(

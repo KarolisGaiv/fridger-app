@@ -87,10 +87,8 @@ it('should throw an error if no active meal plan is found for the user', async (
   )
 })
 
-it('should handle no ingredients found gracefully', async () => {
+it('should throw error if no meal ingredients found for the active meal plan', async () => {
   await clearTables(db, ['mealIngredient'])
 
-  const groceryList = await service.generateGroceryList(user.id)
-
-  expect(groceryList).toHaveLength(0)
+  await expect(service.generateGroceryList(user.id)).rejects.toThrow(/no meal ingredients found/i)
 })
