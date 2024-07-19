@@ -21,6 +21,7 @@ async function createFakeGroceryList() {
     mealPlanId: mealPlan.id,
     product: 'snake oil',
     quantity: 30,
+    ingredientId: ingredient.id,
   }
   const [data] = await insertAll(db, 'groceryList', [list])
   return data.id
