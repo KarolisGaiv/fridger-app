@@ -7,6 +7,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json && npx tsc-alias",
     "coverage": "vitest run --coverage",
+    "coverage:safe": "vitest run --coverage --no-file-parallelism --maxWorkers 1 --poolOptions.threads.useAtomics false --poolOptions.threads.isolate true",
     "dev": "tsx watch src",
     "format": "prettier --write \"src/**/*.ts\"",
     "gen:types": "kysely-codegen --camel-case --dialect postgres --out-file src/database/types.ts && prettier --write src/database/types.ts",
