@@ -1,6 +1,12 @@
 import { createTestDatabase } from '@tests/utils/database'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { fakeMealPlan, fakeUser } from '@server/entities/tests/fakes'
+import {
+  fakeMealPlan,
+  fakeUser,
+  fakeIngredient,
+  fakeMealIngredient,
+  fakeMeal,
+} from '@server/entities/tests/fakes'
 import { insertAll, clearTables } from '@tests/utils/records'
 import { groceryListRepository } from '../groceryListRepository'
 
@@ -8,12 +14,14 @@ const db = await wrapInRollbacks(createTestDatabase())
 const repository = groceryListRepository(db)
 let user: any
 let mealPlan: any
+let fakeIngrId: any
 
 async function createFakeGroceryList() {
   const list = {
     mealPlanId: mealPlan.id,
     product: 'snake oil',
     quantity: 30,
+    ingredientId: fakeIngrId,
   }
   const [data] = await insertAll(db, 'groceryList', [list])
   return data.id
@@ -24,6 +32,19 @@ beforeEach(async () => {
   ;[mealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id }),
   ])
+  const [meal] = await insertAll(db, 'meal', fakeMeal())
+  const [fakeIngr] = await insertAll(db, 'ingredient', fakeIngredient())
+  await insertAll(
+    db,
+    'mealIngredient',
+    fakeMealIngredient({
+      mealPlan: mealPlan.id,
+      ingredientId: fakeIngr.id,
+      mealId: meal.id,
+    })
+  )
+
+  fakeIngrId = fakeIngr.id
 })
 
 afterEach(async () => {
@@ -33,15 +54,19 @@ afterEach(async () => {
 
 describe('create', () => {
   it('should create a new grocery list item', async () => {
+    // arrange
     const newGroceryList = {
       mealPlanId: mealPlan.id,
       product: 'Apples',
       quantity: 5,
+      ingredientId: fakeIngrId,
     }
 
-    const createdGroceryList = await repository.create([newGroceryList])
+    // act
+    const [createdGroceryList] = await repository.create([newGroceryList])
 
-    expect(createdGroceryList).toEqual([newGroceryList])
+    // assert
+    expect(createdGroceryList).toEqual(newGroceryList)
   })
 })
 
@@ -67,8 +92,18 @@ describe('findById', () => {
 describe('findByMealPlanId', () => {
   it('should retrieve all grocery list items by meal plan ID', async () => {
     const groceryListItems = [
-      { mealPlanId: mealPlan.id, product: 'Apples', quantity: 5 },
-      { mealPlanId: mealPlan.id, product: 'Bananas', quantity: 10 },
+      {
+        mealPlanId: mealPlan.id,
+        product: 'Apples',
+        quantity: 5,
+        ingredientId: fakeIngrId,
+      },
+      {
+        mealPlanId: mealPlan.id,
+        product: 'Bananas',
+        quantity: 10,
+        ingredientId: fakeIngrId,
+      },
     ]
 
     await insertAll(db, 'groceryList', groceryListItems)

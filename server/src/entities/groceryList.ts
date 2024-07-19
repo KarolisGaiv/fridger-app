@@ -18,6 +18,7 @@ export const groceryListKeysPublic = [
   'mealPlanId',
   'product',
   'quantity',
+  'ingredientId',
 ] as const
 
 export type GroceryListPublic = Pick<
