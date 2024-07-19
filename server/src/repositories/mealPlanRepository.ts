@@ -45,6 +45,17 @@ export function mealPlanRepository(db: Database) {
         .execute()
     },
 
+    async findActiveMealPlan(
+      userId: number
+    ): Promise<Selectable<MealPlan> | undefined> {
+      return db
+        .selectFrom('mealPlan')
+        .select(mealPlanKeysAll)
+        .where('userId', '=', userId)
+        .where('isActive', '=', true)
+        .executeTakeFirst()
+    },
+
     async update(
       id: number,
       updates: Partial<Insertable<MealPlan>>

@@ -65,41 +65,14 @@ beforeEach(async () => {
 it('should generate fridge content based on grocery list', async () => {
   // arrange
   const groceryList = await groceryService.generateGroceryList(user.id)
+  await insertAll(db, 'groceryList', groceryList)
   const oldFridgeContent = await selectAll(db, 'fridgeContent')
 
   // act
-  await fridgeService.placeItemsIntoFridge(groceryList, user.id)
+  await fridgeService.placeItemsIntoFridge(user.id)
   const fridgeContents = await selectAll(db, 'fridgeContent')
 
   // assert
   expect(fridgeContents).toHaveLength(2)
   expect(fridgeContents.length).toBeGreaterThan(oldFridgeContent.length)
-})
-
-it('should update quantity of existing fridge content item', async () => {
-  // arrange
-  await insertAll(db, 'fridgeContent', [
-    {
-      userId: user.id,
-      mealPlan: activeMealPlan.id,
-      ingredientId: ingredient1.id,
-      existingQuantity: 100,
-    },
-  ])
-
-  const groceryList = [
-    {
-      mealPlanId: activeMealPlan.id,
-      ingredientId: ingredient1.id,
-      quantity: 50,
-    },
-  ]
-
-  // act
-  await fridgeService.placeItemsIntoFridge(groceryList, user.id)
-  const [fridgeContents] = await selectAll(db, 'fridgeContent')
-
-  // assert
-  expect(fridgeContents.existingQuantity).toBeGreaterThan(100)
-  expect(fridgeContents.existingQuantity).toBe(150)
 })
