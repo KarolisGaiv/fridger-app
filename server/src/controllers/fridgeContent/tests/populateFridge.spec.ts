@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createTestDatabase } from '@tests/utils/database'
 import { authContext } from '@tests/utils/context'
 import { createCallerFactory } from '@server/trpc'
