@@ -11,7 +11,8 @@ jobs:
       # VITE_API_PATH: /api/v1/trpc
 
       # variables for our back-end tests, see server/src/config.ts
-      DATABASE_URL: postgres://postgres:karolis123@localhost:5432/fridger_app_test_db
+      DATABASE_URL: postgres://postgres:karolis123@localhost:5432/fridger_app
+      TEST_DATABASE_URL: postgres://postgres:karolis123@localhost:5432/fridger_app_test_db
     services:
       # spin up a database for tests
       postgres:
