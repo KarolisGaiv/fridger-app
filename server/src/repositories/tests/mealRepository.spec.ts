@@ -7,6 +7,10 @@ import { mealRepository } from '../mealRepository'
 const db = await wrapInRollbacks(createTestDatabase())
 const repository = mealRepository(db)
 
+afterEach(async () => {
+    await clearTables(db, ['meal'])
+})
+
 describe('create', () => {
   it('should create a new meal', async () => {
     const meal = fakeMeal()
@@ -29,10 +33,6 @@ describe('findByName', () => {
     await insertAll(db, 'meal', meal)
   })
 
-  afterAll(async () => {
-    await clearTables(db, ['meal'])
-  })
-
   it('should find meal by name', async () => {
     const foundMeal = await repository.findByName(meal.name)
 
@@ -50,16 +50,14 @@ describe('findByName', () => {
 })
 
 describe('findAll', () => {
-  afterAll(async () => {
-    await clearTables(db, ['meal'])
-  })
-
   it('should return empty array if there are no meals', async () => {
+    await clearTables(db, ['meal'])
     const meals = await repository.findAll()
     expect(meals).toStrictEqual([])
   })
 
   it('should find all meals from the database', async () => {
+    await clearTables(db, ['meal'])
     await insertAll(db, 'meal', [fakeMeal(), fakeMeal(), fakeMeal()])
     const meals = await repository.findAll()
     expect(meals).toHaveLength(3)
@@ -73,10 +71,6 @@ describe('updateMeal', async () => {
   }
   beforeAll(async () => {
     await insertAll(db, 'meal', meal)
-  })
-
-  afterAll(async () => {
-    await clearTables(db, ['meal'])
   })
 
   it('should update meal sucessfully', async () => {
@@ -110,10 +104,6 @@ describe('delete', () => {
     await insertAll(db, 'meal', meal)
   })
 
-  afterAll(async () => {
-    await clearTables(db, ['meal'])
-  })
-
   it('should delete meal', async () => {
     await repository.deleteMeal('pancakes')
     const database = await repository.findAll()
@@ -123,7 +113,7 @@ describe('delete', () => {
   it('should do nothing if meal was not found', async () => {
     await repository.deleteMeal('KEBAB')
     const database = await repository.findAll()
-    expect(database).toHaveLength(1)
+    expect(database).toHaveLength(3)
     expect(database[0]).toMatchObject({
       name: meal.name,
       calories: meal.calories,
