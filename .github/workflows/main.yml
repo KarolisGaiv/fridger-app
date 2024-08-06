@@ -20,7 +20,7 @@ jobs:
         env:
           # Postgres will create a database with the following credentials
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: testPasword
+          POSTGRES_PASSWORD: karolis123
           POSTGRES_DB: githubActions
         ports:
           - 5432:5432
