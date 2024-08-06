@@ -57,7 +57,7 @@ jobs:
         run: npm run migrate:test -w=server
 
       - name: Test server
-        run: npm run test:Safe -w=server
+        run: npm run test:safe -w=server
 
       # Add more browsers here if you want to test on more/different browsers
       - name: Install Playwright Browsers
