@@ -52,7 +52,7 @@ afterEach(async () => {
   await clearTables(db, ['groceryList'])
 })
 
-describe.skip('create', () => {
+describe('create', () => {
   it('should create a new grocery list item', async () => {
     // arrange
     const newGroceryList = {
@@ -70,7 +70,7 @@ describe.skip('create', () => {
   })
 })
 
-describe.skip('findById', () => {
+describe('findById', () => {
   it('should retrieve a grocery list item by ID', async () => {
     const fakeListId = await createFakeGroceryList()
     const foundGroceryList = await repository.findById(fakeListId)
@@ -89,7 +89,7 @@ describe.skip('findById', () => {
   })
 })
 
-describe.skip('findByMealPlanId', () => {
+describe('findByMealPlanId', () => {
   it('should retrieve all grocery list items by meal plan ID', async () => {
     const groceryListItems = [
       {
@@ -138,7 +138,7 @@ describe.skip('findByMealPlanId', () => {
   })
 })
 
-describe.skip('update', () => {
+describe('update', () => {
   it('should update a grocery list item', async () => {
     const fakeListId = await createFakeGroceryList()
     const updates = { product: 'Updated Product', quantity: 99 }
@@ -158,7 +158,7 @@ describe.skip('update', () => {
   })
 })
 
-describe.skip('deleteById', () => {
+describe('deleteById', () => {
   it('should delete a grocery list item by ID', async () => {
     const fakeListId = await createFakeGroceryList()
     await repository.deleteById(fakeListId)

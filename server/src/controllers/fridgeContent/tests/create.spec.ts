@@ -39,7 +39,7 @@ beforeEach(async () => {
   groceryListId = await createFakeGroceryList()
 })
 
-it.skip('allows adding fridge content', async () => {
+it('allows adding fridge content', async () => {
   // arrange
   const content = {
     mealPlan: mealPlan.id,
@@ -62,7 +62,7 @@ it.skip('allows adding fridge content', async () => {
   )
 })
 
-it.skip('prevents unauthenticated user from adding fridge content', async () => {
+it('prevents unauthenticated user from adding fridge content', async () => {
   // arrange
   const content = {
     mealPlan: mealPlan.id,
@@ -82,7 +82,7 @@ it.skip('prevents unauthenticated user from adding fridge content', async () => 
   await expect(create(content)).rejects.toThrow(/Unauthenticated/i)
 })
 
-it.skip('throws an error if a required field is missing', async () => {
+it('throws an error if a required field is missing', async () => {
   // arrange
   const content = {
     mealPlan: mealPlan.id,

@@ -49,7 +49,7 @@ beforeEach(async () => {
   await insertAll(db, 'fridgeContent', data)
 })
 
-it.skip('allows authenticated user to delete their fridge content', async () => {
+it('allows authenticated user to delete their fridge content', async () => {
   const { deleteByUser, findByUser } = createCaller(
     authContext({ db }, realUser)
   )
@@ -66,7 +66,7 @@ it.skip('allows authenticated user to delete their fridge content', async () => 
   expect(result).toHaveLength(0)
 })
 
-it.skip('prevents unauthenticated user to delete fridge', async () => {
+it('prevents unauthenticated user to delete fridge', async () => {
   const { deleteByUser } = createCaller({
     db,
     req: { header: () => undefined } as any,

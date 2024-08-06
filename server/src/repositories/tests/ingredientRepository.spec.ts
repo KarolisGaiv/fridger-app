@@ -7,7 +7,7 @@ import { ingredientRepository } from '../ingredientRepository'
 const db = await wrapInRollbacks(createTestDatabase())
 const repository = ingredientRepository(db)
 
-describe.skip('create', () => {
+describe('create', () => {
   it('should create a new ingredient', async () => {
     const ingredient = fakeIngredient()
     const createdIngredient = await repository.create(ingredient)
@@ -19,7 +19,7 @@ describe.skip('create', () => {
   })
 })
 
-describe.skip('findByName', () => {
+describe('findByName', () => {
   const ingredient = {
     name: 'milk',
   }
@@ -46,7 +46,7 @@ describe.skip('findByName', () => {
   })
 })
 
-describe.skip('findAll', () => {
+describe('findAll', () => {
   afterAll(async () => {
     await clearTables(db, ['ingredient'])
   })
@@ -67,7 +67,7 @@ describe.skip('findAll', () => {
   })
 })
 
-describe.skip('updateIngredient', async () => {
+describe('updateIngredient', async () => {
   const ingredient = {
     name: 'milk',
   }
@@ -101,7 +101,7 @@ describe.skip('updateIngredient', async () => {
   })
 })
 
-describe.skip('delete', () => {
+describe('delete', () => {
   const ingredient = {
     name: 'banana',
   }

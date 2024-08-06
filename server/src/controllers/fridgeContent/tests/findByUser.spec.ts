@@ -49,14 +49,14 @@ beforeEach(async () => {
   await insertAll(db, 'fridgeContent', data)
 })
 
-it.skip('finds users fridge content', async () => {
+it('finds users fridge content', async () => {
   const { findByUser } = createCaller(authContext({ db }, realUser))
 
   const result = await findByUser()
   expect(result).toHaveLength(1)
 })
 
-it.skip('prevents unauthenticated user to get fridge content', async () => {
+it('prevents unauthenticated user to get fridge content', async () => {
   const { findByUser } = createCaller({
     db,
     req: {

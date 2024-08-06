@@ -16,7 +16,7 @@ beforeAll(async () => {
   await clearTables(db, ['mealIngredient', 'meal', 'ingredient'])
 })
 
-describe.skip('create', () => {
+describe('create', () => {
   it('should create a new meal ingredient', async () => {
     const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
     const [ingredient1] = await insertAll(db, 'ingredient', [fakeIngredient()])
@@ -37,8 +37,8 @@ describe.skip('create', () => {
   })
 })
 
-describe.skip('find meal ingredient funcionalities', () => {
-  describe.skip('findMealIngredientById', () => {
+describe('find meal ingredient funcionalities', () => {
+  describe('findMealIngredientById', () => {
     it("should find meal ingredient by it's ID", async () => {
       const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
       const [ingredient1] = await insertAll(db, 'ingredient', [
@@ -64,7 +64,7 @@ describe.skip('find meal ingredient funcionalities', () => {
     })
   })
 
-  describe.skip('findIngredientsByMealId', () => {
+  describe('findIngredientsByMealId', () => {
     it('should find ingredients by meal id', async () => {
       const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
       const [ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
@@ -105,7 +105,7 @@ describe.skip('find meal ingredient funcionalities', () => {
     })
   })
 
-  describe.skip('findIngredientsByMealPlanId', () => {
+  describe('findIngredientsByMealPlanId', () => {
     let user: any
     let mealPlan: any
     beforeEach(async () => {
@@ -176,7 +176,7 @@ describe.skip('find meal ingredient funcionalities', () => {
   })
 })
 
-describe.skip('updateMealIngredient', () => {
+describe('updateMealIngredient', () => {
   it('should update a meal ingredient successfully', async () => {
     const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
     const [ingredient1] = await insertAll(db, 'ingredient', [
@@ -207,7 +207,7 @@ describe.skip('updateMealIngredient', () => {
   })
 })
 
-describe.skip('deleteMealIngredient', () => {
+describe('deleteMealIngredient', () => {
   it('should delete a meal ingredient', async () => {
     const [meal] = await insertAll(db, 'meal', [
       { name: 'Pasta', calories: 400 },
@@ -234,7 +234,7 @@ describe.skip('deleteMealIngredient', () => {
   })
 })
 
-describe.skip('deleteIngredientsByMealId', () => {
+describe('deleteIngredientsByMealId', () => {
   let mealId: number
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let ingredientIds: number[]

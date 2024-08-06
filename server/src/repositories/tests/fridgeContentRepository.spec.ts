@@ -73,7 +73,7 @@ beforeEach(async () => {
   await insertAll(db, 'fridgeContent', fridgeContents)
 })
 
-describe.skip('create', () => {
+describe('create', () => {
   it('should create new fridge content', async () => {
     const fridgeContent = {
       userId: user.id,
@@ -113,7 +113,7 @@ describe.skip('create', () => {
   })
 })
 
-describe.skip('findByUser', () => {
+describe('findByUser', () => {
   it('should return fridge content for a specific user', async () => {
     const fridgeContent = {
       userId: user.id,
@@ -161,7 +161,7 @@ describe.skip('findByUser', () => {
   })
 })
 
-describe.skip('findByMealPlan', () => {
+describe('findByMealPlan', () => {
   it('should return fridge content for specific meal plans', async () => {
     // Insert fridge content for multiple meal plans
     const mealPlan1 = await insertMealPlanWithFridgeContent(10)
@@ -193,7 +193,7 @@ describe.skip('findByMealPlan', () => {
   })
 })
 
-describe.skip('deleteByUserId', () => {
+describe('deleteByUserId', () => {
   it('should delete fridge content for a specific user', async () => {
     await insertMealPlanWithFridgeContent(10)
     await insertMealPlanWithFridgeContent(30)
@@ -210,7 +210,7 @@ describe.skip('deleteByUserId', () => {
   })
 })
 
-describe.skip('findByUserAndProduct', () => {
+describe('findByUserAndProduct', () => {
   it('should find existing item in users fridge', async () => {
     // Arrange
     const fridgeContent = {
@@ -246,7 +246,7 @@ describe.skip('findByUserAndProduct', () => {
   })
 })
 
-describe.skip('updateQuantity', () => {
+describe('updateQuantity', () => {
   it('should update quantity of existing fridge content item', async () => {
     // Arrange
     const newQuantity = 15

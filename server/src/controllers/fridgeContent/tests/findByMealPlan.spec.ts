@@ -49,7 +49,7 @@ beforeEach(async () => {
   await insertAll(db, 'fridgeContent', data)
 })
 
-it.skip('returns fridge content for a specific meal plan', async () => {
+it('returns fridge content for a specific meal plan', async () => {
   const { findByMealPlan } = createCaller(authContext({ db }, realUser))
 
   const result = await findByMealPlan({ mealPlan: mealPlan.id })
@@ -59,7 +59,7 @@ it.skip('returns fridge content for a specific meal plan', async () => {
   expect(result[0].existingQuantity).toBe(57)
 })
 
-it.skip('returns empty array if no fridge content found for the meal plan', async () => {
+it('returns empty array if no fridge content found for the meal plan', async () => {
   const { findByMealPlan } = createCaller(authContext({ db }, realUser))
 
   const result = await findByMealPlan({ mealPlan: mealPlan.id + 1 }) // Using a non-existent meal plan ID
@@ -67,13 +67,13 @@ it.skip('returns empty array if no fridge content found for the meal plan', asyn
   expect(result).toHaveLength(0)
 })
 
-it.skip('throws error if meal plan ID is not provided', async () => {
+it('throws error if meal plan ID is not provided', async () => {
   const { findByMealPlan } = createCaller(authContext({ db }, realUser))
 
   await expect(findByMealPlan({})).rejects.toThrowError()
 })
 
-it.skip('prevents unauthenticated user to get fridge content', async () => {
+it('prevents unauthenticated user to get fridge content', async () => {
   const { findByMealPlan } = createCaller({
     db,
     req: {

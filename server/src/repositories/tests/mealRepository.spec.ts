@@ -11,7 +11,7 @@ afterEach(async () => {
     await clearTables(db, ['meal'])
 })
 
-describe.skip('create', () => {
+describe('create', () => {
   it('should create a new meal', async () => {
     const meal = fakeMeal()
     const createdMeal = await repository.create(meal)
@@ -24,7 +24,7 @@ describe.skip('create', () => {
   })
 })
 
-describe.skip('findByName', () => {
+describe('findByName', () => {
   const meal = {
     name: 'pancakes',
     calories: 650,
@@ -49,7 +49,7 @@ describe.skip('findByName', () => {
   })
 })
 
-describe.skip('findAll', () => {
+describe('findAll', () => {
   it('should return empty array if there are no meals', async () => {
     await clearTables(db, ['meal'])
     const meals = await repository.findAll()
@@ -64,7 +64,7 @@ describe.skip('findAll', () => {
   })
 })
 
-describe.skip('updateMeal', async () => {
+describe('updateMeal', async () => {
   const meal = {
     name: 'pancakes',
     calories: 650,
@@ -95,7 +95,7 @@ describe.skip('updateMeal', async () => {
   })
 })
 
-describe.skip('delete', () => {
+describe('delete', () => {
   const meal = {
     name: 'pancakes',
     calories: 650,

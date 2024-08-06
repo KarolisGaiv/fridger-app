@@ -76,7 +76,7 @@ beforeEach(async () => {
 })
 
 describe('populateFridge', () => {
-  it.skip("should fill/populate user's fridge based on grocery list", async () => {
+  it("should fill/populate user's fridge based on grocery list", async () => {
     // arrange
     const { generateGroceryList } = createGroceryListCaller(
       authContext({ db }, user)
@@ -98,7 +98,7 @@ describe('populateFridge', () => {
     expect(currentFridgeContent.length).toBe(list.length)
   })
 
-  it.skip('does not allow to use method for unauth user', async () => {
+  it('does not allow to use method for unauth user', async () => {
     // arrange
     const { populateFridge } = createFridgeCaller({
       db,

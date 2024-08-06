@@ -7,7 +7,7 @@ import { userRepository } from '../userRepository'
 const db = await wrapInRollbacks(createTestDatabase())
 const repository = userRepository(db)
 
-describe.skip('create', () => {
+describe('create', () => {
   it('should create a new user', async () => {
     const user = fakeUser()
     const createdUser = await repository.create(user)
@@ -20,7 +20,7 @@ describe.skip('create', () => {
   })
 })
 
-describe.skip('findByEmail', () => {
+describe('findByEmail', () => {
   const user = fakeUser()
   beforeAll(async () => {
     await insertAll(db, 'user', user)
