@@ -2,7 +2,7 @@ import { authContext } from '@tests/utils/context'
 import { createTestDatabase } from '@tests/utils/database'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, selectAll } from '@tests/utils/records'
+import { insertAll } from '@tests/utils/records'
 import {
   fakeUser,
   fakeMealPlan,

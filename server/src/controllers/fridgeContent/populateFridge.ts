@@ -1,6 +1,5 @@
 import { authenticatedProcedure } from '@server/trpc/authenticateProcedure'
 import provideRepos from '@server/trpc/provideRepos'
-import { TRPCError } from '@trpc/server'
 import provideServices from '@server/trpc/provideServices'
 import { fridgeContentRepository } from '@server/repositories/fridgeContentRepository'
 import { fridgeContentService } from '@server/services/fridgeContentServices'

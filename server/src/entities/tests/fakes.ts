@@ -4,7 +4,6 @@ import type {
   Ingredient,
   MealIngredient,
   MealPlan,
-  GroceryList,
 } from '@server/database/types'
 import type { Insertable } from 'kysely'
 import { random } from '@tests/utils/random'

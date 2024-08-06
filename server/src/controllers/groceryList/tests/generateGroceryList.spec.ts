@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createTestDatabase } from '@tests/utils/database'
 import { authContext } from '@tests/utils/context'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables, selectAll } from '@tests/utils/records'
+import { insertAll, clearTables } from '@tests/utils/records'
 import {
   fakeUser,
   fakeMealPlan,
