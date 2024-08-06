@@ -3,7 +3,7 @@ import { createTestDatabase } from '@tests/utils/database'
 import { createCallerFactory } from '@server/trpc'
 import { fakeUser } from '@server/entities/tests/fakes'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables } from '@tests/utils/records'
+import { insertAll } from '@tests/utils/records'
 import mealRouter from '..'
 
 const db = await wrapInRollbacks(createTestDatabase())
@@ -11,12 +11,11 @@ const createCaller = createCallerFactory(mealRouter)
 let user: any
 
 beforeEach(async () => {
-  await clearTables(db, ['meal'])
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   await insertAll(db, 'meal', [{ name: 'pancakges', calories: 650 }])
 })
 
-it.skip('should update meals name', async () => {
+it('should update meals name', async () => {
   // arrange
   const { updateMeal } = createCaller(authContext({ db }, user))
 
@@ -32,7 +31,7 @@ it.skip('should update meals name', async () => {
   expect(updatedMeal?.calories).toBe(650)
 })
 
-it.skip('should update meals calories', async () => {
+it('should update meals calories', async () => {
   // arrange
   const { updateMeal } = createCaller(authContext({ db }, user))
 
@@ -48,7 +47,7 @@ it.skip('should update meals calories', async () => {
   expect(updatedMeal?.name).toBe('pancakges')
 })
 
-it.skip('should throw error if meal to be updated does not exist', async () => {
+it('should throw error if meal to be updated does not exist', async () => {
   const { updateMeal } = createCaller(authContext({ db }, user))
 
   await expect(
@@ -56,7 +55,7 @@ it.skip('should throw error if meal to be updated does not exist', async () => {
   ).rejects.toThrowError(/this name was not found/i)
 })
 
-it.skip('should throw error if more properties are provided than name or calories', async () => {
+it('should throw error if more properties are provided than name or calories', async () => {
   const { updateMeal } = createCaller(authContext({ db }, user))
 
   await expect(
@@ -67,7 +66,7 @@ it.skip('should throw error if more properties are provided than name or calorie
   ).rejects.toThrowError(/unrecognized key/i)
 })
 
-it.skip('prevents unauth user from using method', async () => {
+it('prevents unauth user from using method', async () => {
   // arrange
   const { updateMeal } = createCaller({
     db,

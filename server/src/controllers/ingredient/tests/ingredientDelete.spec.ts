@@ -14,7 +14,7 @@ beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
 })
 
-it.skip('should throw error if ingredient to delete is not found', async () => {
+it('should throw error if ingredient to delete is not found', async () => {
   // arrange
   const { deleteIngredient } = createCaller(authContext({ db }, user))
 
@@ -29,7 +29,7 @@ it.skip('should throw error if ingredient to delete is not found', async () => {
   ).rejects.toThrowError()
 })
 
-it.skip('should delete ingredient', async () => {
+it('should delete ingredient', async () => {
   const { deleteIngredient } = createCaller(authContext({ db }, user))
   await insertAll(db, 'ingredient', { name: 'egg' })
 
@@ -41,7 +41,7 @@ it.skip('should delete ingredient', async () => {
   expect(ingredients).toHaveLength(0)
 })
 
-it.skip('prevents unauth user from using method', async () => {
+it('prevents unauth user from using method', async () => {
   // arrange
   const { deleteIngredient } = createCaller({
     db,

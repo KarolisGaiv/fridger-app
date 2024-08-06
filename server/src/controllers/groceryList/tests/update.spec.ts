@@ -2,7 +2,7 @@ import { createTestDatabase } from '@tests/utils/database'
 import { authContext } from '@tests/utils/context'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables } from '@tests/utils/records'
+import { insertAll } from '@tests/utils/records'
 import {
   fakeUser,
   fakeMealPlan,
@@ -30,7 +30,6 @@ async function createFakeGroceryList() {
 }
 
 beforeEach(async () => {
-  await clearTables(db, ['groceryList', 'mealPlan', 'user'])
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   ;[mealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id }),

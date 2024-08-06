@@ -43,14 +43,6 @@ async function insertMealPlanWithFridgeContent(quantity: number) {
 }
 
 beforeEach(async () => {
-  await clearTables(db, [
-    'fridgeContent',
-    'ingredient',
-    'mealPlan',
-    'user',
-    'groceryList',
-  ])
-
   // Insert fake data into related tables
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   ;[mealPlan] = await insertAll(db, 'mealPlan', [

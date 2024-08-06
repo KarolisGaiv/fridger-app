@@ -1,7 +1,7 @@
 import { createTestDatabase } from '@tests/utils/database'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { fakeUser } from '@server/entities/tests/fakes'
-import { insertAll, clearTables } from '@tests/utils/records'
+import { insertAll } from '@tests/utils/records'
 import { mealPlanRepository } from '../mealPlanRepository'
 
 const db = await wrapInRollbacks(createTestDatabase())
@@ -9,7 +9,6 @@ const repository = mealPlanRepository(db)
 let user: any
 
 beforeEach(async () => {
-  await clearTables(db, ['mealPlan', 'user'])
   ;[user] = await insertAll(db, 'user', [fakeUser()])
 })
 

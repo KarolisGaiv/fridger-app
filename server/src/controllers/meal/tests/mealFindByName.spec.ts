@@ -14,7 +14,7 @@ beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
 })
 
-it.skip("should find meal by it.skip's name", async () => {
+it("should find meal by it's name", async () => {
   // arrange
   const [meal] = await insertAll(db, 'meal', [fakeMeal()])
   const { findByName } = createCaller(authContext({ db }, user))
@@ -26,14 +26,14 @@ it.skip("should find meal by it.skip's name", async () => {
   expect(result.name).toBe(meal.name)
 })
 
-it.skip('throws error if meal is not found', async () => {
+it('throws error if meal is not found', async () => {
   const { findByName } = createCaller(authContext({ db }, user))
   await expect(findByName({ name: 'non existing' })).rejects.toThrowError(
     /name not found/i
   )
 })
 
-it.skip('prevents unauth user from using method', async () => {
+it('prevents unauth user from using method', async () => {
   // arrange
   const { findByName } = createCaller({
     db,

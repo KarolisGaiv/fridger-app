@@ -32,10 +32,10 @@ export function groceryListServices(db: Database) {
         activeMealPlan.id
       )
 
-      if(ingredients.length === 0) {
+      if (ingredients.length === 0) {
         throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "No meal ingredients found for this meal plan"
+          code: 'NOT_FOUND',
+          message: 'No meal ingredients found for this meal plan',
         })
       }
 

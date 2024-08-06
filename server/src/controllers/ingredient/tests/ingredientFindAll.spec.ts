@@ -14,13 +14,13 @@ beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
 })
 
-it.skip('should return empty list if there are no ingredients', async () => {
+it('should return empty list if there are no ingredients', async () => {
   const { findAll } = createCaller(authContext({ db }, user))
 
   expect(await findAll()).toHaveLength(0)
 })
 
-it.skip('should return all ingredients', async () => {
+it('should return all ingredients', async () => {
   await insertAll(db, 'ingredient', [fakeIngredient(), fakeIngredient()])
   const { findAll } = createCaller(authContext({ db }, user))
 
@@ -29,7 +29,7 @@ it.skip('should return all ingredients', async () => {
   expect(ingredients).toHaveLength(2)
 })
 
-it.skip('prevents unauth user from using method', async () => {
+it('prevents unauth user from using method', async () => {
   // arrange
   const { findAll } = createCaller({
     db,

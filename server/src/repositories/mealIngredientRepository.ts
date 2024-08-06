@@ -1,9 +1,6 @@
 import type { Database } from '@server/database'
 import type { MealIngredient } from '@server/database/types'
-import type {
-  Insertable,
-  Selectable,
-} from 'kysely'
+import type { Insertable, Selectable } from 'kysely'
 import {
   type MealIngredientPublic,
   mealIngredientKeysPublic,

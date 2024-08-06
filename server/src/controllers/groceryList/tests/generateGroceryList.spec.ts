@@ -31,7 +31,6 @@ const db = await wrapInRollbacks(createTestDatabase())
 const createCaller = createCallerFactory(groceryListRouter)
 
 beforeEach(async () => {
-  await clearTables(db, ['groceryList', 'mealPlan', 'user'])
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   ;[mealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id }),

@@ -2,7 +2,7 @@ import { authContext } from '@tests/utils/context'
 import { createCallerFactory } from '@server/trpc'
 import { createTestDatabase } from '@tests/utils/database'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables } from '@tests/utils/records'
+import { insertAll } from '@tests/utils/records'
 import { fakeUser, fakeMealPlan } from '@server/entities/tests/fakes'
 import mealPlanRouter from '..'
 
@@ -12,7 +12,6 @@ let user: any
 let mealPlan: any
 
 beforeEach(async () => {
-  await clearTables(db, ['mealPlan', 'user'])
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   const mealPlanData = { userId: user.id, planName: 'Initial Plan' }
   ;[mealPlan] = await insertAll(db, 'mealPlan', [mealPlanData])

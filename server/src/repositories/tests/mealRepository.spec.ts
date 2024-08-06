@@ -7,10 +7,6 @@ import { mealRepository } from '../mealRepository'
 const db = await wrapInRollbacks(createTestDatabase())
 const repository = mealRepository(db)
 
-afterEach(async () => {
-    await clearTables(db, ['meal'])
-})
-
 describe('create', () => {
   it('should create a new meal', async () => {
     const meal = fakeMeal()

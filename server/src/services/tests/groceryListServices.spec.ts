@@ -20,15 +20,15 @@ let meal1: any
 let ingredient1: any
 let ingredient2: any
 
-beforeAll(async () => {
-  await clearTables(db, [
-    'mealIngredient',
-    'meal',
-    'ingredient',
-    'mealPlan',
-    'user',
-  ])
-})
+// beforeAll(async () => {
+//   await clearTables(db, [
+//     'mealIngredient',
+//     'meal',
+//     'ingredient',
+//     'mealPlan',
+//     'user',
+//   ])
+// })
 
 beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
@@ -90,5 +90,7 @@ it('should throw an error if no active meal plan is found for the user', async (
 it('should throw error if no meal ingredients found for the active meal plan', async () => {
   await clearTables(db, ['mealIngredient'])
 
-  await expect(service.generateGroceryList(user.id)).rejects.toThrow(/no meal ingredients found/i)
+  await expect(service.generateGroceryList(user.id)).rejects.toThrow(
+    /no meal ingredients found/i
+  )
 })

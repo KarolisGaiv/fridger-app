@@ -14,7 +14,7 @@ export const appRouter = router({
   ingredient,
   mealIngredient,
   groceryList,
-  fridgeContent
+  fridgeContent,
 })
 
 export type AppRouter = typeof appRouter

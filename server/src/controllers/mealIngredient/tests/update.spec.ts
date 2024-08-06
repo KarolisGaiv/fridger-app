@@ -21,7 +21,7 @@ beforeEach(async () => {
 })
 
 describe('updateMealIngredient', () => {
-  it.skip('should update a meal ingredient successfully', async () => {
+  it('should update a meal ingredient successfully', async () => {
     const [ingredient1] = await insertAll(db, 'ingredient', [fakeIngredient()])
 
     const initialMealIngredient = {
@@ -51,7 +51,7 @@ describe('updateMealIngredient', () => {
     })
   })
 
-  it.skip('should throw a NOT_FOUND error if the meal ingredient does not exist', async () => {
+  it('should throw a NOT_FOUND error if the meal ingredient does not exist', async () => {
     const updatedInfo = {
       quantity: 300,
     }
@@ -65,7 +65,7 @@ describe('updateMealIngredient', () => {
     ).rejects.toThrowError(/meal ingredient does not exist/i)
   })
 
-  it.skip('prevents unauth user from using procedure', async () => {
+  it('prevents unauth user from using procedure', async () => {
     const { updateMealIngredient } = createCaller({
       db,
       req: {

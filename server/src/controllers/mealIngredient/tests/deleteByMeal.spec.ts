@@ -21,7 +21,7 @@ beforeEach(async () => {
   ;[meal] = await insertAll(db, 'meal', [fakeMeal()])
 })
 
-it.skip('should delete ingredients by meal ID', async () => {
+it('should delete ingredients by meal ID', async () => {
   // arrange
   const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
   const [ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
@@ -46,7 +46,7 @@ it.skip('should delete ingredients by meal ID', async () => {
   expect(remainingIngredients).toHaveLength(0)
 })
 
-it.skip('should do nothing if no ingredients are found for the meal ID', async () => {
+it('should do nothing if no ingredients are found for the meal ID', async () => {
   const { deleteIngredientsByMealId } = createCaller(authContext({ db }, user))
   const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
 
@@ -60,7 +60,7 @@ it.skip('should do nothing if no ingredients are found for the meal ID', async (
   expect(remainingIngredients).toHaveLength(0)
 })
 
-it.skip('prevents unauth user from using procedure', async () => {
+it('prevents unauth user from using procedure', async () => {
   const { deleteIngredientsByMealId } = createCaller({
     db,
     req: {

@@ -16,7 +16,7 @@ beforeEach(async () => {
   ;[ingredient] = await insertAll(db, 'ingredient', [{ name: 'apple' }])
 })
 
-it.skip("should update ingredient's name", async () => {
+it("should update ingredient's name", async () => {
   // arrange
   const { updateIngredient } = createCaller(authContext({ db }, user))
 
@@ -30,7 +30,7 @@ it.skip("should update ingredient's name", async () => {
   expect(updatedIngr?.name).toBe('egg')
 })
 
-it.skip('should throw error if ingredient to be updated does not exist', async () => {
+it('should throw error if ingredient to be updated does not exist', async () => {
   const { updateIngredient } = createCaller(authContext({ db }, user))
 
   await expect(
@@ -41,7 +41,7 @@ it.skip('should throw error if ingredient to be updated does not exist', async (
   ).rejects.toThrowError(/this name was not found/i)
 })
 
-it.skip('prevents unauth user from using method', async () => {
+it('prevents unauth user from using method', async () => {
   // arrange
   const { updateIngredient } = createCaller({
     db,

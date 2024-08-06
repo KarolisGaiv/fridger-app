@@ -3,7 +3,7 @@ import { createTestDatabase } from '@tests/utils/database'
 import { createCallerFactory } from '@server/trpc'
 import { fakeUser } from '@server/entities/tests/fakes'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables, selectAll } from '@tests/utils/records'
+import { insertAll, selectAll } from '@tests/utils/records'
 import mealRouter from '..'
 
 const db = await wrapInRollbacks(createTestDatabase())
@@ -14,7 +14,7 @@ beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
 })
 
-it.skip('should throw error if meal to delete is not found', async () => {
+it('should throw error if meal to delete is not found', async () => {
   // arrange
   const { deleteMeal } = createCaller(authContext({ db }, user))
 
@@ -25,9 +25,8 @@ it.skip('should throw error if meal to delete is not found', async () => {
   await expect(deleteMeal({ name: 'non-existing-meal' })).rejects.toThrowError()
 })
 
-it.skip('should delete meal', async () => {
+it('should delete meal', async () => {
   // arrange
-  await clearTables(db, ['meal'])
   await insertAll(db, 'meal', { name: 'pizza', calories: 123 })
   let meals = await selectAll(db, 'meal')
   expect(meals).toHaveLength(1)
@@ -39,7 +38,7 @@ it.skip('should delete meal', async () => {
   expect(meals).toHaveLength(0)
 })
 
-it.skip('prevents unauth user from using method', async () => {
+it('prevents unauth user from using method', async () => {
   // arrange
   const { deleteMeal } = createCaller({
     db,

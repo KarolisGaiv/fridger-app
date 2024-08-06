@@ -22,7 +22,7 @@ beforeEach(async () => {
 })
 
 describe('deleteById', () => {
-  it.skip('should delete a meal ingredient successfully', async () => {
+  it('should delete a meal ingredient successfully', async () => {
     // arrange
     const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
     const [ingredient1] = await insertAll(db, 'ingredient', [fakeIngredient()])
@@ -47,14 +47,14 @@ describe('deleteById', () => {
     expect(remainingMealIngredients).toHaveLength(0)
   })
 
-  it.skip('should handle non-existent ID gracefully', async () => {
+  it('should handle non-existent ID gracefully', async () => {
     const { deleteById } = createCaller(authContext({ db }, user))
     const result = await deleteById({ id: 999 })
 
     expect(result).toBeUndefined()
   })
 
-  it.skip('prevents unauth user from using procedure', async () => {
+  it('prevents unauth user from using procedure', async () => {
     const { deleteById } = createCaller({
       db,
       req: {

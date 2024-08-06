@@ -47,10 +47,6 @@ describe('findByName', () => {
 })
 
 describe('findAll', () => {
-  afterAll(async () => {
-    await clearTables(db, ['ingredient'])
-  })
-
   it('should return empty array if there are no ingredients', async () => {
     const ingredients = await repository.findAll()
     expect(ingredients).toStrictEqual([])
@@ -74,10 +70,6 @@ describe('updateIngredient', async () => {
 
   beforeAll(async () => {
     await insertAll(db, 'ingredient', ingredient)
-  })
-
-  afterAll(async () => {
-    await clearTables(db, ['ingredient'])
   })
 
   it('should update ingredient sucessfully', async () => {
@@ -106,11 +98,8 @@ describe('delete', () => {
     name: 'banana',
   }
   beforeAll(async () => {
-    await insertAll(db, 'ingredient', ingredient)
-  })
-
-  afterAll(async () => {
     await clearTables(db, ['ingredient'])
+    await insertAll(db, 'ingredient', ingredient)
   })
 
   it('should delete meal', async () => {

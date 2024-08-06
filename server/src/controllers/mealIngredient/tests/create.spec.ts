@@ -2,7 +2,7 @@ import { authContext } from '@tests/utils/context'
 import { createTestDatabase } from '@tests/utils/database'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, selectAll, clearTables } from '@tests/utils/records'
+import { insertAll, selectAll } from '@tests/utils/records'
 import {
   fakeMeal,
   fakeIngredient,
@@ -17,14 +17,13 @@ let meal: any
 let ingredient: any
 
 beforeEach(async () => {
-  await clearTables(db, ['meal', 'ingredient'])
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   ;[meal] = await insertAll(db, 'meal', [fakeMeal()])
   ;[ingredient] = await insertAll(db, 'ingredient', [fakeIngredient()])
 })
 
 describe('create', async () => {
-  it.skip('should allow saving new meal ingredient', async () => {
+  it('should allow saving new meal ingredient', async () => {
     // arrange
     const mealIngredientData = {
       mealId: meal.id,
@@ -41,7 +40,7 @@ describe('create', async () => {
     expect(mealIngredients[0]).toMatchObject(mealIngredientData)
   })
 
-  it.skip('prevents unauth user from adding meal plan', async () => {
+  it('prevents unauth user from adding meal plan', async () => {
     // arrange
     const mealIngredientData = {
       mealId: meal.id,

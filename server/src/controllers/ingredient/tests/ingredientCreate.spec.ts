@@ -14,7 +14,7 @@ beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
 })
 
-it.skip('should create and save new ingredient', async () => {
+it('should create and save new ingredient', async () => {
   // arrange
   const ingredient = fakeIngredient()
   const { create } = createCaller(authContext({ db }, user))
@@ -28,7 +28,7 @@ it.skip('should create and save new ingredient', async () => {
   })
 })
 
-it.skip('prevents unauth user from using method', async () => {
+it('prevents unauth user from using method', async () => {
   // arrange
   const { create } = createCaller({
     db,

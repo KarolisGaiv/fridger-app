@@ -3,7 +3,7 @@ import { createTestDatabase } from '@tests/utils/database'
 import { fakeMeal, fakeUser } from '@server/entities/tests/fakes'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { clearTables, insertAll } from '@tests/utils/records'
+import { insertAll } from '@tests/utils/records'
 import mealRouter from '..'
 
 const db = await wrapInRollbacks(createTestDatabase())
@@ -11,11 +11,10 @@ const createCaller = createCallerFactory(mealRouter)
 let user: any
 
 beforeEach(async () => {
-  await clearTables(db, ['meal'])
   ;[user] = await insertAll(db, 'user', [fakeUser()])
 })
 
-it.skip('should return empty list if there are no meals', async () => {
+it('should return empty list if there are no meals', async () => {
   // arrange
   const { findAll } = createCaller(authContext({ db }, user))
 
@@ -23,7 +22,7 @@ it.skip('should return empty list if there are no meals', async () => {
   expect(await findAll()).toHaveLength(0)
 })
 
-it.skip('should return all meals', async () => {
+it('should return all meals', async () => {
   // arrange
   await insertAll(db, 'meal', [fakeMeal(), fakeMeal()])
   const { findAll } = createCaller(authContext({ db }, user))
@@ -35,7 +34,7 @@ it.skip('should return all meals', async () => {
   expect(meals).toHaveLength(2)
 })
 
-it.skip('prevents unauth user from using method', async () => {
+it('prevents unauth user from using method', async () => {
   // arrange
   const { findAll } = createCaller({
     db,

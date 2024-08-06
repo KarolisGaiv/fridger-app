@@ -7,7 +7,7 @@ import {
   fakeMealIngredient,
   fakeMeal,
 } from '@server/entities/tests/fakes'
-import { insertAll, clearTables } from '@tests/utils/records'
+import { insertAll } from '@tests/utils/records'
 import { groceryListRepository } from '../groceryListRepository'
 
 const db = await wrapInRollbacks(createTestDatabase())
@@ -45,11 +45,6 @@ beforeEach(async () => {
   )
 
   fakeIngrId = fakeIngr.id
-})
-
-afterEach(async () => {
-  // Clear all records after each test
-  await clearTables(db, ['groceryList'])
 })
 
 describe('create', () => {
