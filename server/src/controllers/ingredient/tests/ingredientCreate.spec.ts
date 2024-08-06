@@ -1,45 +1,45 @@
-// import { authContext } from '@tests/utils/context'
-// import { createTestDatabase } from '@tests/utils/database'
-// import { fakeIngredient, fakeUser } from '@server/entities/tests/fakes'
-// import { createCallerFactory } from '@server/trpc'
-// import { wrapInRollbacks } from '@tests/utils/transactions'
-// import { insertAll } from '@tests/utils/records'
-// import ingredientRouter from '..'
+import { authContext } from '@tests/utils/context'
+import { createTestDatabase } from '@tests/utils/database'
+import { fakeIngredient, fakeUser } from '@server/entities/tests/fakes'
+import { createCallerFactory } from '@server/trpc'
+import { wrapInRollbacks } from '@tests/utils/transactions'
+import { insertAll } from '@tests/utils/records'
+import ingredientRouter from '..'
 
-// const db = await wrapInRollbacks(createTestDatabase())
-// const createCaller = createCallerFactory(ingredientRouter)
-// let user: any
+const db = await wrapInRollbacks(createTestDatabase())
+const createCaller = createCallerFactory(ingredientRouter)
+let user: any
 
-// beforeEach(async () => {
-//   ;[user] = await insertAll(db, 'user', [fakeUser()])
-// })
+beforeEach(async () => {
+  ;[user] = await insertAll(db, 'user', [fakeUser()])
+})
 
-// it('should create and save new ingredient', async () => {
-//   // arrange
-//   const ingredient = fakeIngredient()
-//   const { create } = createCaller(authContext({ db }, user))
+it.skip('should create and save new ingredient', async () => {
+  // arrange
+  const ingredient = fakeIngredient()
+  const { create } = createCaller(authContext({ db }, user))
 
-//   // act
-//   const res = await create(ingredient)
+  // act
+  const res = await create(ingredient)
 
-//   // assert
-//   expect(res.ingredientCreated).toMatchObject({
-//     name: ingredient.name,
-//   })
-// })
+  // assert
+  expect(res.ingredientCreated).toMatchObject({
+    name: ingredient.name,
+  })
+})
 
-// it('prevents unauth user from using method', async () => {
-//   // arrange
-//   const { create } = createCaller({
-//     db,
-//     req: {
-//       // no Auth header
-//       header: () => undefined,
-//     } as any,
-//   })
+it.skip('prevents unauth user from using method', async () => {
+  // arrange
+  const { create } = createCaller({
+    db,
+    req: {
+      // no Auth header
+      header: () => undefined,
+    } as any,
+  })
 
-//   // act & assert
-//   await expect(create(fakeIngredient())).rejects.toThrowError(
-//     /unauthenticated/i
-//   )
-// })
+  // act & assert
+  await expect(create(fakeIngredient())).rejects.toThrowError(
+    /unauthenticated/i
+  )
+})

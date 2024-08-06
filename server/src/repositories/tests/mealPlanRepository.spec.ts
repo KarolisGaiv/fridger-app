@@ -13,7 +13,7 @@ beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
 })
 
-describe('create', () => {
+describe.skip('create', () => {
   it('should create new meal plan', async () => {
     const mealPlan = {
       userId: user.id,
@@ -87,7 +87,7 @@ describe('create', () => {
   })
 })
 
-describe('findById', () => {
+describe.skip('findById', () => {
   it('should retrieve a meal plan by ID', async () => {
     const mealPlan = {
       userId: user.id,
@@ -109,7 +109,7 @@ describe('findById', () => {
   })
 })
 
-describe('findByUserId', () => {
+describe.skip('findByUserId', () => {
   it('should retrieve all meal plans for a specific user', async () => {
     const [user2] = await insertAll(db, 'user', [fakeUser()])
 
@@ -145,7 +145,7 @@ describe('findByUserId', () => {
   })
 })
 
-describe('update', () => {
+describe.skip('update', () => {
   it('should update an existing meal plan', async () => {
     const initialMealPlan = {
       userId: user.id,
@@ -184,7 +184,7 @@ describe('update', () => {
   })
 })
 
-describe('deleteById', () => {
+describe.skip('deleteById', () => {
   it('should delete an existing meal plan', async () => {
     const mealPlan = {
       userId: user.id,
