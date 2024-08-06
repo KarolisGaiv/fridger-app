@@ -8,7 +8,7 @@ import {
 } from '@server/entities/tests/fakes'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { fridgeContentService } from '@server/services/fridgeContentServices'
-import { insertAll, clearTables, selectAll } from '@tests/utils/records'
+import { insertAll, selectAll } from '@tests/utils/records'
 import { groceryListServices } from '@server/services/groceryListServices'
 
 const db = await wrapInRollbacks(createTestDatabase())
@@ -22,17 +22,6 @@ let inactiveMealPlan: any
 let meal1: any
 let ingredient1: any
 let ingredient2: any
-
-// beforeAll(async () => {
-//   // // await clearTables(db, [
-//     'mealIngredient',
-//     'meal',
-//     'ingredient',
-//     'mealPlan',
-//     'user',
-//     'fridgeContent',
-//   ])
-// })
 
 beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
