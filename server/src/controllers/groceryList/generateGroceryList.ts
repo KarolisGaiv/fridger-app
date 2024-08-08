@@ -51,8 +51,14 @@ export default authenticatedProcedure
       authUser.id
     )
 
+    // Ensure mealPlanId is either a number or null
+    const formattedGroceryList = groceryList.map((item) => ({
+      ...item,
+      mealPlanId: item.mealPlanId ?? null,
+    }))
+
     const savedGroceryList =
-      await repos.groceryListRepository.create(groceryList)
+      await repos.groceryListRepository.create(formattedGroceryList)
 
     return savedGroceryList
   })
