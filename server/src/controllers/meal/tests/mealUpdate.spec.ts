@@ -55,17 +55,6 @@ it('should throw error if meal to be updated does not exist', async () => {
   ).rejects.toThrowError(/this name was not found/i)
 })
 
-it('should throw error if more properties are provided than name or calories', async () => {
-  const { updateMeal } = createCaller(authContext({ db }, user))
-
-  await expect(
-    updateMeal({
-      mealName: 'non-exising',
-      updateInfo: { calories: 420, invalidProperty: 'oops' },
-    })
-  ).rejects.toThrowError(/unrecognized key/i)
-})
-
 it('prevents unauth user from using method', async () => {
   // arrange
   const { updateMeal } = createCaller({

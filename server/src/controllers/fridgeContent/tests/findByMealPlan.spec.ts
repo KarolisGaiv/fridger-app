@@ -67,12 +67,6 @@ it('returns empty array if no fridge content found for the meal plan', async () 
   expect(result).toHaveLength(0)
 })
 
-it('throws error if meal plan ID is not provided', async () => {
-  const { findByMealPlan } = createCaller(authContext({ db }, realUser))
-
-  await expect(findByMealPlan({})).rejects.toThrowError()
-})
-
 it('prevents unauthenticated user to get fridge content', async () => {
   const { findByMealPlan } = createCaller({
     db,

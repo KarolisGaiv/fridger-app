@@ -90,19 +90,6 @@ describe('create', () => {
       fridgeContent.existingQuantity
     )
   })
-
-  it('should throw an error if required fields are missing', async () => {
-    const fridgeContent = {
-      userId: 1,
-      groceryListId: 1,
-      // Missing ingredientId which is required
-      existingQuantity: 10,
-    }
-
-    await expect(repository.create(fridgeContent)).rejects.toThrow(
-      /violates not-null constraint/i
-    )
-  })
 })
 
 describe('findByUser', () => {

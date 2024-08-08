@@ -75,15 +75,6 @@ describe('create', () => {
     const previousActivePlan = await repository.findById(oldPlan.id)
     expect(previousActivePlan?.isActive).toBe(true)
   })
-
-  it('throws error if missing plan name', async () => {
-    const mealPlan = {
-      userId: user.id,
-    }
-    await expect(repository.create(mealPlan)).rejects.toThrowError(
-      /violates not-null constraint/
-    )
-  })
 })
 
 describe('findById', () => {

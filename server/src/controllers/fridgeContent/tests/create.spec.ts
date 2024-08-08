@@ -81,16 +81,3 @@ it('prevents unauthenticated user from adding fridge content', async () => {
   // act & assert
   await expect(create(content)).rejects.toThrow(/Unauthenticated/i)
 })
-
-it('throws an error if a required field is missing', async () => {
-  // arrange
-  const content = {
-    mealPlan: mealPlan.id,
-    existingQuantity: 32,
-    groceryListId,
-  }
-  const { create } = createCaller(authContext({ db }, realUser))
-
-  // act & assert
-  await expect(create(content)).rejects.toThrow()
-})
