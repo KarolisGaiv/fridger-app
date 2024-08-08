@@ -5,13 +5,13 @@ import { groceryListRepository } from '@server/repositories/groceryListRepositor
 import { TRPCError } from '@trpc/server'
 
 export function fridgeContentService(db: Database) {
-  const frideContentRepo = fridgeContentRepository(db)
+  const fridgeContentRepo = fridgeContentRepository(db)
   const mealPlanRepo = mealPlanRepository(db)
   const groceryListRepo = groceryListRepository(db)
 
   return {
     async placeItemsIntoFridge(userId: number): Promise<void> {
-      // find active meal plan for user
+      // Find active meal plan for user
       const activeMealPlan = await mealPlanRepo.findActiveMealPlan(userId)
 
       if (!activeMealPlan) {
@@ -21,7 +21,7 @@ export function fridgeContentService(db: Database) {
         })
       }
 
-      // find grocery list by the active meal plan
+      // Find grocery list by the active meal plan
       const groceryList = await groceryListRepo.findByMealPlanId(
         activeMealPlan.id
       )
@@ -33,21 +33,23 @@ export function fridgeContentService(db: Database) {
         })
       }
 
-      // place items into fridge
+      // Place items into fridge
       await Promise.all(
         groceryList.map(async (item) => {
-          const existingItem = await frideContentRepo.findByUserAndProduct(
+          const existingItem = await fridgeContentRepo.findByUserAndProduct(
             userId,
             item.ingredientId
           )
 
           if (existingItem) {
-            await frideContentRepo.updateQuantity(
+            // Handle the case where existingQuantity might be null
+            const updatedQuantity = existingItem.existingQuantity ?? 0
+            await fridgeContentRepo.updateQuantity(
               existingItem.ingredientId,
-              existingItem.existingQuantity + item.quantity
+              updatedQuantity + item.quantity
             )
           } else {
-            await frideContentRepo.create({
+            await fridgeContentRepo.create({
               userId,
               mealPlan: activeMealPlan.id,
               ingredientId: item.ingredientId,
