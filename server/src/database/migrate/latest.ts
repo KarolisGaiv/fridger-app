@@ -66,13 +66,18 @@ if (isFileRunDirectly) {
   const db = createDatabase(config.database)
   const testdb = createDatabase(config.testDatabase)
 
-  if (process.env.RUN_ENV === 'test') {
-    console.log('Start test database migration')
-    await migrateLatest(testdb)
-  } else {
-    console.log('Start production database migration')
+  console.log('Start production database migration')
     await migrateLatest(db)
     console.log('Start test database migration')
     await migrateLatest(testdb)
-  }
+
+  // if (process.env.RUN_ENV === 'test') {
+  //   console.log('Start test database migration')
+  //   await migrateLatest(testdb)
+  // } else {
+  //   console.log('Start production database migration')
+  //   await migrateLatest(db)
+  //   console.log('Start test database migration')
+  //   await migrateLatest(testdb)
+  // }
 }
