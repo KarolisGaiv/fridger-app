@@ -34,10 +34,6 @@ const schema = z
     database: z.object({
       connectionString: z.string().url(),
     }),
-
-    testDatabase: z.object({
-      connectionString: z.string().url(),
-    }),
   })
   .readonly()
 
@@ -54,10 +50,6 @@ const config = schema.parse({
 
   database: {
     connectionString: env.DATABASE_URL,
-  },
-
-  testDatabase: {
-    connectionString: env.TEST_DATABASE_URL,
   },
 })
 

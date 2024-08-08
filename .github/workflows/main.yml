@@ -11,8 +11,9 @@ jobs:
       # VITE_API_PATH: /api/v1/trpc
 
       # variables for our back-end tests, see server/src/config.ts
-      DATABASE_URL: postgres://postgres:karolis123@localhost:5432/fridger_app
-      TEST_DATABASE_URL: postgres://postgres:karolis123@localhost:5432/githubActions
+      # DATABASE_URL: postgres://postgres:karolis123@localhost:5432/fridger_app
+      DATABASE_URL: postgres://postgres:karolis123@localhost:5432/githubActions
+      # TEST_DATABASE_URL: postgres://postgres:karolis123@localhost:5432/githubActions
     services:
       # spin up a database for tests
       postgres:
@@ -53,8 +54,10 @@ jobs:
       # - name: Test client (unit)
       #   run: npm run test:unit -w=client
 
+      # - name: Run server database migrations (test)
+      #   run: npm run migrate:test -w=server
       - name: Run server database migrations (test)
-        run: npm run migrate:test -w=server
+        run: npm run migrate:latest -w=server
 
       - name: Test server
         run: npm run test -w=server

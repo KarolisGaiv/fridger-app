@@ -14,7 +14,6 @@
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx --fix",
     "migrate:new": "tsx ./src/database/migrate/new",
     "migrate:latest": "tsx src/database/migrate/latest",
-    "migrate:test": "RUN_ENV=test tsx src/database/migrate/latest",
     "migrate:latest:prod": "npm run node-es dist/database/migrate/latest.js",
     "node-es": "node --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"./loader.js\", pathToFileURL(\"./\"));'",
     "prod": "npm run migrate:latest:prod && npm run start",
