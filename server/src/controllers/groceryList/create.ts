@@ -1,4 +1,5 @@
 import { authenticatedProcedure } from '@server/trpc/authenticateProcedure'
+import z from 'zod'
 import { TRPCError } from '@trpc/server'
 import provideRepos from '@server/trpc/provideRepos'
 import { assertError } from '@server/utils/errors'
@@ -12,9 +13,11 @@ export default authenticatedProcedure
     })
   )
   .input(
-    groceryListSchema.omit({
-      id: true,
-    })
+    z.array(
+      groceryListSchema.omit({
+        id: true,
+      })
+    )
   )
   .mutation(async ({ input, ctx: { repos } }) => {
     const result = await repos.groceryListRepository

@@ -26,14 +26,28 @@ beforeAll(async () => {
 })
 
 describe('create', () => {
-  it('should create a new grocery list item', async () => {
+  it('should create new grocery list items', async () => {
     // arrange
-    const newGroceryList = {
-      mealPlanId: mealPlan.id,
-      product: 'Apples',
-      quantity: 5,
-      ingredientId: ingredient.id,
-    }
+    const newGroceryList = [
+      {
+        mealPlanId: mealPlan.id,
+        product: 'Apples',
+        quantity: 5,
+        ingredientId: ingredient.id,
+      },
+      {
+        mealPlanId: mealPlan.id,
+        product: 'Bananas',
+        quantity: 3,
+        ingredientId: ingredient.id,
+      },
+      {
+        mealPlanId: mealPlan.id,
+        product: 'Carrots',
+        quantity: 7,
+        ingredientId: ingredient.id,
+      },
+    ]
     const { create } = createCaller(authContext({ db }, user))
 
     // act
@@ -41,13 +55,20 @@ describe('create', () => {
 
     // assert
     expect(result).toEqual({
-      result: [
+      result: newGroceryList.map((item) => expect.objectContaining(item)),
+    })
+
+    // Assert that each item in the result array is an object
+    result.result.forEach((item) => {
+      expect(typeof item).toBe('object')
+      expect(item).toEqual(
         expect.objectContaining({
-          mealPlanId: mealPlan.id,
-          product: 'Apples',
-          quantity: 5,
-        }),
-      ],
+          mealPlanId: expect.any(Number),
+          product: expect.any(String),
+          quantity: expect.any(Number),
+          ingredientId: expect.any(Number),
+        })
+      )
     })
   })
 
@@ -61,12 +82,26 @@ describe('create', () => {
       } as any,
     })
 
-    const newGroceryList = {
-      mealPlanId: mealPlan.id,
-      product: 'Apples',
-      quantity: 5,
-      ingredientId: ingredient.id,
-    }
+    const newGroceryList = [
+      {
+        mealPlanId: mealPlan.id,
+        product: 'Apples',
+        quantity: 5,
+        ingredientId: ingredient.id,
+      },
+      {
+        mealPlanId: mealPlan.id,
+        product: 'Bananas',
+        quantity: 3,
+        ingredientId: ingredient.id,
+      },
+      {
+        mealPlanId: mealPlan.id,
+        product: 'Carrots',
+        quantity: 7,
+        ingredientId: ingredient.id,
+      },
+    ]
 
     // act & assert
     await expect(create(newGroceryList)).rejects.toThrowError(

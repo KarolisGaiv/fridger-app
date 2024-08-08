@@ -11,7 +11,7 @@ import type { Insertable, Selectable } from 'kysely'
 export function groceryListRepository(db: Database) {
   return {
     async create(
-      groceryList: { quantity: number; product: string }[]
+      groceryList: Omit<GroceryList, 'id'>[]
     ): Promise<GroceryListPublic[]> {
       return db
         .insertInto('groceryList')
