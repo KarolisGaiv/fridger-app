@@ -50,7 +50,7 @@ import { isLoggedIn } from '@/stores/user'
         </div>
       </div>
     </div>
-    <div class="text-4xl font-bold text-gray-800 dark:text-gray-100">
+    <div v-if="isLoggedIn" class="text-4xl font-bold text-gray-800 dark:text-gray-100">
       PLACEHOLDER FOR CURRENT MEAL PLAN DETAILS
     </div>
 
