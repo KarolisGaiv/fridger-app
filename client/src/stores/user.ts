@@ -44,4 +44,4 @@ export function logout() {
   clearStoredAccessToken(localStorage)
 }
 
-export const signup = trpc.user.signup.mutate
+export const signup = trpc.user.register.mutate

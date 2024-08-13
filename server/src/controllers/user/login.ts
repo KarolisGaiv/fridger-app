@@ -50,12 +50,12 @@ export default publicProcedure
       const payload = prepareTokenPayload(user)
 
       // create token for authenticated and logged user
-      const token = jsonwebtoken.sign(payload, tokenKey, {
+      const accessToken = jsonwebtoken.sign(payload, tokenKey, {
         expiresIn,
       })
 
       return {
-        token,
+        accessToken,
       }
     }
   )
