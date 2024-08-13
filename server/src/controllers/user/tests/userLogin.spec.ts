@@ -19,13 +19,13 @@ const [userSeed] = await insertAll(db, 'user', [
 const { login } = createCaller({ db })
 
 it('returns a token if password matches', async () => {
-  const { token } = await login({
+  const { accessToken } = await login({
     email: userSeed.email,
     password: CORRECT_PASW,
   })
 
-  expect(token).toEqual(expect.any(String))
-  expect(token.slice(0, 3)).toEqual('eyJ')
+  expect(accessToken).toEqual(expect.any(String))
+  expect(accessToken.slice(0, 3)).toEqual('eyJ')
 })
 
 it('throws error for non-existant user', async () => {
