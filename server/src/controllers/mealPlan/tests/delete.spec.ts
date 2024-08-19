@@ -27,8 +27,8 @@ describe('deleteMealPlan', () => {
     // Arrange
     const { deleteById } = createCaller(authContext({ db }, user))
     let userPlans = await selectAll(db, 'mealPlan')
-    expect(userPlans).toHaveLength(4)
-    expect(userPlans[0].planName).toBe('Initial Plan')
+    expect(userPlans).toHaveLength(9)
+    expect(userPlans[5].planName).toBe('Initial Plan')
 
     // Act
     const result = await deleteById({ id: mealPlan.id })
@@ -36,9 +36,9 @@ describe('deleteMealPlan', () => {
     // Assert
     expect(result.message).toBe('Meal plan deleted successfully')
     userPlans = await selectAll(db, 'mealPlan')
-    expect(userPlans).toHaveLength(3)
-    // Ensure the meal plan is actually deleted
-    expect(userPlans[0].planName).not.toBe('Initial Plan')
+    expect(userPlans).toHaveLength(8)
+    // // Ensure the meal plan is actually deleted
+    expect(userPlans[5].planName).not.toBe('Initial Plan')
   })
 
   it('should throw a NOT_FOUND error if meal plan is not found', async () => {

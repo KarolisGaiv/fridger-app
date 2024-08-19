@@ -48,7 +48,7 @@ export const authenticatedProcedure = publicProcedure.use(({ ctx, next }) => {
     })
   }
 
-  const userToken = ctx.req.header('Authorization')?.replace('Bearer', '')
+  const userToken = ctx.req.header('Authorization')?.replace('Bearer ', '')
 
   if (!userToken) {
     throw new TRPCError({

@@ -34,7 +34,7 @@ it('should pass if user provides a valid token', async () => {
   const usingValidToken = createCaller({
     db,
     req: {
-      header: () => `Bearer${VALID_TOKEN}`,
+      header: () => `Bearer ${VALID_TOKEN}`,
     } as any,
   })
   const response = await usingValidToken.testCall()
