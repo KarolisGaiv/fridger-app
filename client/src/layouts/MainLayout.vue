@@ -29,7 +29,6 @@ const links = computed(() => [
       ]),
 ])
 
-
 function logoutUser() {
   logout()
   router.push({ name: 'Login' })
