@@ -20,7 +20,7 @@ const [submitLogin, errorMessage] = useErrorMessage(async () => {
   // if it is provided in the query string:
   // :to="/login?redirect=/some-page-to-go/after-login"
   const redirectTo = (router.currentRoute.value.query.redirect as string) ?? {
-    name: 'WriteArticle',
+    name: 'AddMealPlan',
   }
 
   router.push(redirectTo)

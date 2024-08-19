@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import { trpc } from '@/trpc'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -55,4 +55,4 @@ const [createArticle, errorMessage] = useErrorMessage(async () => {
       <FwbButton size="lg" type="submit">Post article</FwbButton>
     </div>
   </form>
-</template>
+</template> -->
