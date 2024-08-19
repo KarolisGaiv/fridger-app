@@ -29,7 +29,7 @@ const [createMealPlan, errorMessage] = useErrorMessage(async () => {
 
 const addMeals = () => {
   if (createdMealPlanId.value) {
-    router.push({ name: 'AddMeals', params: { mealPlanId: createdMealPlanId.value } })
+    router.push({ name: 'AddMeal', params: { mealPlanId: createdMealPlanId.value } })
   }
 }
 
@@ -67,7 +67,7 @@ const goToDashboard = () => {
   </form>
 
   <div v-if="showOptions" class="mt-6 space-x-4">
-    <p>Would you like to add meals to this plan?</p>
+    <p>Would you like to add new meals?</p>
     <FwbButton size="lg" @click="addMeals">Yes, add meals</FwbButton>
     <FwbButton size="lg" @click="goToDashboard">No, go to dashboard</FwbButton>
   </div>
