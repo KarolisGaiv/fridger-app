@@ -13,16 +13,29 @@ const mealPlanForm = ref({
 })
 
 const successMessage = ref<string | null>(null)
+const showOptions = ref<boolean>(false)
+const createdMealPlanId = ref<number | null>(null)
 
 const [createMealPlan, errorMessage] = useErrorMessage(async () => {
   const mealPlan = await trpc.mealPlan.create.mutate(mealPlanForm.value)
 
   successMessage.value = "Meal plan created successfully!"
+  createdMealPlanId.value = mealPlan.id
 
   mealPlanForm.value.planName = ""
 
+  showOptions.value = true // Show options for adding meals or going to dashboard
 })
 
+const addMeals = () => {
+  if (createdMealPlanId.value) {
+    router.push({ name: 'AddMeals', params: { mealPlanId: createdMealPlanId.value } })
+  }
+}
+
+const goToDashboard = () => {
+  router.push({ name: 'Home' })
+}
 </script>
 
 <template>
@@ -52,4 +65,10 @@ const [createMealPlan, errorMessage] = useErrorMessage(async () => {
       <FwbButton size="lg" type="submit">Add meal plan</FwbButton>
     </div>
   </form>
+
+  <div v-if="showOptions" class="mt-6 space-x-4">
+      <p>Would you like to add meals to this plan?</p>
+      <FwbButton size="lg" @click="addMeals">Yes, add meals</FwbButton>
+      <FwbButton size="lg" @click="goToDashboard">No, go to dashboard</FwbButton>
+    </div>
 </template>
