@@ -12,9 +12,9 @@ const router = createRouter({
       beforeEnter: [authenticate],
       children: [
         {
-          path: 'write-article',
-          name: 'WriteArticle',
-          component: () => import('../views/WriteArticle.vue'),
+          path: 'add-meal-plan',
+          name: 'AddMealPlan',
+          component: () => import('../views/AddMealPlan.vue'),
         },
       ],
     },
