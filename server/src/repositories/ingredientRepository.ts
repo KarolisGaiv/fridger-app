@@ -32,7 +32,7 @@ export function ingredientRepository(db: Database) {
     async findAll(): Promise<IngredientPublic[]> {
       return db
         .selectFrom('ingredient')
-        .select(ingredientKeys)
+        .select(ingredientKeyPublic)
         .orderBy('id', 'asc')
         .execute()
     },
