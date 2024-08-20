@@ -17,10 +17,11 @@ export function mealRepository(db: Database) {
         .executeTakeFirstOrThrow()
     },
 
-    async findByName(name: string): Promise<Selectable<Meal> | undefined> {
+    async findByName(name: string, userId: number): Promise<Selectable<Meal> | undefined> {
       const meal = await db
         .selectFrom('meal')
         .select(mealKeysAll)
+        .where('user', '=', userId)
         .where('name', '=', name)
         .executeTakeFirst()
 
@@ -37,21 +38,24 @@ export function mealRepository(db: Database) {
       return meal
     },
 
-    async findAll(): Promise<MealPublic[]> {
+    async findAll(userId: number): Promise<MealPublic[]> {
       return db
         .selectFrom('meal')
         .select(mealKeysAll)
         .orderBy('id', 'asc')
+        .where('user', '=', userId)
         .execute()
     },
 
     async updateMeal(
+      userId: number,
       mealName: string,
-      updates: Partial<Insertable<MealPublic>>
+      updates: Partial<Omit<Meal, 'id'>>
     ): Promise<MealPublic | undefined> {
       const result = await db
         .updateTable('meal')
         .set(updates)
+        .where('user', '=', userId)
         .where('name', '=', mealName)
         .returning(mealKeysPublic)
         .executeTakeFirst()
@@ -59,8 +63,10 @@ export function mealRepository(db: Database) {
       return result
     },
 
-    async deleteMeal(name: string): Promise<void> {
-      await db.deleteFrom('meal').where('name', '=', name).execute()
+    async deleteMeal(name: string, userId: number): Promise<void> {
+      await db.deleteFrom('meal')
+      .where('user', '=', userId)
+      .where('name', '=', name).execute()
     },
   }
 }

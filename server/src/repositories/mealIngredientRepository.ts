@@ -6,7 +6,8 @@ import {
   mealIngredientKeysPublic,
 } from '@server/entities/mealIngredient'
 
-export interface MealIngredientWithMealName extends Selectable<MealIngredientPublic> {
+export interface MealIngredientWithMealName
+  extends Selectable<MealIngredientPublic> {
   ingredientName: string
 }
 

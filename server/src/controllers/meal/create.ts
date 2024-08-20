@@ -17,20 +17,27 @@ export default authenticatedProcedure
       calories: true,
     })
   )
-  .mutation(async ({ input: meal, ctx: { repos: databaseRepositories } }) => {
-    const mealCreated = await databaseRepositories.mealRepository
-      .create(meal)
-      .catch((error: unknown) => {
-        assertError(error)
+  .mutation(
+    async ({ input, ctx: { authUser, repos: databaseRepositories } }) => {
+      const data = {
+        ...input,
+        user: authUser.id,
+      }
 
-        if (error.message.includes('duplicate key')) {
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: 'Meal already exist',
-            cause: error,
-          })
-        }
-        throw error
-      })
-    return { mealCreated }
-  })
+      const mealCreated = await databaseRepositories.mealRepository
+        .create(data)
+        .catch((error: unknown) => {
+          assertError(error)
+
+          if (error.message.includes('duplicate key')) {
+            throw new TRPCError({
+              code: 'BAD_REQUEST',
+              message: 'Meal already exist',
+              cause: error,
+            })
+          }
+          throw error
+        })
+      return { mealCreated }
+    }
+  )

@@ -7,6 +7,8 @@ export const mealSchema = z.object({
   id: idSchema,
   calories: z.number(),
   name: z.string().min(1).max(60),
+  user: z.number(),
+  mealPlan: z.number().optional(),
 })
 
 export const mealKeysAll = Object.keys(mealSchema.shape) as (keyof Meal)[]
