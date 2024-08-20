@@ -21,19 +21,25 @@ export default authenticatedProcedure
         .strict(), // ensure no other properties
     })
   )
-  .mutation(async ({ input: { mealName, updateInfo }, ctx: { repos } }) => {
-    const mealToUpdate = await repos.mealRepository.findByName(mealName)
+  .mutation(
+    async ({ input: { mealName, updateInfo }, ctx: { authUser, repos } }) => {
+      const mealToUpdate = await repos.mealRepository.findByName(
+        mealName,
+        authUser.id
+      )
 
-    if (!mealToUpdate) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Meal with this name was not found',
-      })
+      if (!mealToUpdate) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Meal with this name was not found',
+        })
+      }
+
+      const updatedMeal = await repos.mealRepository.updateMeal(
+        authUser.id,
+        mealName,
+        updateInfo
+      )
+      return updatedMeal
     }
-
-    const updatedMeal = await repos.mealRepository.updateMeal(
-      mealName,
-      updateInfo
-    )
-    return updatedMeal
-  })
+  )

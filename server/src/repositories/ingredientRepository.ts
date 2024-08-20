@@ -18,32 +18,37 @@ export function ingredientRepository(db: Database) {
     },
 
     async findByName(
-      name: string
+      name: string,
+      userId: number
     ): Promise<Selectable<Ingredient> | undefined> {
       const ingredient = await db
         .selectFrom('ingredient')
         .select(ingredientKeys)
+        .where('user', '=', userId)
         .where('name', '=', name)
         .executeTakeFirst()
 
       return ingredient
     },
 
-    async findAll(): Promise<IngredientPublic[]> {
+    async findAll(userId: number): Promise<IngredientPublic[]> {
       return db
         .selectFrom('ingredient')
         .select(ingredientKeys)
+        .where('user', '=', userId)
         .orderBy('id', 'asc')
         .execute()
     },
 
     async updateIngredient(
       ingredientName: string,
+      userId: number,
       updates: Partial<Insertable<IngredientPublic>>
     ): Promise<IngredientPublic | undefined> {
       const result = await db
         .updateTable('ingredient')
         .set(updates)
+        .where('user', '=', userId)
         .where('name', '=', ingredientName)
         .returning(ingredientKeyPublic)
         .executeTakeFirst()
@@ -51,8 +56,12 @@ export function ingredientRepository(db: Database) {
       return result
     },
 
-    async deleteIngredient(name: string): Promise<void> {
-      await db.deleteFrom('ingredient').where('name', '=', name).execute()
+    async deleteIngredient(name: string, userId: number): Promise<void> {
+      await db
+        .deleteFrom('ingredient')
+        .where('user', '=', userId)
+        .where('name', '=', name)
+        .execute()
     },
   }
 }

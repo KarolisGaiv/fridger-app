@@ -13,7 +13,7 @@ let ingredient: any
 
 beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
-  ;[ingredient] = await insertAll(db, 'ingredient', [{ name: 'apple' }])
+  ;[ingredient] = await insertAll(db, 'ingredient', [{ name: 'apple', user: user.id }])
 })
 
 it("should update ingredient's name", async () => {

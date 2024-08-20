@@ -15,8 +15,11 @@ export default authenticatedProcedure
       name: true,
     })
   )
-  .mutation(async ({ input, ctx: { repos } }) => {
-    const mealToDelete = await repos.mealRepository.findByName(input.name)
+  .mutation(async ({ input, ctx: { authUser, repos } }) => {
+    const mealToDelete = await repos.mealRepository.findByName(
+      input.name,
+      authUser.id
+    )
 
     if (!mealToDelete) {
       throw new TRPCError({
@@ -25,5 +28,5 @@ export default authenticatedProcedure
       })
     }
 
-    await repos.mealRepository.deleteMeal(input.name)
+    await repos.mealRepository.deleteMeal(input.name, authUser.id)
   })

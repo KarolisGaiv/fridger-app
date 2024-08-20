@@ -16,9 +16,14 @@ export default authenticatedProcedure
       name: true,
     })
   )
-  .mutation(async ({ input: ingredient, ctx: { repos } }) => {
+  .mutation(async ({ input: ingredient, ctx: { authUser, repos } }) => {
+    const data = {
+      ...ingredient,
+      user: authUser.id,
+    }
+
     const ingredientCreated = await repos.ingredientRepository
-      .create(ingredient)
+      .create(data)
       .catch((error: unknown) => {
         assertError(error)
 

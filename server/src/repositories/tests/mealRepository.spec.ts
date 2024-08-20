@@ -1,15 +1,24 @@
 import { createTestDatabase } from '@tests/utils/database'
-import { fakeMeal } from '@server/entities/tests/fakes'
+import { fakeMeal, fakeUser } from '@server/entities/tests/fakes'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables } from '@tests/utils/records'
+import { insertAll, clearTables, selectAll } from '@tests/utils/records'
 import { mealRepository } from '../mealRepository'
 
 const db = await wrapInRollbacks(createTestDatabase())
 const repository = mealRepository(db)
+let user: any
+let user2: any
+
+beforeEach(async () => {
+  ;[user] = await insertAll(db, 'user', [fakeUser()])
+})
 
 describe('create', () => {
   it('should create a new meal', async () => {
-    const meal = fakeMeal()
+    const meal = {
+      ...fakeMeal(),
+      user: user.id,
+    }
     const createdMeal = await repository.create(meal)
 
     expect(createdMeal).toEqual({
@@ -20,17 +29,19 @@ describe('create', () => {
   })
 })
 
-describe('findByName', () => {
-  const meal = {
-    name: 'pancakes',
-    calories: 650,
-  }
+describe('findByName', async () => {
   beforeAll(async () => {
-    await insertAll(db, 'meal', meal)
+    ;[user] = await insertAll(db, 'user', [fakeUser()])
   })
 
   it('should find meal by name', async () => {
-    const foundMeal = await repository.findByName(meal.name)
+    const meal = {
+      ...fakeMeal(),
+      user: user.id,
+    }
+    await insertAll(db, 'meal', meal)
+
+    const foundMeal = await repository.findByName(meal.name, user.id)
 
     expect(foundMeal).toMatchObject({
       name: meal.name,
@@ -39,80 +50,139 @@ describe('findByName', () => {
   })
 
   it('should return nothing if meal is not found by name', async () => {
-    const foundMeal = await repository.findByName('nonExistingMeal')
+    const foundMeal = await repository.findByName('nonExistingMeal', user.id)
 
     expect(foundMeal).toBeUndefined()
   })
 })
 
-describe('findAll', () => {
+describe('findAll', async () => {
   it('should return empty array if there are no meals', async () => {
+    ;[user] = await insertAll(db, 'user', [fakeUser()])
     await clearTables(db, ['meal'])
-    const meals = await repository.findAll()
+    const meals = await repository.findAll(user.id)
     expect(meals).toStrictEqual([])
   })
 
-  it('should find all meals from the database', async () => {
+  it('should find all meals for SPECIFIC user from the database', async () => {
+    ;[user] = await insertAll(db, 'user', [fakeUser()])
+    ;[user2] = await insertAll(db, 'user', [fakeUser()])
     await clearTables(db, ['meal'])
-    await insertAll(db, 'meal', [fakeMeal(), fakeMeal(), fakeMeal()])
-    const meals = await repository.findAll()
+    await insertAll(db, 'meal', [
+      {
+        ...fakeMeal(),
+        user: user.id,
+      },
+      {
+        ...fakeMeal(),
+        user: user.id,
+      },
+      {
+        ...fakeMeal(),
+        user: user.id,
+      },
+      {
+        ...fakeMeal(),
+        user: user2.id,
+      },
+      {
+        ...fakeMeal(),
+        user: user2.id,
+      },
+    ])
+
+    const meals = await repository.findAll(user.id)
     expect(meals).toHaveLength(3)
+    expect(meals).not.toHaveLength(5)
+    const meals2 = await repository.findAll(user2.id)
+    expect(meals2).toHaveLength(2)
   })
 })
 
 describe('updateMeal', async () => {
-  const meal = {
-    name: 'pancakes',
-    calories: 650,
-  }
-  beforeAll(async () => {
-    await insertAll(db, 'meal', meal)
-  })
-
   it('should update meal sucessfully', async () => {
+    ;[user] = await insertAll(db, 'user', [fakeUser()])
+    const meal = {
+      name: 'pancakes',
+      calories: 650,
+      user: user.id,
+    }
+
+    await insertAll(db, 'meal', meal)
     const updateData = {
       calories: 550,
     }
-    await repository.updateMeal('pancakes', updateData)
-    const updatedMeal = await repository.findByName(meal.name)
+    await repository.updateMeal(user.id, 'pancakes', updateData)
+
+    const updatedMeal = await repository.findByName(meal.name, user.id)
     expect(updatedMeal?.calories).toBe(updateData.calories)
     expect(updatedMeal?.name).toBe('pancakes')
   })
 
   it('should not update other meals if specific meal not found', async () => {
+    ;[user] = await insertAll(db, 'user', [fakeUser()])
+    const meal = {
+      name: 'pancakes',
+      calories: 650,
+      user: user.id,
+    }
+
+    await insertAll(db, 'meal', meal)
+
     const updateData = {
       calories: 550,
     }
 
-    await repository.updateMeal('no meal exist', updateData)
-    const existingMeal = await repository.findByName(meal.name)
+    await repository.updateMeal(user.id, 'no meal exist', updateData)
+    const existingMeal = await repository.findByName(meal.name, user.id)
     expect(existingMeal?.calories).toBe(meal.calories)
     expect(existingMeal?.name).toBe(meal.name)
   })
 })
 
-describe('delete', () => {
-  const meal = {
-    name: 'pancakes',
-    calories: 650,
-  }
+describe('delete', async () => {
   beforeAll(async () => {
-    await insertAll(db, 'meal', meal)
+    ;[user] = await insertAll(db, 'user', [fakeUser()])
+    ;[user2] = await insertAll(db, 'user', [fakeUser()])
   })
 
   it('should delete meal', async () => {
-    await repository.deleteMeal('pancakes')
-    const database = await repository.findAll()
-    expect(database).toHaveLength(0)
+    const meal = {
+      name: 'pancakes',
+      calories: 650,
+      user: user.id,
+    }
+    const meal2 = {
+      name: 'test',
+      calories: 650,
+      user: user2.id,
+    }
+    await insertAll(db, 'meal', [meal, meal2])
+
+    const databaseBeforeDeletion = await selectAll(db, 'meal')
+    expect(databaseBeforeDeletion).toHaveLength(2)
+
+    await repository.deleteMeal('pancakes', user.id)
+    const databaseAfterDeletion = await selectAll(db, 'meal')
+    expect(databaseAfterDeletion).toHaveLength(1)
+
+    const userMeals = await repository.findAll(user.id)
+    expect(userMeals).toHaveLength(0)
+
+    const userMeals2 = await repository.findAll(user2.id)
+    expect(userMeals2).toHaveLength(1)
   })
 
   it('should do nothing if meal was not found', async () => {
-    await repository.deleteMeal('KEBAB')
-    const database = await repository.findAll()
-    expect(database).toHaveLength(3)
-    expect(database[0]).toMatchObject({
-      name: meal.name,
-      calories: meal.calories,
-    })
+    const meal2 = {
+      name: 'test',
+      calories: 650,
+      user: user2.id,
+    }
+    await insertAll(db, 'meal', meal2)
+
+    await repository.deleteMeal('NON EXISTING MEAL', user2.id)
+    const database = await repository.findAll(user2.id)
+    expect(database).toHaveLength(1)
   })
 })

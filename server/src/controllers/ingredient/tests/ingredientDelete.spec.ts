@@ -23,7 +23,7 @@ it('should throw error if ingredient to delete is not found', async () => {
     deleteIngredient({ name: 'non-existing-ingredient' })
   ).rejects.toThrowError()
 
-  await insertAll(db, 'ingredient', { name: 'egg' })
+  await insertAll(db, 'ingredient', { name: 'egg', user: user.id })
   await expect(
     deleteIngredient({ name: 'non-existing-meal' })
   ).rejects.toThrowError()
@@ -31,7 +31,7 @@ it('should throw error if ingredient to delete is not found', async () => {
 
 it('should delete ingredient', async () => {
   const { deleteIngredient } = createCaller(authContext({ db }, user))
-  await insertAll(db, 'ingredient', { name: 'egg' })
+  await insertAll(db, 'ingredient', { name: 'egg', user: user.id })
 
   let ingredients = await selectAll(db, 'ingredient')
   expect(ingredients).toHaveLength(1)
