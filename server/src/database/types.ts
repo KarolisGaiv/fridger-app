@@ -30,7 +30,9 @@ export interface Ingredient {
 export interface Meal {
   calories: number
   id: Generated<number>
+  mealPlan: number | null
   name: string
+  user: number
 }
 
 export interface MealIngredient {
