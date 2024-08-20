@@ -17,7 +17,10 @@ export function mealRepository(db: Database) {
         .executeTakeFirstOrThrow()
     },
 
-    async findByName(name: string, userId: number): Promise<Selectable<Meal> | undefined> {
+    async findByName(
+      name: string,
+      userId: number
+    ): Promise<Selectable<Meal> | undefined> {
       const meal = await db
         .selectFrom('meal')
         .select(mealKeysAll)
@@ -64,9 +67,11 @@ export function mealRepository(db: Database) {
     },
 
     async deleteMeal(name: string, userId: number): Promise<void> {
-      await db.deleteFrom('meal')
-      .where('user', '=', userId)
-      .where('name', '=', name).execute()
+      await db
+        .deleteFrom('meal')
+        .where('user', '=', userId)
+        .where('name', '=', name)
+        .execute()
     },
   }
 }

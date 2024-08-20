@@ -15,8 +15,8 @@ export default authenticatedProcedure
       name: true,
     })
   )
-  .query(async ({ input, ctx: { repos } }) => {
-    const meal = await repos.mealRepository.findByName(input.name)
+  .query(async ({ input, ctx: { authUser, repos } }) => {
+    const meal = await repos.mealRepository.findByName(input.name, authUser.id)
 
     if (!meal) {
       throw new TRPCError({

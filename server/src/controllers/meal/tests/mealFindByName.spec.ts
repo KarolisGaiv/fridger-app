@@ -16,7 +16,7 @@ beforeEach(async () => {
 
 it("should find meal by it's name", async () => {
   // arrange
-  const [meal] = await insertAll(db, 'meal', [fakeMeal()])
+  const [meal] = await insertAll(db, 'meal', { ...fakeMeal(), user: user.id })
   const { findByName } = createCaller(authContext({ db }, user))
 
   // act

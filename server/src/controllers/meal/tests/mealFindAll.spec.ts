@@ -9,9 +9,11 @@ import mealRouter from '..'
 const db = await wrapInRollbacks(createTestDatabase())
 const createCaller = createCallerFactory(mealRouter)
 let user: any
+let user2: any
 
 beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
+  ;[user2] = await insertAll(db, 'user', [fakeUser()])
 })
 
 it('should return empty list if there are no meals', async () => {
@@ -24,7 +26,11 @@ it('should return empty list if there are no meals', async () => {
 
 it('should return all meals', async () => {
   // arrange
-  await insertAll(db, 'meal', [fakeMeal(), fakeMeal()])
+  await insertAll(db, 'meal', [
+    { ...fakeMeal(), user: user.id },
+    { ...fakeMeal(), user: user.id },
+    { ...fakeMeal(), user: user2.id },
+  ])
   const { findAll } = createCaller(authContext({ db }, user))
 
   // act
