@@ -33,7 +33,7 @@ const [createMeal, errorMessage] = useErrorMessage(async () => {
 })
 
 const goToIngredientsView = () => {
-  router.push({name: "AddIngredient"})
+  router.push({ name: 'AddIngredient' })
 }
 
 const goToDashboard = () => {
