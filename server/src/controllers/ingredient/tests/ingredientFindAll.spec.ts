@@ -21,7 +21,10 @@ it('should return empty list if there are no ingredients', async () => {
 })
 
 it('should return all ingredients', async () => {
-  await insertAll(db, 'ingredient', [fakeIngredient(), fakeIngredient()])
+  await insertAll(db, 'ingredient', [
+    { ...fakeIngredient(), user: user.id },
+    { ...fakeIngredient(), user: user.id },
+  ])
   const { findAll } = createCaller(authContext({ db }, user))
 
   const ingredients = await findAll()

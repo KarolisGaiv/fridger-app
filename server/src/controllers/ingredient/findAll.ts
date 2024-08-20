@@ -8,7 +8,7 @@ export default authenticatedProcedure
       ingredientRepository,
     })
   )
-  .query(async ({ ctx: { repos } }) => {
-    const ingredients = await repos.ingredientRepository.findAll()
+  .query(async ({ ctx: { authUser, repos } }) => {
+    const ingredients = await repos.ingredientRepository.findAll(authUser.id)
     return ingredients
   })

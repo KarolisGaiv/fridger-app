@@ -17,9 +17,9 @@ export default authenticatedProcedure
     })
   )
   .mutation(
-    async ({ input: { ingredientToUpdate, newName }, ctx: { repos } }) => {
+    async ({ input: { ingredientToUpdate, newName }, ctx: { authUser, repos } }) => {
       const ingredient =
-        await repos.ingredientRepository.findByName(ingredientToUpdate)
+        await repos.ingredientRepository.findByName(ingredientToUpdate, authUser.id)
 
       if (!ingredient) {
         throw new TRPCError({
@@ -29,7 +29,7 @@ export default authenticatedProcedure
       }
 
       const updatedIngredient =
-        await repos.ingredientRepository.updateIngredient(ingredientToUpdate, {
+        await repos.ingredientRepository.updateIngredient(ingredientToUpdate, authUser.id, {
           name: newName,
         })
 

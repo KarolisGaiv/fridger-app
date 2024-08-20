@@ -15,8 +15,8 @@ export default authenticatedProcedure
       name: true,
     })
   )
-  .mutation(async ({ input, ctx: { repos } }) => {
-    const ingredient = await repos.ingredientRepository.findByName(input.name)
+  .mutation(async ({ input, ctx: { authUser, repos } }) => {
+    const ingredient = await repos.ingredientRepository.findByName(input.name, authUser.id)
 
     if (!ingredient) {
       throw new TRPCError({
@@ -25,5 +25,5 @@ export default authenticatedProcedure
       })
     }
 
-    await repos.ingredientRepository.deleteIngredient(input.name)
+    await repos.ingredientRepository.deleteIngredient(input.name, authUser.id)
   })

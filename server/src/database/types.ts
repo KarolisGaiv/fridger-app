@@ -25,6 +25,7 @@ export interface GroceryList {
 export interface Ingredient {
   id: Generated<number>
   name: string
+  user: number
 }
 
 export interface Meal {

@@ -15,8 +15,8 @@ export default authenticatedProcedure
       name: true,
     })
   )
-  .query(async ({ input, ctx: { repos } }) => {
-    const ingredient = await repos.ingredientRepository.findByName(input.name)
+  .query(async ({ input, ctx: { authUser, repos } }) => {
+    const ingredient = await repos.ingredientRepository.findByName(input.name, authUser.id)
 
     if (!ingredient) {
       throw new TRPCError({

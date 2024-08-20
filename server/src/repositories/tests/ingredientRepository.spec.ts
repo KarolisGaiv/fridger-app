@@ -1,15 +1,21 @@
 import { createTestDatabase } from '@tests/utils/database'
-import { fakeIngredient } from '@server/entities/tests/fakes'
+import { fakeIngredient, fakeUser } from '@server/entities/tests/fakes'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables } from '@tests/utils/records'
+import { insertAll } from '@tests/utils/records'
 import { ingredientRepository } from '../ingredientRepository'
 
 const db = await wrapInRollbacks(createTestDatabase())
 const repository = ingredientRepository(db)
+let user: any
+let user2: any
 
-describe('create', () => {
+describe('create', async () => {
+  ;[user] = await insertAll(db, 'user', [fakeUser()])
   it('should create a new ingredient', async () => {
-    const ingredient = fakeIngredient()
+    const ingredient = {
+      ...fakeIngredient(),
+      user: user.id,
+    }
     const createdIngredient = await repository.create(ingredient)
 
     expect(createdIngredient).toEqual({
@@ -24,15 +30,15 @@ describe('findByName', () => {
     name: 'milk',
   }
   beforeAll(async () => {
-    await insertAll(db, 'ingredient', ingredient)
-  })
-
-  afterAll(async () => {
-    await clearTables(db, ['ingredient'])
+    ;[user] = await insertAll(db, 'user', [fakeUser()])
+    await insertAll(db, 'ingredient', { ...ingredient, user: user.id })
   })
 
   it('should find ingredient by name', async () => {
-    const foundIngredient = await repository.findByName(ingredient.name)
+    const foundIngredient = await repository.findByName(
+      ingredient.name,
+      user.id
+    )
 
     expect(foundIngredient).toMatchObject({
       name: ingredient.name,
@@ -40,26 +46,37 @@ describe('findByName', () => {
   })
 
   it('should return nothing if ingredient is not found by name', async () => {
-    const foundIngredient = await repository.findByName('nonExistingINGR')
+    const foundIngredient = await repository.findByName(
+      'nonExistingINGR',
+      user.id
+    )
 
     expect(foundIngredient).toBeUndefined()
   })
 })
 
 describe('findAll', () => {
-  it('should return empty array if there are no ingredients', async () => {
-    const ingredients = await repository.findAll()
+  beforeAll(async () => {
+    ;[user] = await insertAll(db, 'user', [fakeUser()])
+    ;[user2] = await insertAll(db, 'user', [fakeUser()])
+    await insertAll(db, 'ingredient', { ...fakeIngredient(), user: user2.id })
+  })
+
+  it('should return empty array if there are no ingredients for that user', async () => {
+    const ingredients = await repository.findAll(user.id)
     expect(ingredients).toStrictEqual([])
   })
 
-  it('should find all ingredients from the database', async () => {
+  it('should find all ingredients for the user from the database', async () => {
     await insertAll(db, 'ingredient', [
-      fakeIngredient(),
-      fakeIngredient(),
-      fakeIngredient(),
+      { ...fakeIngredient(), user: user.id },
+      { ...fakeIngredient(), user: user.id },
+      { ...fakeIngredient(), user: user.id },
     ])
-    const meals = await repository.findAll()
-    expect(meals).toHaveLength(3)
+    const ingredients = await repository.findAll(user.id)
+    expect(ingredients).toHaveLength(3)
+    const otherUserIngredients = await repository.findAll(user2.id)
+    expect(otherUserIngredients).toHaveLength(1)
   })
 })
 
@@ -69,7 +86,8 @@ describe('updateIngredient', async () => {
   }
 
   beforeAll(async () => {
-    await insertAll(db, 'ingredient', ingredient)
+    ;[user] = await insertAll(db, 'user', [fakeUser()])
+    await insertAll(db, 'ingredient', { ...ingredient, user: user.id })
   })
 
   it('should update ingredient sucessfully', async () => {
@@ -77,8 +95,8 @@ describe('updateIngredient', async () => {
       name: 'eggs',
     }
 
-    await repository.updateIngredient('milk', updateData)
-    const updatedIngredient = await repository.findByName('eggs')
+    await repository.updateIngredient('milk', user.id, updateData)
+    const updatedIngredient = await repository.findByName('eggs', user.id)
     expect(updatedIngredient?.name).toBe('eggs')
   })
 
@@ -87,8 +105,11 @@ describe('updateIngredient', async () => {
       name: 'flour',
     }
 
-    await repository.updateIngredient('fdsaf', updateData)
-    const existingIngredient = await repository.findByName(ingredient.name)
+    await repository.updateIngredient('fdsaf', user.id, updateData)
+    const existingIngredient = await repository.findByName(
+      ingredient.name,
+      user.id
+    )
     expect(existingIngredient?.name).toBe(ingredient.name)
   })
 })
@@ -98,19 +119,21 @@ describe('delete', () => {
     name: 'banana',
   }
   beforeAll(async () => {
-    await clearTables(db, ['ingredient'])
-    await insertAll(db, 'ingredient', ingredient)
+    ;[user] = await insertAll(db, 'user', [fakeUser()])
+    await insertAll(db, 'ingredient', { ...ingredient, user: user.id })
   })
 
   it('should delete meal', async () => {
-    await repository.deleteIngredient('banana')
-    const database = await repository.findAll()
+    const previousDB = await repository.findAll(user.id)
+    expect(previousDB).toHaveLength(1)
+    await repository.deleteIngredient('banana', user.id)
+    const database = await repository.findAll(user.id)
     expect(database).toHaveLength(0)
   })
 
   it('should do nothing if meal was not found', async () => {
-    await repository.deleteIngredient('fdsaf')
-    const database = await repository.findAll()
+    await repository.deleteIngredient('fdsaf', user.id)
+    const database = await repository.findAll(user.id)
     expect(database).toHaveLength(1)
     expect(database[0]).toMatchObject({
       name: ingredient.name,
