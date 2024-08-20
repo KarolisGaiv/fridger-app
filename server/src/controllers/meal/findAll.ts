@@ -8,7 +8,7 @@ export default authenticatedProcedure
       mealRepository,
     })
   )
-  .query(async ({ ctx: { repos } }) => {
-    const meals = await repos.mealRepository.findAll()
+  .query(async ({ ctx: { authUser, repos } }) => {
+    const meals = await repos.mealRepository.findAll(authUser.id)
     return meals
   })
