@@ -8,6 +8,12 @@ import AlertError from '@/components/AlertError.vue'
 
 const router = useRouter()
 
+// State for Ingredients form
+const ingredientForm = ref({
+  name: '',
+  quantity: '',
+})
+
 const mealPlanForm = ref({
   planName: '',
 })
@@ -36,7 +42,7 @@ const goToDashboard = () => {
 <template>
   <form aria-label="Meal Plan" @submit.prevent="createMealPlan">
     <div class="space-y-6">
-      <FwbHeading tag="h1" class="text-3xl">Create a new meal plan</FwbHeading>
+      <FwbHeading tag="h1" class="text-3xl">TEST</FwbHeading>
 
       <div class="mt-6">
         <FwbInput
