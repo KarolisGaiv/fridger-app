@@ -51,12 +51,16 @@ const [createIngredient, errorMessage] = useErrorMessage(async () => {
     return
   }
 
-  const ingredientId = (
-    await trpc.ingredient.findByName.query({ name: ingredientForm.value.name })
-  ).id
+  if (showAddNewIngredientForm.value) {
+    // add new ingredient to the database
+    await trpc.ingredient.create.mutate({ name: ingredientForm.value.name })
+  }
+
+  const ingredientId = (await trpc.ingredient.findByName.query({ name: ingredientForm.value.name }))
+    .id
   const quantity = parseFloat(ingredientForm.value.quantity)
 
-  await trpc.mealIngredient.create.mutate({ingredientId, quantity, mealId: selectedMealId.value})
+  await trpc.mealIngredient.create.mutate({ ingredientId, quantity, mealId: selectedMealId.value })
 
   successMessage.value = `${ingredientForm.value.name} added to '${selectedMealName.value}' meal successfully!`
 
@@ -114,26 +118,69 @@ const showAddIngredientFormHandler = () => {
     <FwbButton size="lg" @click="showAddIngredientFormHandler">Add new ingredient</FwbButton>
   </div>
 
-  <form v-if="showSelectIngredientForm" aria-label="Add existing ingredient to the meal" @submit.prevent="createIngredient">
+  <form
+    v-if="showSelectIngredientForm"
+    aria-label="Add existing ingredient to the meal"
+    @submit.prevent="createIngredient"
+  >
     <div class="mt-6">
-      <label for="ingredientSelect" class="block text-sm font-medium text-gray-700">Select Ingredient</label>
-      <select 
-      id="ingredientSelect"
-      v-model="ingredientForm.name"
-      class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+      <label for="ingredientSelect" class="block text-sm font-medium text-gray-700"
+        >Select Ingredient</label
       >
-      <option value="" disabled>Available ingredients</option>
-      <option v-for="ingredient in ingredients" :key="ingredient.name" :value="ingredient.name">{{ ingredient.name }}</option>
-    </select>
+      <select
+        id="ingredientSelect"
+        v-model="ingredientForm.name"
+        class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+      >
+        <option value="" disabled>Available ingredients</option>
+        <option v-for="ingredient in ingredients" :key="ingredient.name" :value="ingredient.name">
+          {{ ingredient.name }}
+        </option>
+      </select>
     </div>
-
 
     <!-- Quantity Input Field -->
     <div class="mt-6">
       <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
-      <input 
-        type="number" 
-        id="quantity" 
+      <input
+        type="number"
+        id="quantity"
+        v-model="ingredientForm.quantity"
+        class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        placeholder="Enter quantity"
+      />
+    </div>
+
+    <!-- Submit Button -->
+    <div class="mt-6">
+      <FwbButton size="lg" type="submit">Add Ingredient</FwbButton>
+    </div>
+  </form>
+
+  <form
+    v-if="showAddNewIngredientForm"
+    aria-label="Add new ingredient to the meal"
+    @submit.prevent="createIngredient"
+  >
+    <div class="mt-6">
+      <label for="ingredientAddition" class="block text-sm font-medium text-gray-700"
+        >Add New Ingredient</label
+      >
+      <input
+        id="ingredientAddition"
+        type="text"
+        v-model="ingredientForm.name"
+        class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        placeholder="Add new ingredient"
+      />
+    </div>
+
+    <!-- Quantity Input Field -->
+    <div class="mt-6">
+      <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+      <input
+        type="number"
+        id="quantity"
         v-model="ingredientForm.quantity"
         class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         placeholder="Enter quantity"
