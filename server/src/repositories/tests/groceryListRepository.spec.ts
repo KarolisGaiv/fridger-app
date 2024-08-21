@@ -4,10 +4,9 @@ import {
   fakeMealPlan,
   fakeUser,
   fakeIngredient,
-  fakeMealIngredient,
   fakeMeal,
 } from '@server/entities/tests/fakes'
-import { insertAll, selectAll } from '@tests/utils/records'
+import { insertAll } from '@tests/utils/records'
 import { groceryListRepository } from '../groceryListRepository'
 
 const db = await wrapInRollbacks(createTestDatabase())
@@ -33,26 +32,22 @@ beforeAll(async () => {
   ;[mealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id }),
   ])
-  ;[meal] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id, mealPlan: mealPlan.id})
+  ;[meal] = await insertAll(db, 'meal', {
+    ...fakeMeal(),
+    user: user.id,
+    mealPlan: mealPlan.id,
+  })
+  ;[fakeIngr] = await insertAll(db, 'ingredient', {
+    ...fakeIngredient(),
+    user: user.id,
+  })
 
-  ;[fakeIngr] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: user.id})
-
-  await insertAll(db, "mealIngredient", {
+  await insertAll(db, 'mealIngredient', {
     quantity: 43,
     ingredientId: fakeIngr.id,
     mealId: meal.id,
-    mealPlan: mealPlan.id
+    mealPlan: mealPlan.id,
   })
-  // await insertAll(
-  //   db,
-  //   'mealIngredient',
-  //   fakeMealIngredient({
-  //     mealPlan: mealPlan.id,
-  //     ingredientId: fakeIngr.id,
-  //     mealId: meal.id,
-  //   })
-  // )
-  // fakeIngrId = fakeIngr.id
 })
 
 describe('create', () => {
