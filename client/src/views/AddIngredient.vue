@@ -2,14 +2,15 @@
 import { trpc } from '@/trpc'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { FwbButton, FwbHeading, FwbInput, FwbTextarea } from 'flowbite-vue'
+import { FwbButton, FwbHeading, FwbInput } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
 import type { MealPublic } from '../../../server/src/entities/meal'
+import type { IngredientPublic } from '../../../server/src/entities/ingredient'
 
 // State for meals and selected meal
 const meals = ref<MealPublic[]>([]) // Array to hold all user meals
-const ingredients = ref<[]>([])
+const ingredients = ref<IngredientPublic[]>([])
 const selectedMealName = ref<string | null>(null)
 const selectedMealId = ref<number | null>(null)
 const showIngredientFormSelection = ref<boolean>(false)
@@ -157,12 +158,12 @@ const showAddIngredientFormHandler = () => {
 
     <!-- Quantity Input Field -->
     <div class="mt-6">
-      <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
-      <input
+      <FwbInput
+        aria-label="Quantity"
+        label="Quantity"
         type="number"
         id="quantity"
         v-model="ingredientForm.quantity"
-        class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         placeholder="Enter quantity"
       />
     </div>
