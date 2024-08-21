@@ -16,17 +16,17 @@ const createCaller = createCallerFactory(mealIngredientRouter)
 let user: any
 let meal: any
 
-beforeEach(async () => {
+beforeAll(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
-  ;[meal] = await insertAll(db, 'meal', [fakeMeal()])
+  ;[meal] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
 })
 
 it('should delete ingredients by meal ID', async () => {
   // arrange
-  const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
+  const [meal1] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
   const [ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
-    fakeIngredient(),
-    fakeIngredient(),
+    {...fakeIngredient(), user: user.id},
+    {...fakeIngredient(), user: user.id},
   ])
   await insertAll(db, 'mealIngredient', [
     { mealId: meal1.id, ingredientId: ingredient1.id, quantity: 200 },
@@ -48,7 +48,7 @@ it('should delete ingredients by meal ID', async () => {
 
 it('should do nothing if no ingredients are found for the meal ID', async () => {
   const { deleteIngredientsByMealId } = createCaller(authContext({ db }, user))
-  const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
+  const [meal1] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
 
   await deleteIngredientsByMealId({ mealId: meal1.id }) // Attempting to delete, but no ingredients exist
 

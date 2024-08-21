@@ -16,24 +16,24 @@ const createCaller = createCallerFactory(mealIngredientRouter)
 let user: any
 let meal: any
 
-beforeEach(async () => {
+beforeAll(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
-  ;[meal] = await insertAll(db, 'meal', [fakeMeal()])
+  ;[meal] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
 })
 
 describe('deleteById', () => {
   it('should delete a meal ingredient successfully', async () => {
     // arrange
-    const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
-    const [ingredient1] = await insertAll(db, 'ingredient', [fakeIngredient()])
+    const [meal1] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
+    const [ingredient1] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: user.id})
 
-    const [mealIngredient] = await insertAll(db, 'mealIngredient', [
+    const [mealIngredient] = await insertAll(db, 'mealIngredient', 
       {
         mealId: meal1.id,
         ingredientId: ingredient1.id,
         quantity: 200,
-      },
-    ])
+      }
+    )
     const { deleteById } = createCaller(authContext({ db }, user))
 
     // act

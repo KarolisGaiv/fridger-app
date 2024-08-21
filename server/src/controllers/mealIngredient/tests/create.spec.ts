@@ -16,10 +16,10 @@ let user: any
 let meal: any
 let ingredient: any
 
-beforeEach(async () => {
+beforeAll(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
-  ;[meal] = await insertAll(db, 'meal', [fakeMeal()])
-  ;[ingredient] = await insertAll(db, 'ingredient', [fakeIngredient()])
+  ;[meal] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
+  ;[ingredient] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: user.id})
 })
 
 describe('create', async () => {
