@@ -6,7 +6,15 @@ import { FwbButton, FwbHeading, FwbInput } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
 
-const activeMealPlan = ref<number | null>(null)
+const activeMealPlan = ref({})
+
+onMounted( async () => {
+  activeMealPlan.value = await trpc.mealPlan.findActiveMealPlan.query()
+  console.log(activeMealPlan.value);
+})
+
+
+
 </script>
 
 <template>
