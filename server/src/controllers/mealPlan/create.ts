@@ -5,7 +5,7 @@ import { mealPlanSchema } from '@server/entities/mealPlan'
 
 export default authenticatedProcedure
   .use(provideRepos({ mealPlanRepository }))
-  .input(mealPlanSchema.pick({ planName: true }))
+  .input(mealPlanSchema.pick({ planName: true, isActive: true }))
   .mutation(async ({ input, ctx: { authUser, repos } }) => {
     const data = {
       ...input,

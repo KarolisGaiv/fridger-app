@@ -19,13 +19,21 @@ it('allows adding meal plan', async () => {
   const { create } = createCaller(authContext({ db }, user))
 
   // act
-  const result = await create({ planName: 'Best plan' })
+  const result1 = await create({ planName: 'Best plan', isActive: true })
+  const result2 = await create({ planName: 'Best plan', isActive: false })
 
   // assert
-  expect(result).toBeDefined()
-  expect(result).toMatchObject({
+  expect(result1).toBeDefined()
+  expect(result1).toMatchObject({
     planName: 'Best plan',
     userId: user.id,
+    isActive: true
+  })
+  expect(result2).toBeDefined()
+  expect(result2).toMatchObject({
+    planName: 'Best plan',
+    userId: user.id,
+    isActive: false
   })
 })
 
@@ -40,7 +48,7 @@ it('prevents unauth user from adding meal plan', async () => {
   })
 
   // act & assert
-  await expect(create({ planName: 'Worst plan' })).rejects.toThrowError(
+  await expect(create({ planName: 'Worst plan', isActive: true })).rejects.toThrowError(
     /unauthenticated/i
   )
 })

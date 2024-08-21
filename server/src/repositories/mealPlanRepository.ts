@@ -22,7 +22,8 @@ export function mealPlanRepository(db: Database) {
           .updateTable('mealPlan')
           .set({ isActive: false }) // deactivate other meal plans
           .where('userId', '=', mealPlan.userId)
-          .where('id', '!=', newMealPlan.id) // Exclude the current meal plan
+          .where('id', '!=', newMealPlan.id)
+          .where("isActive", "=", true) 
           .execute()
       }
 
