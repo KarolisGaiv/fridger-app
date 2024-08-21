@@ -20,26 +20,16 @@ let meal1: any
 let ingredient1: any
 let ingredient2: any
 
-// beforeAll(async () => {
-//   await clearTables(db, [
-//     'mealIngredient',
-//     'meal',
-//     'ingredient',
-//     'mealPlan',
-//     'user',
-//   ])
-// })
-
-beforeEach(async () => {
+beforeAll(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   ;[activeMealPlan, inactiveMealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id, isActive: true }),
     fakeMealPlan({ userId: user.id, isActive: false }),
   ])
-  ;[meal1] = await insertAll(db, 'meal', [fakeMeal()])
+  ;[meal1] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
   ;[ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
-    fakeIngredient(),
-    fakeIngredient(),
+    {...fakeIngredient(), user: user.id},
+    {...fakeIngredient(), user: user.id},
   ])
 
   await insertAll(db, 'mealIngredient', [

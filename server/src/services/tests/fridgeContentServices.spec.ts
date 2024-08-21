@@ -1,7 +1,6 @@
 import { createTestDatabase } from '@tests/utils/database'
 import {
   fakeMeal,
-  fakeIngredient,
   fakeMealPlan,
   fakeUser,
   fakeMealIngredient,
@@ -23,17 +22,14 @@ let meal1: any
 let ingredient1: any
 let ingredient2: any
 
-beforeEach(async () => {
+beforeAll(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   ;[activeMealPlan, inactiveMealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id, isActive: true }),
     fakeMealPlan({ userId: user.id, isActive: false }),
   ])
-  ;[meal1] = await insertAll(db, 'meal', [fakeMeal()])
-  ;[ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
-    fakeIngredient({ name: 'eggs' }),
-    fakeIngredient({ name: 'bacon' }),
-  ])
+  ;[meal1] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id, mealPlan: activeMealPlan.id})
+  ;[ingredient1, ingredient2] = await insertAll(db, 'ingredient', [{name: "eggs", user: user.id}, {name: "bacon", user: user.id}])
 
   await insertAll(db, 'mealIngredient', [
     fakeMealIngredient({
