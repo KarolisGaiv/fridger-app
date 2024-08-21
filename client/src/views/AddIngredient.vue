@@ -13,7 +13,6 @@ const ingredients = ref<[]>([])
 const selectedMealName = ref<string | null>(null)
 const selectedMealId = ref<number | null>(null)
 const showIngredientFormSelection = ref<boolean>(false)
-const showIngredientForm = ref<boolean>(false)
 
 const showSelectIngredientForm = ref<boolean>(false)
 const showAddNewIngredientForm = ref<boolean>(false)
@@ -79,6 +78,7 @@ const [createIngredient, errorMessage] = useErrorMessage(async () => {
 const showSelectIngredientFormHandler = async () => {
   showSelectIngredientForm.value = true
   showAddNewIngredientForm.value = false
+  ingredientForm.value.quantity = ''
   ingredients.value = await trpc.ingredient.findAll.query()
 }
 
@@ -86,12 +86,14 @@ const showSelectIngredientFormHandler = async () => {
 const showAddIngredientFormHandler = () => {
   showSelectIngredientForm.value = false
   showAddNewIngredientForm.value = true
+  ingredientForm.value.name = ''
+  ingredientForm.value.quantity = ''
 }
 </script>
 
 <template>
   <div class="space-y-6">
-    <FwbHeading tag="h1" class="text-3xl">Add ingredients to you meal</FwbHeading>
+    <FwbHeading tag="h1" class="text-3xl">Add ingredients to your meal</FwbHeading>
   </div>
   <form aria-lable="User Meal">
     <!-- Meal Selection -->
@@ -112,31 +114,45 @@ const showAddIngredientFormHandler = () => {
   </form>
 
   <div v-if="showIngredientFormSelection" class="mt-4 flex space-x-4">
-    <FwbButton size="lg" @click="showSelectIngredientFormHandler"
-      >Select existing ingredient</FwbButton
-    >
+    <FwbButton size="lg" @click="showSelectIngredientFormHandler">
+      Select existing ingredient
+    </FwbButton>
     <FwbButton size="lg" @click="showAddIngredientFormHandler">Add new ingredient</FwbButton>
   </div>
 
   <form
-    v-if="showSelectIngredientForm"
-    aria-label="Add existing ingredient to the meal"
+    v-if="showSelectIngredientForm || showAddNewIngredientForm"
+    aria-label="Add ingredient to the meal"
     @submit.prevent="createIngredient"
   >
     <div class="mt-6">
-      <label for="ingredientSelect" class="block text-sm font-medium text-gray-700"
-        >Select Ingredient</label
+      <label
+        :for="showAddNewIngredientForm ? 'ingredientAddition' : 'ingredientSelect'"
+        class="block text-sm font-medium text-gray-700"
       >
-      <select
-        id="ingredientSelect"
-        v-model="ingredientForm.name"
-        class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-      >
-        <option value="" disabled>Available ingredients</option>
-        <option v-for="ingredient in ingredients" :key="ingredient.name" :value="ingredient.name">
-          {{ ingredient.name }}
-        </option>
-      </select>
+        {{ showAddNewIngredientForm ? 'Add New Ingredient' : 'Select Ingredient' }}
+      </label>
+      <div v-if="showAddNewIngredientForm">
+        <input
+          id="ingredientAddition"
+          type="text"
+          v-model="ingredientForm.name"
+          class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          placeholder="Add new ingredient"
+        />
+      </div>
+      <div v-else>
+        <select
+          id="ingredientSelect"
+          v-model="ingredientForm.name"
+          class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        >
+          <option value="" disabled>Available ingredients</option>
+          <option v-for="ingredient in ingredients" :key="ingredient.name" :value="ingredient.name">
+            {{ ingredient.name }}
+          </option>
+        </select>
+      </div>
     </div>
 
     <!-- Quantity Input Field -->
@@ -153,43 +169,9 @@ const showAddIngredientFormHandler = () => {
 
     <!-- Submit Button -->
     <div class="mt-6">
-      <FwbButton size="lg" type="submit">Add Ingredient</FwbButton>
-    </div>
-  </form>
-
-  <form
-    v-if="showAddNewIngredientForm"
-    aria-label="Add new ingredient to the meal"
-    @submit.prevent="createIngredient"
-  >
-    <div class="mt-6">
-      <label for="ingredientAddition" class="block text-sm font-medium text-gray-700"
-        >Add New Ingredient</label
-      >
-      <input
-        id="ingredientAddition"
-        type="text"
-        v-model="ingredientForm.name"
-        class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-        placeholder="Add new ingredient"
-      />
-    </div>
-
-    <!-- Quantity Input Field -->
-    <div class="mt-6">
-      <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
-      <input
-        type="number"
-        id="quantity"
-        v-model="ingredientForm.quantity"
-        class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-        placeholder="Enter quantity"
-      />
-    </div>
-
-    <!-- Submit Button -->
-    <div class="mt-6">
-      <FwbButton size="lg" type="submit">Add Ingredient</FwbButton>
+      <FwbButton size="lg" type="submit">
+        {{ showAddNewIngredientForm ? 'Add New Ingredient' : 'Add Selected Ingredient' }}
+      </FwbButton>
     </div>
   </form>
 
