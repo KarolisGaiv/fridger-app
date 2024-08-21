@@ -12,5 +12,5 @@ export default router({
   findByUserId,
   update,
   deleteById,
-  findActiveMealPlan
+  findActiveMealPlan,
 })

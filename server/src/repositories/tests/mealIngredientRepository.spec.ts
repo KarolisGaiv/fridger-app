@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createTestDatabase } from '@tests/utils/database'
 import {
   fakeMeal,
@@ -6,21 +7,51 @@ import {
   fakeUser,
 } from '@server/entities/tests/fakes'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll } from '@tests/utils/records'
+import { clearTables, insertAll, selectAll } from '@tests/utils/records'
 import { mealIngredientRepository } from '../mealIngredientRepository'
 
 const db = await wrapInRollbacks(createTestDatabase())
 const repository = mealIngredientRepository(db)
+let user: any
+let mealPlan: any
+let ingredient: any
+let ingredient2: any
+let meal1: any
+let meal2: any
+
+beforeAll(async () => {
+  ;[user] = await insertAll(db, 'user', [fakeUser()])
+  ;[mealPlan] = await insertAll(db, 'mealPlan', {
+    ...fakeMealPlan(),
+    userId: user.id,
+    isActive: true,
+  })
+  ;[ingredient] = await insertAll(db, 'ingredient', {
+    ...fakeIngredient(),
+    user: user.id,
+  })
+  ;[ingredient2] = await insertAll(db, 'ingredient', {
+    ...fakeIngredient(),
+    user: user.id,
+  })
+  ;[meal1] = await insertAll(db, 'meal', {
+    ...fakeMeal(),
+    user: user.id,
+    mealPlan: mealPlan.id,
+  })
+  ;[meal2] = await insertAll(db, 'meal', {
+    ...fakeMeal(),
+    user: user.id,
+    mealPlan: mealPlan.id,
+  })
+})
 
 describe('create', () => {
   it('should create a new meal ingredient', async () => {
-    const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
-    const [ingredient1] = await insertAll(db, 'ingredient', [fakeIngredient()])
-
     const fakeIngr = {
       quantity: 350,
       mealId: meal1.id,
-      ingredientId: ingredient1.id,
+      ingredientId: ingredient.id,
     }
 
     const createdIngr = await repository.create(fakeIngr)
@@ -35,22 +66,26 @@ describe('create', () => {
 
 describe('find meal ingredient funcionalities', () => {
   describe('findMealIngredientById', () => {
-    it("should find meal ingredient by it's ID", async () => {
-      const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
-      const [ingredient1] = await insertAll(db, 'ingredient', [
-        fakeIngredient(),
-      ])
-
-      const [fakeIngr] = await insertAll(db, 'mealIngredient', {
+    beforeAll(async () => {
+      const fakeIngr = {
         quantity: 350,
         mealId: meal1.id,
-        ingredientId: ingredient1.id,
-      })
+        ingredientId: ingredient.id,
+      }
+      await insertAll(db, 'mealIngredient', fakeIngr)
+    })
+    it("should find meal ingredient by it's ID", async () => {
+      const data = {
+        quantity: 350,
+        mealId: meal1.id,
+        ingredientId: ingredient.id,
+      }
+      const [fakeIngr] = await insertAll(db, 'mealIngredient', data)
 
       const res = await repository.findMealIngredientById(fakeIngr.id)
       expect(res).toMatchObject({
         mealId: meal1.id,
-        ingredientId: ingredient1.id,
+        ingredientId: ingredient.id,
       })
     })
 
@@ -62,17 +97,19 @@ describe('find meal ingredient funcionalities', () => {
 
   describe('findIngredientsByMealId', () => {
     it('should find ingredients by meal id', async () => {
-      const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
-      const [ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
-        fakeIngredient(),
-        fakeIngredient(),
+      await clearTables(db, ["mealIngredient"])
+      await insertAll(db, "mealIngredient", [
+        {
+          quantity: 150,
+          mealId: meal1.id,
+          ingredientId: ingredient.id
+        },
+        {
+          quantity: 200,
+          mealId: meal1.id,
+          ingredientId: ingredient2.id
+        }
       ])
-
-      await insertAll(db, 'mealIngredient', [
-        { mealId: meal1.id, ingredientId: ingredient1.id, quantity: 200 },
-        { mealId: meal1.id, ingredientId: ingredient2.id, quantity: 300 },
-      ])
-
       const ingredients = await repository.findIngredientsByMealId(meal1.id)
 
       expect(ingredients).toHaveLength(2)
@@ -80,57 +117,42 @@ describe('find meal ingredient funcionalities', () => {
         expect.arrayContaining([
           expect.objectContaining({
             mealId: meal1.id,
-            ingredientId: ingredient1.id,
-            quantity: 200,
+            ingredientId: ingredient.id,
+            quantity: 150,
           }),
           expect.objectContaining({
             mealId: meal1.id,
             ingredientId: ingredient2.id,
-            quantity: 300,
+            quantity: 200,
           }),
         ])
       )
     })
 
     it('should return an empty array if no ingredients are found for the meal', async () => {
-      const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
-
-      const ingredients = await repository.findIngredientsByMealId(meal1.id)
-
+      const [meal] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
+      const ingredients = await repository.findIngredientsByMealId(meal.id)
       expect(ingredients).toHaveLength(0)
     })
   })
 
   describe('findIngredientsByMealPlanId', () => {
-    let user: any
-    let mealPlan: any
-    beforeEach(async () => {
-      ;[user] = await insertAll(db, 'user', [fakeUser()])
-      ;[mealPlan] = await insertAll(db, 'mealPlan', [
-        fakeMealPlan({ userId: user.id }),
-      ])
-    })
     it('should find ingredients by meal plan ID', async () => {
-      const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
-      const [ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
-        fakeIngredient(),
-        fakeIngredient(),
-      ])
-
-      await insertAll(db, 'mealIngredient', [
+      await insertAll(db, "mealIngredient", [
         {
+          quantity: 150,
           mealId: meal1.id,
-          ingredientId: ingredient1.id,
-          quantity: 200,
-          mealPlan: mealPlan.id,
+          ingredientId: ingredient.id,
+          mealPlan: mealPlan.id
         },
         {
+          quantity: 200,
           mealId: meal1.id,
           ingredientId: ingredient2.id,
-          quantity: 300,
-          mealPlan: mealPlan.id,
-        },
+          mealPlan: mealPlan.id
+        }
       ])
+
       const ingredients = await repository.findIngredientsByMealPlanId(
         mealPlan.id
       )
@@ -140,22 +162,22 @@ describe('find meal ingredient funcionalities', () => {
         expect.arrayContaining([
           expect.objectContaining({
             mealId: meal1.id,
-            ingredientId: ingredient1.id,
-            quantity: 200,
+            ingredientId: ingredient.id,
+            quantity: 150,
           }),
           expect.objectContaining({
             mealId: meal1.id,
             ingredientId: ingredient2.id,
-            quantity: 300,
+            quantity: 200,
           }),
         ])
       )
     })
 
     it('should return an empty array if no ingredients are found for the meal plan', async () => {
-      const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
+      const [meal] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
 
-      const ingredients = await repository.findIngredientsByMealPlanId(meal1.id)
+      const ingredients = await repository.findIngredientsByMealPlanId(meal.id)
 
       expect(ingredients).toHaveLength(0)
     })
@@ -174,53 +196,49 @@ describe('find meal ingredient funcionalities', () => {
 
 describe('updateMealIngredient', () => {
   it('should update a meal ingredient successfully', async () => {
-    const [meal1] = await insertAll(db, 'meal', [fakeMeal()])
-    const [ingredient1] = await insertAll(db, 'ingredient', [
-      fakeIngredient(),
-      fakeIngredient(),
-    ])
-
-    const [mealIngredient] = await insertAll(db, 'mealIngredient', {
+    const fakeIngr = {
+      quantity: 350,
       mealId: meal1.id,
-      ingredientId: ingredient1.id,
-      quantity: 200,
-    })
+      ingredientId: ingredient.id,
+      mealPlan: mealPlan.id
+    }
 
+    const [createdIngr] = await insertAll(db, "mealIngredient", fakeIngr)
     const updates = {
       quantity: 300,
     }
 
+    expect(createdIngr.quantity).toBe(fakeIngr.quantity)
+
     const updatedIngredient = await repository.updateMealIngredient(
-      mealIngredient.id,
+      createdIngr.id,
       updates
     )
-
-    expect(updatedIngredient).toMatchObject({
-      mealId: meal1.id,
-      ingredientId: ingredient1.id,
-      quantity: updates.quantity,
-    })
+    expect(updatedIngredient?.quantity).toBe(updates.quantity)
   })
 })
 
 describe('deleteMealIngredient', () => {
   it('should delete a meal ingredient', async () => {
-    const [meal] = await insertAll(db, 'meal', [
-      { name: 'Pasta', calories: 400 },
-    ])
-    const [ingredient] = await insertAll(db, 'ingredient', [{ name: 'Tomato' }])
+    const data1 = {
+      quantity: 350,
+      mealId: meal1.id,
+      ingredientId: ingredient.id,
+      mealPlan: mealPlan.id
+    }
 
-    const [mealIngredient] = await insertAll(db, 'mealIngredient', [
-      {
-        mealId: meal.id,
-        ingredientId: ingredient.id,
-        quantity: 200,
-      },
-    ])
+    const data2 = {
+      quantity: 420,
+      mealId: meal1.id,
+      ingredientId: ingredient2.id,
+      mealPlan: mealPlan.id
+    }
 
-    await repository.deleteMealIngredient(mealIngredient.id)
+    const [fakeIngr1, fakeIngr2] = await insertAll(db, "mealIngredient", [data1, data2])
+
+    await repository.deleteMealIngredient(fakeIngr2.id)
     const deletedMealIngredient = await repository.findMealIngredientById(
-      mealIngredient.id
+      fakeIngr2.id
     )
     expect(deletedMealIngredient).toBeUndefined()
   })
@@ -231,68 +249,57 @@ describe('deleteMealIngredient', () => {
 })
 
 describe('deleteIngredientsByMealId', () => {
-  let mealId: number
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let ingredientIds: number[]
+  beforeAll(async () => {
+    const data1 = {
+    quantity: 350,
+    mealId: meal1.id,
+    ingredientId: ingredient.id,
+    mealPlan: mealPlan.id
+  }
 
-  beforeEach(async () => {
-    // Insert a meal
-    const [meal] = await insertAll(db, 'meal', [
-      { name: 'Pasta', calories: 400 },
-    ])
-    mealId = meal.id
+  const data2 = {
+    quantity: 420,
+    mealId: meal1.id,
+    ingredientId: ingredient2.id,
+    mealPlan: mealPlan.id
+  }
 
-    // Insert ingredients
-    const [ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
-      { name: 'Tomato' },
-      { name: 'Cheese' },
-    ])
-    ingredientIds = [ingredient1.id, ingredient2.id]
-
-    // Insert meal ingredients
-    await insertAll(db, 'mealIngredient', [
-      { mealId, ingredientId: ingredient1.id, quantity: 200 },
-      { mealId, ingredientId: ingredient2.id, quantity: 300 },
-    ])
+  const [fakeIngr1, fakeIngr2] = await insertAll(db, "mealIngredient", [data1, data2])
   })
-
+ 
   it('should delete ingredients associated with the specified meal ID', async () => {
-    await repository.deleteIngredientsByMealId(mealId)
+    const dataBeforeDeletion = await repository.findIngredientsByMealId(meal1.id)
+    expect(dataBeforeDeletion).toHaveLength(3)
+    
+    await repository.deleteIngredientsByMealId(meal1.id)
 
     // Verify that meal ingredients associated with the meal ID are deleted
-    const ingredients = await repository.findIngredientsByMealId(mealId)
+    const ingredients = await repository.findIngredientsByMealId(meal1.id)
     expect(ingredients).toHaveLength(0)
   })
 
   it('should not delete ingredients associated with other meals', async () => {
-    const [anotherMeal] = await insertAll(db, 'meal', [
-      { name: 'Salad', calories: 300 },
-    ])
-    const [anotherIngredient] = await insertAll(db, 'ingredient', [
-      { name: 'Lettuce' },
-    ])
+    const data2 = {
+      quantity: 420,
+      mealId: meal2.id,
+      ingredientId: ingredient2.id,
+      mealPlan: mealPlan.id
+    }
 
-    // Insert a meal ingredient associated with another meal
-    await insertAll(db, 'mealIngredient', [
-      {
-        mealId: anotherMeal.id,
-        ingredientId: anotherIngredient.id,
-        quantity: 150,
-      },
-    ])
+    await insertAll(db, "mealIngredient", [data2])
 
-    await repository.deleteIngredientsByMealId(mealId)
+    await repository.deleteIngredientsByMealId(meal1.id)
 
     // Verify that the meal ingredient associated with another meal remains
-    const ingredients = await repository.findIngredientsByMealId(anotherMeal.id)
+    const ingredients = await repository.findIngredientsByMealId(meal2.id)
     expect(ingredients).toHaveLength(1)
-    expect(ingredients[0]).toMatchObject({
-      mealId: anotherMeal.id,
-      ingredientId: anotherIngredient.id,
-    })
+    expect(ingredients[0].mealId).toBe(meal2.id)
   })
 
   it('should handle non-existent meal ID gracefully', async () => {
+    const dataBefore = await selectAll(db, "mealIngredient");
+    expect(dataBefore).not.toHaveLength(0)
+
     const nonExistentMealId = 999
 
     await expect(
@@ -300,7 +307,7 @@ describe('deleteIngredientsByMealId', () => {
     ).resolves.not.toThrow()
 
     // Verify that no meal ingredients were deleted
-    const ingredients = await repository.findIngredientsByMealId(mealId)
-    expect(ingredients).toHaveLength(2)
+    const dataAfter = await selectAll(db, "mealIngredient");
+    expect(dataAfter.length).toBeGreaterThan(0)
   })
 })

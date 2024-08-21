@@ -27,13 +27,13 @@ it('allows adding meal plan', async () => {
   expect(result1).toMatchObject({
     planName: 'Best plan',
     userId: user.id,
-    isActive: true
+    isActive: true,
   })
   expect(result2).toBeDefined()
   expect(result2).toMatchObject({
     planName: 'Best plan',
     userId: user.id,
-    isActive: false
+    isActive: false,
   })
 })
 
@@ -48,7 +48,7 @@ it('prevents unauth user from adding meal plan', async () => {
   })
 
   // act & assert
-  await expect(create({ planName: 'Worst plan', isActive: true })).rejects.toThrowError(
-    /unauthenticated/i
-  )
+  await expect(
+    create({ planName: 'Worst plan', isActive: true })
+  ).rejects.toThrowError(/unauthenticated/i)
 })

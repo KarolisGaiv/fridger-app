@@ -17,7 +17,7 @@ describe('create', () => {
     const mealPlan = {
       userId: user.id,
       planName: 'My Meal Plan',
-      isActive: true
+      isActive: true,
     }
     const createdMealPlan = await repository.create(mealPlan)
     expect(createdMealPlan).toEqual(expect.objectContaining(mealPlan))
@@ -32,7 +32,9 @@ describe('create', () => {
     }
     const createdActiveMealPlan = await repository.create(activeMealPlan)
     const firstActiveMealPlanID = createdActiveMealPlan.id
-    let firstActiveMealPlanDetails = await repository.findById(firstActiveMealPlanID)
+    let firstActiveMealPlanDetails = await repository.findById(
+      firstActiveMealPlanID
+    )
     expect(firstActiveMealPlanDetails?.isActive).toBe(true)
 
     // Create a new meal plan that should activate and deactivate others
@@ -43,13 +45,17 @@ describe('create', () => {
     }
     const createdSecondMealPlan = await repository.create(newSecondMealPlan)
     const secondActiveMealPlanID = createdSecondMealPlan.id
-    const secondActiveMealPlanDetails = await repository.findById(secondActiveMealPlanID)
+    const secondActiveMealPlanDetails = await repository.findById(
+      secondActiveMealPlanID
+    )
 
     // Verify that the new meal plan is active
     expect(secondActiveMealPlanDetails?.isActive).toBe(true)
 
     // Verify that the previously active meal plan is now inactive
-    firstActiveMealPlanDetails = await repository.findById(firstActiveMealPlanID)
+    firstActiveMealPlanDetails = await repository.findById(
+      firstActiveMealPlanID
+    )
     expect(firstActiveMealPlanDetails?.isActive).toBe(false)
   })
 
@@ -202,24 +208,24 @@ describe('deleteById', () => {
   })
 })
 
-describe("findActiveMealPlan", () => {
-  it("should find active meal plan for the user", async () => {
+describe('findActiveMealPlan', () => {
+  it('should find active meal plan for the user', async () => {
     const firstPlan = {
-      planName: "First ACTIVE meal plan",
+      planName: 'First ACTIVE meal plan',
       userId: user.id,
-      isActive: true
+      isActive: true,
     }
     await repository.create(firstPlan)
 
     const secondPlan = {
-      planName: "SECOND ACTIVE meal plan",
+      planName: 'SECOND ACTIVE meal plan',
       userId: user.id,
-      isActive: true
+      isActive: true,
     }
 
     await repository.create(secondPlan)
 
     const result = await repository.findActiveMealPlan(user.id)
-    expect(result?.planName).toBe("SECOND ACTIVE meal plan")
+    expect(result?.planName).toBe('SECOND ACTIVE meal plan')
   })
 })

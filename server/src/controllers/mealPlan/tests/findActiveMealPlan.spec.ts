@@ -15,51 +15,53 @@ let mealPlan2: any
 
 beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
-  ;[mealPlan] = await insertAll(db, "mealPlan", {
-    userId: user.id, planName: "First Plan", isActive: false
+  ;[mealPlan] = await insertAll(db, 'mealPlan', {
+    userId: user.id,
+    planName: 'First Plan',
+    isActive: false,
   })
-  ;[mealPlan2] = await insertAll(db, "mealPlan", {
-    userId: user.id, planName: "Second Plan", isActive: true
+  ;[mealPlan2] = await insertAll(db, 'mealPlan', {
+    userId: user.id,
+    planName: 'Second Plan',
+    isActive: true,
   })
 })
 
-describe("findActiveMealPlan", () => {
-    it("should find meal plan with active status", async () => {
-      // arrange
-      const {findActiveMealPlan} = createCaller(authContext({db}, user))
+describe('findActiveMealPlan', () => {
+  it('should find meal plan with active status', async () => {
+    // arrange
+    const { findActiveMealPlan } = createCaller(authContext({ db }, user))
 
-      // act
-      const res = await findActiveMealPlan()
-      
-      // assert
-      expect(res?.planName).toBe("Second Plan")
-      expect(res?.isActive).toBe(true)
-    })
+    // act
+    const res = await findActiveMealPlan()
 
-    it('should throw a NOT_FOUND error if active meal plan is not found', async () => {
-      // arrange
-      const {findActiveMealPlan} = createCaller(authContext({db}, user))
-      await clearTables(db, ["mealPlan"])
+    // assert
+    expect(res?.planName).toBe('Second Plan')
+    expect(res?.isActive).toBe(true)
+  })
 
-      // Act & Assert
+  it('should throw a NOT_FOUND error if active meal plan is not found', async () => {
+    // arrange
+    const { findActiveMealPlan } = createCaller(authContext({ db }, user))
+    await clearTables(db, ['mealPlan'])
+
+    // Act & Assert
     await expect(findActiveMealPlan()).rejects.toThrowError(
       /no active meal plan found/i
     )
+  })
+
+  it('prevents unauth user from using method', async () => {
+    // arrange
+    const { findActiveMealPlan } = createCaller({
+      db,
+      req: {
+        // no Auth header
+        header: () => undefined,
+      } as any,
     })
 
-    it("prevents unauth user from using method", async () => {
-      // arrange
-      const { findActiveMealPlan } = createCaller({
-        db,
-        req: {
-          // no Auth header
-          header: () => undefined,
-        } as any,
-      })
-
-      // act & assert
-    await expect(findActiveMealPlan()).rejects.toThrowError(
-      /unauthenticated/i
-    )
-    })
+    // act & assert
+    await expect(findActiveMealPlan()).rejects.toThrowError(/unauthenticated/i)
+  })
 })

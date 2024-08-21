@@ -14,15 +14,15 @@ export default authenticatedProcedure
 
     if (!data) {
       throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "No active meal plan found"
+        code: 'NOT_FOUND',
+        message: 'No active meal plan found',
       })
     }
 
     if (data.userId !== authUser.id) {
       throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Not authorized to access this data"
+        code: 'FORBIDDEN',
+        message: 'Not authorized to access this data',
       })
     }
     return data

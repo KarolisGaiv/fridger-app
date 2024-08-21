@@ -23,7 +23,7 @@ export function mealPlanRepository(db: Database) {
           .set({ isActive: false }) // deactivate other meal plans
           .where('userId', '=', mealPlan.userId)
           .where('id', '!=', newMealPlan.id)
-          .where("isActive", "=", true) 
+          .where('isActive', '=', true)
           .execute()
       }
 
