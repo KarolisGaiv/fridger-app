@@ -7,22 +7,11 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-// const links = computed(() => [
-//   { label: 'Dashboard', name: 'Home' },
-
-//   ...(isLoggedIn.value
-//     ? [{ label: 'Add Meal Plan', name: 'WriteArticle' }]
-//     : [
-//         { label: 'Login', name: 'Login' },
-//         { label: 'Signup', name: 'Signup' },
-//       ]),
-// ])
-
 const links = computed(() => [
   { label: 'Dashboard', name: 'Home' },
 
   ...(isLoggedIn.value
-    ? [{ label: 'Add Meal Plan', name: 'AddMealPlan' }]
+    ? [{ label: 'Add Meal Plan', name: 'AddMealPlan' }, {label: "Grocery List", name: "GroceryView"}]
     : [
         { label: 'Login', name: 'Login' },
         { label: 'Signup', name: 'Signup' },
