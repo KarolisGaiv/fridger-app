@@ -7,44 +7,52 @@ import {
   fakeMealIngredient,
   fakeMeal,
 } from '@server/entities/tests/fakes'
-import { insertAll } from '@tests/utils/records'
+import { insertAll, selectAll } from '@tests/utils/records'
 import { groceryListRepository } from '../groceryListRepository'
 
 const db = await wrapInRollbacks(createTestDatabase())
 const repository = groceryListRepository(db)
 let user: any
 let mealPlan: any
-let fakeIngrId: any
+let meal: any
+let fakeIngr: any
 
 async function createFakeGroceryList() {
   const list = {
     mealPlanId: mealPlan.id,
     product: 'snake oil',
     quantity: 30,
-    ingredientId: fakeIngrId,
+    ingredientId: fakeIngr.id,
   }
   const [data] = await insertAll(db, 'groceryList', [list])
   return data.id
 }
 
-beforeEach(async () => {
+beforeAll(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   ;[mealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id }),
   ])
-  const [meal] = await insertAll(db, 'meal', fakeMeal())
-  const [fakeIngr] = await insertAll(db, 'ingredient', fakeIngredient())
-  await insertAll(
-    db,
-    'mealIngredient',
-    fakeMealIngredient({
-      mealPlan: mealPlan.id,
-      ingredientId: fakeIngr.id,
-      mealId: meal.id,
-    })
-  )
+  ;[meal] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id, mealPlan: mealPlan.id})
 
-  fakeIngrId = fakeIngr.id
+  ;[fakeIngr] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: user.id})
+
+  await insertAll(db, "mealIngredient", {
+    quantity: 43,
+    ingredientId: fakeIngr.id,
+    mealId: meal.id,
+    mealPlan: mealPlan.id
+  })
+  // await insertAll(
+  //   db,
+  //   'mealIngredient',
+  //   fakeMealIngredient({
+  //     mealPlan: mealPlan.id,
+  //     ingredientId: fakeIngr.id,
+  //     mealId: meal.id,
+  //   })
+  // )
+  // fakeIngrId = fakeIngr.id
 })
 
 describe('create', () => {
@@ -54,7 +62,7 @@ describe('create', () => {
       mealPlanId: mealPlan.id,
       product: 'Apples',
       quantity: 5,
-      ingredientId: fakeIngrId,
+      ingredientId: fakeIngr.id,
     }
 
     // act
@@ -91,13 +99,13 @@ describe('findByMealPlanId', () => {
         mealPlanId: mealPlan.id,
         product: 'Apples',
         quantity: 5,
-        ingredientId: fakeIngrId,
+        ingredientId: fakeIngr.id,
       },
       {
         mealPlanId: mealPlan.id,
         product: 'Bananas',
         quantity: 10,
-        ingredientId: fakeIngrId,
+        ingredientId: fakeIngr.id,
       },
     ]
 
