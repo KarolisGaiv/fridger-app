@@ -35,7 +35,7 @@ beforeEach(async () => {
   ;[mealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: realUser.id }),
   ])
-  ;[ingredient] = await insertAll(db, 'ingredient', [fakeIngredient()])
+  ;[ingredient] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: realUser.id})
   groceryListId = await createFakeGroceryList()
 })
 

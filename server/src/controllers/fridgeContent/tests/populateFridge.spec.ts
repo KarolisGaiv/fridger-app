@@ -32,18 +32,18 @@ const db = await wrapInRollbacks(createTestDatabase())
 const createFridgeCaller = createCallerFactory(fridgeContentRouter)
 const createGroceryListCaller = createCallerFactory(groceryListRouter)
 
-beforeEach(async () => {
+beforeAll(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   ;[mealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id }),
   ])
-  ;[meal1] = await insertAll(db, 'meal', fakeMeal())
-  ;[meal2] = await insertAll(db, 'meal', fakeMeal())
-  ;[meal3] = await insertAll(db, 'meal', fakeMeal())
-  ;[ingredient1] = await insertAll(db, 'ingredient', fakeIngredient())
-  ;[ingredient2] = await insertAll(db, 'ingredient', fakeIngredient())
-  ;[ingredient3] = await insertAll(db, 'ingredient', fakeIngredient())
-  ;[ingredient4] = await insertAll(db, 'ingredient', fakeIngredient())
+  ;[meal1] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id, mealPlan: mealPlan.id})
+  ;[meal2] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id, mealPlan: mealPlan.id})
+  ;[meal3] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id, mealPlan: mealPlan.id})
+  ;[ingredient1] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: user.id})
+  ;[ingredient3] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: user.id})
+  ;[ingredient4] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: user.id})
+  ;[ingredient2] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: user.id})
   ;[fakeMealIngr1] = await insertAll(db, 'mealIngredient', [
     fakeMealIngredient({
       mealId: meal1.id,
