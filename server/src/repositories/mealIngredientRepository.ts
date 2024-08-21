@@ -50,7 +50,7 @@ export function mealIngredientRepository(db: Database) {
         .selectFrom('mealIngredient')
         .innerJoin('meal', 'meal.id', 'mealIngredient.mealId')
         .innerJoin('ingredient', 'ingredient.id', 'mealIngredient.ingredientId')
-        .where('mealPlan', '=', mealPlanId)
+        .where('mealIngredient.mealPlan', '=', mealPlanId)
         .select([
           'mealIngredient.ingredientId',
           'mealIngredient.quantity',

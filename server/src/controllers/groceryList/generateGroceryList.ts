@@ -22,30 +22,30 @@ export default authenticatedProcedure
   )
   .mutation(async ({ ctx: { authUser, services, repos } }) => {
     // Fetch all meal plans for the user
-    const mealPlans = await repos.mealPlanRepository.findByUserId(authUser.id)
-    if (mealPlans.length === 0) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'No meal plan found for the user.',
-      })
-    }
+    // const mealPlans = await repos.mealPlanRepository.findByUserId(authUser.id)
+    // if (mealPlans.length === 0) {
+    //   throw new TRPCError({
+    //     code: 'NOT_FOUND',
+    //     message: 'No meal plan found for the user.',
+    //   })
+    // }
 
-    // Find the active meal plan
-    const activeMealPlan = mealPlans.find((plan) => plan.isActive)
-    if (!activeMealPlan) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'No active meal plan found for the user.',
-      })
-    }
+    // // Find the active meal plan
+    // const activeMealPlan = mealPlans.find((plan) => plan.isActive)
+    // if (!activeMealPlan) {
+    //   throw new TRPCError({
+    //     code: 'NOT_FOUND',
+    //     message: 'No active meal plan found for the user.',
+    //   })
+    // }
 
-    // Perform the ownership check
-    if (activeMealPlan.userId !== authUser.id) {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'Not authorized to access this meal plan',
-      })
-    }
+    // // Perform the ownership check
+    // if (activeMealPlan.userId !== authUser.id) {
+    //   throw new TRPCError({
+    //     code: 'FORBIDDEN',
+    //     message: 'Not authorized to access this meal plan',
+    //   })
+    // }
 
     const groceryList = await services.groceryListServices.generateGroceryList(
       authUser.id

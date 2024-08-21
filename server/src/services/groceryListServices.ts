@@ -10,7 +10,7 @@ export function groceryListServices(db: Database) {
 
   return {
     async generateGroceryList(userId: number) {
-      // get user's meal plan
+      // get user's meal plans
       const mealPlans = await mealPlanRepo.findByUserId(userId)
       if (mealPlans.length === 0) {
         throw new TRPCError({
@@ -19,7 +19,8 @@ export function groceryListServices(db: Database) {
         })
       }
       // find active meal plan
-      const activeMealPlan = mealPlans.find((plan) => plan.isActive)
+      // const activeMealPlan = mealPlans.find((plan) => plan.isActive)
+      const activeMealPlan = await mealPlanRepo.findActiveMealPlan(userId)
       if (!activeMealPlan) {
         throw new TRPCError({
           code: 'NOT_FOUND',
