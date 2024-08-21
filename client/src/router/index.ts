@@ -27,9 +27,9 @@ const router = createRouter({
           component: () => import('../views/AddIngredient.vue'),
         },
         {
-          path: "grocery",
-          name: "GroceryView",
-          component: () => import("../views/GroceryView.vue")
+          path: 'grocery',
+          name: 'GroceryView',
+          component: () => import('../views/GroceryView.vue'),
         },
       ],
     },

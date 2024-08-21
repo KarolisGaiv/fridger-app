@@ -2,7 +2,7 @@
 import { trpc } from '@/trpc'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { FwbButton, FwbHeading, FwbInput, FwbTextarea } from 'flowbite-vue'
+import { FwbButton, FwbHeading, FwbInput, FwbCheckbox } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
 
@@ -10,6 +10,7 @@ const router = useRouter()
 
 const mealPlanForm = ref({
   planName: '',
+  isActive: false,
 })
 
 const successMessage = ref<string | null>(null)
@@ -20,6 +21,7 @@ const [createMealPlan, errorMessage] = useErrorMessage(async () => {
   successMessage.value = 'Meal plan created successfully!'
 
   mealPlanForm.value.planName = ''
+  mealPlanForm.value.isActive = false
 
   showOptions.value = true // Show options for adding meals or going to dashboard
 })
@@ -45,6 +47,14 @@ const goToDashboard = () => {
           :minlength="2"
           label="Meal Plan Name"
           placeholder="My meal plan"
+        />
+      </div>
+
+      <div class="mt-6" v-if="mealPlanForm.planName">
+        <FwbCheckbox
+          aria-label="Active status"
+          v-model="mealPlanForm.isActive"
+          label="Add as active plan"
         />
       </div>
     </div>

@@ -7,8 +7,6 @@ import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
 
 const activeMealPlan = ref<number | null>(null)
-
-
 </script>
 
 <template>
@@ -17,9 +15,6 @@ const activeMealPlan = ref<number | null>(null)
   </div>
 
   <div class="mt-6">
-    <FwbButton size="lg" >
-      Generate grocery list
-    </FwbButton>
+    <FwbButton size="lg"> Generate grocery list </FwbButton>
   </div>
-  
 </template>
