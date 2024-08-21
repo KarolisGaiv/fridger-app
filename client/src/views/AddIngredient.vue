@@ -11,6 +11,7 @@ import type { MealPublic } from '../../../server/src/entities/meal'
 const meals = ref<MealPublic[]>([]) // Array to hold all user meals
 const ingredients = ref<[]>([])
 const selectedMealName = ref<string | null>(null)
+const selectedMealId = ref<number | null>(null)
 const showIngredientFormSelection = ref<boolean>(false)
 const showIngredientForm = ref<boolean>(false)
 
@@ -28,16 +29,7 @@ const successMessage = ref<string | null>(null)
 // Fetch all meals when the component is mounted
 onMounted(async () => {
   meals.value = await trpc.meal.findAll.query()
-  ingredients.value = await trpc.ingredient.findAll.query()
 })
-
-// Handle meal selection
-// const selectMeal = async () => {
-//   console.log(selectedMealName.value);
-//   // showIngredientFormSelection.value = true
-
-//   // showIngredientForm.value = true
-// }
 
 const getMealDetails = async () => {
   // Fetch the meal ID based on the selected meal name
@@ -46,31 +38,25 @@ const getMealDetails = async () => {
     return
   }
   const selectedMeal = await trpc.meal.findByName.query({ name: selectedMealName.value })
-  const selectedMealId = selectedMeal.id
+  selectedMealId.value = selectedMeal.id
   showIngredientFormSelection.value = true
-  console.log('selected meal id ', selectedMealId)
+  showSelectIngredientForm.value = false
+  showAddNewIngredientForm.value = false
 }
 
-// Handle ingredient creation
 const [createIngredient, errorMessage] = useErrorMessage(async () => {
-  // Fetch the meal ID based on the selected meal name
-  if (!selectedMealName.value) {
-    console.error('No meal selected')
+  // Ensure selectedMealId is not null
+  if (selectedMealId.value === null) {
+    console.error('Meal ID is null')
     return
   }
-  const selectedMeal = await trpc.meal.findByName.query({ name: selectedMealName.value })
-  const selectedMealId = selectedMeal.id
 
-  // create new ingredient into database
-  const ingredient = await trpc.ingredient.create.mutate({ name: ingredientForm.value.name })
-
-  // create new meal ingredient into database
   const ingredientId = (
-    await trpc.ingredient.findByName.query({ name: ingredient.ingredientCreated.name })
+    await trpc.ingredient.findByName.query({ name: ingredientForm.value.name })
   ).id
   const quantity = parseFloat(ingredientForm.value.quantity)
 
-  await trpc.mealIngredient.create.mutate({ quantity, ingredientId, mealId: selectedMealId })
+  await trpc.mealIngredient.create.mutate({ingredientId, quantity, mealId: selectedMealId.value})
 
   successMessage.value = `${ingredientForm.value.name} added to '${selectedMealName.value}' meal successfully!`
 
@@ -78,13 +64,18 @@ const [createIngredient, errorMessage] = useErrorMessage(async () => {
   ingredientForm.value.name = ''
   ingredientForm.value.quantity = ''
   selectedMealName.value = null
-  showIngredientForm.value = false
+
+  // Hide the form after adding the ingredient
+  showIngredientFormSelection.value = false
+  showSelectIngredientForm.value = false
+  showAddNewIngredientForm.value = false
 })
 
 // Show form to select existing ingredient
-const showSelectIngredientFormHandler = () => {
+const showSelectIngredientFormHandler = async () => {
   showSelectIngredientForm.value = true
   showAddNewIngredientForm.value = false
+  ingredients.value = await trpc.ingredient.findAll.query()
 }
 
 // Show form to add new ingredient
@@ -122,6 +113,38 @@ const showAddIngredientFormHandler = () => {
     >
     <FwbButton size="lg" @click="showAddIngredientFormHandler">Add new ingredient</FwbButton>
   </div>
+
+  <form v-if="showSelectIngredientForm" aria-label="Add existing ingredient to the meal" @submit.prevent="createIngredient">
+    <div class="mt-6">
+      <label for="ingredientSelect" class="block text-sm font-medium text-gray-700">Select Ingredient</label>
+      <select 
+      id="ingredientSelect"
+      v-model="ingredientForm.name"
+      class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+      >
+      <option value="" disabled>Available ingredients</option>
+      <option v-for="ingredient in ingredients" :key="ingredient.name" :value="ingredient.name">{{ ingredient.name }}</option>
+    </select>
+    </div>
+
+
+    <!-- Quantity Input Field -->
+    <div class="mt-6">
+      <label for="quantity" class="block text-sm font-medium text-gray-700">Quantity</label>
+      <input 
+        type="number" 
+        id="quantity" 
+        v-model="ingredientForm.quantity"
+        class="mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        placeholder="Enter quantity"
+      />
+    </div>
+
+    <!-- Submit Button -->
+    <div class="mt-6">
+      <FwbButton size="lg" type="submit">Add Ingredient</FwbButton>
+    </div>
+  </form>
 
   <!-- Show success message -->
   <div v-if="successMessage" class="mt-6 text-green-600">
