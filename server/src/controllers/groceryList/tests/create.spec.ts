@@ -22,7 +22,7 @@ beforeAll(async () => {
   ;[mealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id }),
   ])
-  ;[ingredient] = await insertAll(db, 'ingredient', fakeIngredient())
+  ;[ingredient] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: user.id})
 })
 
 describe('create', () => {

@@ -29,12 +29,12 @@ async function createFakeGroceryList() {
   return { id: data.id, ...list }
 }
 
-beforeEach(async () => {
+beforeAll(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   ;[mealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id }),
   ])
-  ;[ingredient] = await insertAll(db, 'ingredient', fakeIngredient())
+  ;[ingredient] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: user.id})
   groceryList = await createFakeGroceryList()
 })
 
