@@ -6,12 +6,20 @@ import { FwbButton, FwbHeading, FwbInput } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
 
+const activeMealPlan = ref<number | null>(null)
+
 
 </script>
 
 <template>
   <div class="space-y-6">
     <FwbHeading tag="h1" class="text-3xl">Grocery List</FwbHeading>
+  </div>
+
+  <div class="mt-6">
+    <FwbButton size="lg" >
+      Generate grocery list
+    </FwbButton>
   </div>
   
 </template>
