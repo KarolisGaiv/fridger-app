@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createTestDatabase } from '@tests/utils/database'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { insertAll, clearTables, selectAll } from '@tests/utils/records'
@@ -5,6 +6,7 @@ import {
   fakeUser,
   fakeIngredient,
   fakeMealPlan,
+  fakeMeal,
 } from '@server/entities/tests/fakes'
 import { fridgeContentRepository } from '../fridgeContentRepository'
 
@@ -15,6 +17,7 @@ let user: any
 let ingredient: any
 let mealPlan: any
 let groceryListId: number
+let meal: any
 
 async function createFakeGroceryList() {
   const list = {
@@ -42,13 +45,21 @@ async function insertMealPlanWithFridgeContent(quantity: number) {
   return mealPlan
 }
 
-beforeEach(async () => {
+beforeAll(async () => {
   // Insert fake data into related tables
   ;[user] = await insertAll(db, 'user', [fakeUser()])
   ;[mealPlan] = await insertAll(db, 'mealPlan', [
     fakeMealPlan({ userId: user.id }),
   ])
-  ;[ingredient] = await insertAll(db, 'ingredient', [fakeIngredient()])
+  ;[meal] = await insertAll(db, 'meal', {
+    ...fakeMeal(),
+    user: user.id,
+    mealPlan: mealPlan.id,
+  })
+  ;[ingredient] = await insertAll(db, 'ingredient', {
+    ...fakeIngredient(),
+    user: user.id,
+  })
 
   groceryListId = await createFakeGroceryList()
 
@@ -192,11 +203,12 @@ describe('deleteByUserId', () => {
 describe('findByUserAndProduct', () => {
   it('should find existing item in users fridge', async () => {
     // Arrange
+    const [mealPlanFromDatabase] = await selectAll(db, 'mealPlan')
     const fridgeContent = {
       userId: user.id,
       groceryListId,
       ingredientId: ingredient.id,
-      mealPlan: mealPlan.id,
+      mealPlan: mealPlanFromDatabase.id,
       existingQuantity: 10,
     }
 
