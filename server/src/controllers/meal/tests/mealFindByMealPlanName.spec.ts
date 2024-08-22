@@ -48,26 +48,26 @@ it('should find meals by meal plan ID', async () => {
       mealPlan: plan2.id,
     },
   ])
-  const { findByMealPlanId } = createCaller(authContext({ db }, user))
+  const { findByMealPlanName } = createCaller(authContext({ db }, user))
 
   // act
-  const resultForUser = await findByMealPlanId({ planName: plan1.planName })
+  const resultForUser = await findByMealPlanName({ planName: plan1.planName })
 
   // assert
   expect(resultForUser).toHaveLength(3)
 })
 
 it('throws err if meal plan does not exist', async () => {
-  const { findByMealPlanId } = createCaller(authContext({ db }, user))
+  const { findByMealPlanName } = createCaller(authContext({ db }, user))
 
   await expect(
-    findByMealPlanId({ planName: 'DOES NOT EXIST' })
+    findByMealPlanName({ planName: 'DOES NOT EXIST' })
   ).rejects.toThrowError(/plan with this name not found/i)
 })
 
 it('prevents unauth user from using method', async () => {
   // arrange
-  const { findByMealPlanId } = createCaller({
+  const { findByMealPlanName } = createCaller({
     db,
     req: {
       // no Auth header
@@ -76,7 +76,7 @@ it('prevents unauth user from using method', async () => {
   })
 
   // act & assert
-  await expect(findByMealPlanId({ planName: 'Jude' })).rejects.toThrowError(
+  await expect(findByMealPlanName({ planName: 'Jude' })).rejects.toThrowError(
     /unauthenticated/i
   )
 })
