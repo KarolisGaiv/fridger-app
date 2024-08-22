@@ -3,12 +3,29 @@ import { ref, onMounted } from 'vue'
 import { trpc } from '@/trpc'
 import { FwbButton, FwbHeading } from 'flowbite-vue'
 import { isLoggedIn } from '@/stores/user'
+import MealCard from '@/components/MealCard.vue'
 
-const planName = ref({})
+interface Meal {
+  name: string
+  calories: number
+}
+
+const planName = ref<string>('')
+const plannedMeals = ref<Meal[]>([])
+const hasActivePlan = ref<boolean>(false)
 
 onMounted(async () => {
-  planName.value = await trpc.mealPlan.findActiveMealPlan.query()
-  console.log(planName.value)
+  // Fetch the active meal plan name
+  const activePlanName = await trpc.mealPlan.findActiveMealPlan.query()
+  if (activePlanName) {
+    planName.value = activePlanName
+    hasActivePlan.value = true
+
+    // Fetch meals by the active meal plan name
+    plannedMeals.value = await trpc.meal.findByMealPlanName.query({ planName: activePlanName })
+  } else {
+    hasActivePlan.value = false
+  }
 })
 </script>
 
@@ -35,8 +52,17 @@ onMounted(async () => {
     <div v-if="isLoggedIn" class="text-4xl font-bold text-gray-800 dark:text-gray-100">
       <FwbHeading tag="h1" class="text-3xl">Your current meal plan details</FwbHeading>
     </div>
-    <div class="mt-6" v-if="planName">
+
+    <div v-if="hasActivePlan" class="mt-6 flex items-center gap-2">
       <FwbHeading tag="h3" class="text-3xl">Active Plan: {{ planName }}</FwbHeading>
+    </div>
+
+    <div v-if="hasActivePlan" class="mt-6 grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <MealCard v-for="meal in plannedMeals" :key="meal.name" :meal="meal" />
+    </div>
+
+    <div v-else class="mt-6">
+      <FwbHeading tag="h3" class="text-3xl">You do not have an active meal plan.</FwbHeading>
     </div>
   </div>
 </template>
