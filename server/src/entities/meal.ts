@@ -9,10 +9,12 @@ export const mealSchema = z.object({
   name: z.string().min(1).max(60),
   user: z.number(),
   mealPlan: z.number().optional(),
+  assignedDay: z.number().min(1).max(7).optional(),
+  type: z.enum(['breakfast', 'lunch', 'dinner', 'snack']).optional(),
 })
 
 export const mealKeysAll = Object.keys(mealSchema.shape) as (keyof Meal)[]
 
-export const mealKeysPublic = ['name', 'calories'] as const
+export const mealKeysPublic = ['name', 'calories', 'type'] as const
 
 export type MealPublic = Pick<Selectable<Meal>, (typeof mealKeysPublic)[number]>

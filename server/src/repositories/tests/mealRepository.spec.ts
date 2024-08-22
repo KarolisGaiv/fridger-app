@@ -14,7 +14,7 @@ beforeEach(async () => {
 })
 
 describe('create', () => {
-  it('should create a new meal', async () => {
+  it('should create a new meal without optional parameters', async () => {
     const meal = {
       ...fakeMeal(),
       user: user.id,
@@ -25,7 +25,61 @@ describe('create', () => {
       calories: meal.calories,
       name: meal.name,
       id: meal.id,
+      type: null,
     })
+  })
+
+  it('should create a new meal with optional parameters', async () => {
+    const [plan] = await insertAll(db, 'mealPlan', {
+      ...fakeMealPlan(),
+      userId: user.id,
+    })
+    const meal = {
+      ...fakeMeal(),
+      user: user.id,
+      mealPlan: plan.id,
+      type: 'lunch',
+      assignedDay: 2,
+    }
+
+    const createdMeal = await repository.create(meal)
+    expect(createdMeal).toEqual({
+      calories: meal.calories,
+      name: meal.name,
+      id: meal.id,
+      type: 'lunch',
+    })
+
+    const fullData = (await selectAll(db, 'meal'))[0]
+    expect(fullData).toMatchObject({
+      type: 'lunch',
+      assignedDay: meal.assignedDay,
+      mealPlan: meal.mealPlan,
+    })
+  })
+
+  it('should not allow create new meal with day not between 1 and 7', async () => {
+    const meal = {
+      ...fakeMeal(),
+      user: user.id,
+      assignedDay: 42,
+    }
+
+    await expect(repository.create(meal)).rejects.toThrow(
+      /violates check constraint/i
+    )
+  })
+
+  it('should not allow create new meal with non existing meal types', async () => {
+    const meal = {
+      ...fakeMeal(),
+      user: user.id,
+      type: 'CHEAT MEAL',
+    }
+
+    await expect(repository.create(meal)).rejects.toThrow(
+      /violates check constraint/i
+    )
   })
 })
 
