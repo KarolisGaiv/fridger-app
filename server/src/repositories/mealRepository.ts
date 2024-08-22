@@ -73,6 +73,15 @@ export function mealRepository(db: Database) {
         .where('name', '=', name)
         .execute()
     },
+
+    async findByMealPlanID(planID: number, userId: number) {
+      return db
+        .selectFrom("meal")
+        .select(["name", "calories"])
+        .where('user', '=', userId)
+        .where("mealPlan", '=', planID)
+        .execute()
+    }
   }
 }
 

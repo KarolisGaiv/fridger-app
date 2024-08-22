@@ -1,5 +1,5 @@
 import { createTestDatabase } from '@tests/utils/database'
-import { fakeMeal, fakeUser } from '@server/entities/tests/fakes'
+import { fakeMeal, fakeUser, fakeMealPlan } from '@server/entities/tests/fakes';
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { insertAll, clearTables, selectAll } from '@tests/utils/records'
 import { mealRepository } from '../mealRepository'
@@ -184,5 +184,44 @@ describe('delete', async () => {
     await repository.deleteMeal('NON EXISTING MEAL', user2.id)
     const database = await repository.findAll(user2.id)
     expect(database).toHaveLength(1)
+  })
+})
+
+describe("findByMealPlanID", () => {
+  it("should return array of meals belonging to specific meal plan", async () => {
+    const [plan1, plan2] = await insertAll(db, "mealPlan", [{...fakeMealPlan(), userId: user.id}, {...fakeMealPlan(), userId: user2.id}])
+    await insertAll(db, 'meal', [
+      {
+        ...fakeMeal(),
+        user: user.id,
+        mealPlan: plan1.id
+      },
+      {
+        ...fakeMeal(),
+        user: user.id,
+        mealPlan: plan1.id
+      },
+      {
+        ...fakeMeal(),
+        user: user.id,
+        mealPlan: plan1.id
+      },
+      {
+        ...fakeMeal(),
+        user: user2.id,
+        mealPlan: plan2.id
+      },
+      {
+        ...fakeMeal(),
+        user: user2.id,
+        mealPlan: plan2.id
+      },
+    ])
+
+    const user1Meals = await repository.findByMealPlanID(plan1.id, user.id)
+    expect(user1Meals).toHaveLength(3)
+
+    const user2Meals = await repository.findByMealPlanID(plan2.id, user2.id)
+    expect(user2Meals).toHaveLength(2)
   })
 })
