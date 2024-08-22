@@ -76,12 +76,12 @@ export function mealRepository(db: Database) {
 
     async findByMealPlanID(planID: number, userId: number) {
       return db
-        .selectFrom("meal")
-        .select(["name", "calories"])
+        .selectFrom('meal')
+        .select(['name', 'calories'])
         .where('user', '=', userId)
-        .where("mealPlan", '=', planID)
+        .where('mealPlan', '=', planID)
         .execute()
-    }
+    },
   }
 }
 

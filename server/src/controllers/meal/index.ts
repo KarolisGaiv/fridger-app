@@ -4,6 +4,7 @@ import findByName from './findByName'
 import findAll from './findAll'
 import updateMeal from './updateMeal'
 import deleteMeal from './deleteMeal'
+import findByMealPlanId from './findByMealPlanId'
 
 export default router({
   create,
@@ -11,4 +12,5 @@ export default router({
   findAll,
   updateMeal,
   deleteMeal,
+  findByMealPlanId,
 })

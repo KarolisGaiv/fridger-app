@@ -1,5 +1,5 @@
 import { createTestDatabase } from '@tests/utils/database'
-import { fakeMeal, fakeUser, fakeMealPlan } from '@server/entities/tests/fakes';
+import { fakeMeal, fakeUser, fakeMealPlan } from '@server/entities/tests/fakes'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { insertAll, clearTables, selectAll } from '@tests/utils/records'
 import { mealRepository } from '../mealRepository'
@@ -187,34 +187,37 @@ describe('delete', async () => {
   })
 })
 
-describe("findByMealPlanID", () => {
-  it("should return array of meals belonging to specific meal plan", async () => {
-    const [plan1, plan2] = await insertAll(db, "mealPlan", [{...fakeMealPlan(), userId: user.id}, {...fakeMealPlan(), userId: user2.id}])
+describe('findByMealPlanID', () => {
+  it('should return array of meals belonging to specific meal plan', async () => {
+    const [plan1, plan2] = await insertAll(db, 'mealPlan', [
+      { ...fakeMealPlan(), userId: user.id },
+      { ...fakeMealPlan(), userId: user2.id },
+    ])
     await insertAll(db, 'meal', [
       {
         ...fakeMeal(),
         user: user.id,
-        mealPlan: plan1.id
+        mealPlan: plan1.id,
       },
       {
         ...fakeMeal(),
         user: user.id,
-        mealPlan: plan1.id
+        mealPlan: plan1.id,
       },
       {
         ...fakeMeal(),
         user: user.id,
-        mealPlan: plan1.id
+        mealPlan: plan1.id,
       },
       {
         ...fakeMeal(),
         user: user2.id,
-        mealPlan: plan2.id
+        mealPlan: plan2.id,
       },
       {
         ...fakeMeal(),
         user: user2.id,
-        mealPlan: plan2.id
+        mealPlan: plan2.id,
       },
     ])
 
