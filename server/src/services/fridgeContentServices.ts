@@ -10,7 +10,7 @@ export function fridgeContentService(db: Database) {
   const groceryListRepo = groceryListRepository(db)
 
   return {
-    async placeItemsIntoFridge(userId: number): Promise<void> {
+    async placeItemsIntoFridge(userId: number) {
       // Find active meal plan for user
       const activeMealPlan = await mealPlanRepo.findActiveMealPlan(userId)
 
@@ -58,6 +58,9 @@ export function fridgeContentService(db: Database) {
           }
         })
       )
+
+      const updatedFridgeContent = await fridgeContentRepo.findByUser(userId)
+      return updatedFridgeContent
     },
   }
 }

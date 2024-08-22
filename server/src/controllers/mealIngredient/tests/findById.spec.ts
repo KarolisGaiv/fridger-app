@@ -18,8 +18,11 @@ let ingredient: any
 
 beforeAll(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
-  ;[meal] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
-  ;[ingredient] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: user.id})
+  ;[meal] = await insertAll(db, 'meal', { ...fakeMeal(), user: user.id })
+  ;[ingredient] = await insertAll(db, 'ingredient', {
+    ...fakeIngredient(),
+    user: user.id,
+  })
 })
 
 describe('findMealIngredientById', () => {

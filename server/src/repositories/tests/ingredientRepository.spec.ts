@@ -55,6 +55,33 @@ describe('findByName', () => {
   })
 })
 
+describe('findById', () => {
+  it("should find ingredient by it's ID", async () => {
+    ;[user] = await insertAll(db, 'user', [fakeUser()])
+    const [ingr1, ingr2] = await insertAll(db, 'ingredient', [
+      { ...fakeIngredient(), user: user.id },
+      { ...fakeIngredient(), user: user.id },
+    ])
+
+    const result = await repository.findByIngredientId(ingr1.id, user.id)
+    expect(result?.name).toBe(ingr1.name)
+
+    const result2 = await repository.findByIngredientId(ingr2.id, user.id)
+    expect(result2?.name).toBe(ingr2.name)
+  })
+
+  it('should return nothing if ingredient is not found by id', async () => {
+    ;[user] = await insertAll(db, 'user', [fakeUser()])
+    await insertAll(db, 'ingredient', [
+      { ...fakeIngredient(), user: user.id },
+      { ...fakeIngredient(), user: user.id },
+    ])
+
+    const res = await repository.findByIngredientId(0, user.id)
+    expect(res).toBeUndefined()
+  })
+})
+
 describe('findAll', () => {
   beforeAll(async () => {
     ;[user] = await insertAll(db, 'user', [fakeUser()])

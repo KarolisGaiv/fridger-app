@@ -17,12 +17,15 @@ let meal: any
 
 beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
-  ;[meal] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
+  ;[meal] = await insertAll(db, 'meal', { ...fakeMeal(), user: user.id })
 })
 
 describe('updateMealIngredient', () => {
   it('should update a meal ingredient successfully', async () => {
-    const [ingredient1] = await insertAll(db, 'ingredient', {...fakeIngredient(), user: user.id})
+    const [ingredient1] = await insertAll(db, 'ingredient', {
+      ...fakeIngredient(),
+      user: user.id,
+    })
 
     const initialMealIngredient = {
       mealId: meal.id,

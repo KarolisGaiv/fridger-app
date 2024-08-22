@@ -31,6 +31,15 @@ export function ingredientRepository(db: Database) {
       return ingredient
     },
 
+    async findByIngredientId(ingredientId: number, userId: number) {
+      return db
+        .selectFrom('ingredient')
+        .select(ingredientKeyPublic)
+        .where('user', '=', userId)
+        .where('id', '=', ingredientId)
+        .executeTakeFirst()
+    },
+
     async findAll(userId: number): Promise<IngredientPublic[]> {
       return db
         .selectFrom('ingredient')

@@ -28,8 +28,15 @@ beforeAll(async () => {
     fakeMealPlan({ userId: user.id, isActive: true }),
     fakeMealPlan({ userId: user.id, isActive: false }),
   ])
-  ;[meal1] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id, mealPlan: activeMealPlan.id})
-  ;[ingredient1, ingredient2] = await insertAll(db, 'ingredient', [{name: "eggs", user: user.id}, {name: "bacon", user: user.id}])
+  ;[meal1] = await insertAll(db, 'meal', {
+    ...fakeMeal(),
+    user: user.id,
+    mealPlan: activeMealPlan.id,
+  })
+  ;[ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
+    { name: 'eggs', user: user.id },
+    { name: 'bacon', user: user.id },
+  ])
 
   await insertAll(db, 'mealIngredient', [
     fakeMealIngredient({

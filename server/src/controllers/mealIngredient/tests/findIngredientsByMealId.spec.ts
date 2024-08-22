@@ -19,10 +19,10 @@ let ingredient2: any
 
 beforeAll(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
-  ;[meal] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
+  ;[meal] = await insertAll(db, 'meal', { ...fakeMeal(), user: user.id })
   ;[ingredient1, ingredient2] = await insertAll(db, 'ingredient', [
-    {...fakeIngredient(), user: user.id},
-    {...fakeIngredient(), user: user.id},
+    { ...fakeIngredient(), user: user.id },
+    { ...fakeIngredient(), user: user.id },
   ])
 })
 
@@ -55,7 +55,10 @@ describe('findIngredientsByMealId', () => {
   })
 
   it('should return empty array if no ingredients found for meal', async () => {
-    const [meal1] = await insertAll(db, 'meal', {...fakeMeal(), user: user.id})
+    const [meal1] = await insertAll(db, 'meal', {
+      ...fakeMeal(),
+      user: user.id,
+    })
 
     const { findIngredientsByMealId } = createCaller(authContext({ db }, user))
     const result = await findIngredientsByMealId({ mealId: meal1.id })
