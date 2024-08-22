@@ -5,7 +5,7 @@ import type { ArticlePublic, CommentPublic } from '@server/shared/types'
 import { FwbButton, FwbHeading, FwbInput } from 'flowbite-vue'
 import { onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import Card from '@/components/Card.vue'
+import Card from '@/components/GroceryItemCard.vue'
 import { isLoggedIn } from '@/stores/user'
 
 const route = useRoute()
