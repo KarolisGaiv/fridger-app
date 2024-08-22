@@ -4,6 +4,7 @@ import { trpc } from '@/trpc'
 import { FwbButton, FwbHeading } from 'flowbite-vue'
 import { isLoggedIn } from '@/stores/user'
 import MealCard from '@/components/MealCard.vue'
+import { useRouter } from 'vue-router'
 
 interface Meal {
   name: string
@@ -13,6 +14,7 @@ interface Meal {
 const planName = ref<string>('')
 const plannedMeals = ref<Meal[]>([])
 const hasActivePlan = ref<boolean>(false)
+const router = useRouter()
 
 onMounted(async () => {
   // Fetch the active meal plan name
@@ -27,6 +29,10 @@ onMounted(async () => {
     hasActivePlan.value = false
   }
 })
+
+const goToAddMealPlan = () => {
+  router.push({ name: 'AddMealPlan' })
+}
 </script>
 
 <template>
@@ -61,8 +67,13 @@ onMounted(async () => {
       <MealCard v-for="meal in plannedMeals" :key="meal.name" :meal="meal" />
     </div>
 
-    <div v-else class="mt-6">
+    <div v-else class="mt-6 text-center">
       <FwbHeading tag="h3" class="text-3xl">You do not have an active meal plan.</FwbHeading>
+      <div class="mt-4">
+        <FwbButton @click="goToAddMealPlan">
+          Add Meal Plan
+        </FwbButton>
+      </div>
     </div>
   </div>
 </template>
