@@ -8,7 +8,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const links = computed(() => [
-  { label: 'Dashboard', name: 'Home' },
+  { label: 'Dashboard', name: 'DashboardHome' },
 
   ...(isLoggedIn.value
     ? [

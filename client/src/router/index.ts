@@ -12,6 +12,11 @@ const router = createRouter({
       beforeEnter: [authenticate],
       children: [
         {
+          path: '',
+          name: 'DashboardHome',
+          component: HomeView,
+        },
+        {
           path: 'add-meal-plan',
           name: 'AddMealPlan',
           component: () => import('../views/AddMealPlan.vue'),
@@ -47,6 +52,10 @@ const router = createRouter({
       path: '/signup',
       name: 'Signup',
       component: () => import('../views/SignupView.vue'),
+    },
+    {
+      path: '',
+      redirect: '/dashboard',
     },
     {
       path: '',
