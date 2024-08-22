@@ -14,6 +14,7 @@ const links = computed(() => [
     ? [
         { label: 'Add Meal Plan', name: 'AddMealPlan' },
         { label: 'Grocery List', name: 'GroceryView' },
+        {label: "Fridge", name: "FridgeView"}
       ]
     : [
         { label: 'Login', name: 'Login' },

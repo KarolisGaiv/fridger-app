@@ -31,6 +31,11 @@ const router = createRouter({
           name: 'GroceryView',
           component: () => import('../views/GroceryView.vue'),
         },
+        {
+          path: "fridge",
+          name: "FridgeView",
+          component: () => import("../views/FridgeView.vue")
+        }
       ],
     },
     {
