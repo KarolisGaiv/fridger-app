@@ -1,19 +1,15 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
 import { trpc } from '@/trpc'
-import type { Selectable } from 'kysely'
-import type { Article } from '@server/shared/types'
-import { FwbButton } from 'flowbite-vue'
-import ArticleCard from '@/components/ArticleCard.vue'
+import { FwbButton, FwbHeading } from 'flowbite-vue'
 import { isLoggedIn } from '@/stores/user'
 
-// const articles = ref<Selectable<Article>[]>([])
+const planName = ref({})
 
-// const fetchArticles = async () => {
-//   articles.value = await trpc.article.findAll.query()
-// }
-
-// onMounted(fetchArticles)
+onMounted(async () => {
+  planName.value = await trpc.mealPlan.findActiveMealPlan.query()
+  console.log(planName.value)
+})
 </script>
 
 <template>
@@ -34,32 +30,13 @@ import { isLoggedIn } from '@/stores/user'
             </FwbButton>
           </div>
         </div>
-        <div class="mt-8 lg:mt-0 lg:w-1/2">
-          <!-- <div class="flex items-center justify-center lg:justify-end">
-            <div class="max-w-lg">
-              <picture>
-                <source srcset="../assets/illustration.webp" type="image/webp" />
-                <img
-                  class="h-64 w-full rounded-md object-cover object-center"
-                  src="../assets/illustration.png"
-                  alt="Person typing"
-                />
-              </picture>
-            </div>
-          </div> -->
-        </div>
       </div>
     </div>
     <div v-if="isLoggedIn" class="text-4xl font-bold text-gray-800 dark:text-gray-100">
-      PLACEHOLDER FOR CURRENT MEAL PLAN DETAILS
+      <FwbHeading tag="h1" class="text-3xl">Your current meal plan details</FwbHeading>
     </div>
-
-    <!-- <div class="mt-12">
-      <h3 class="text-2xl font-bold text-gray-800 dark:text-gray-100">Latest Articles</h3>
-      <div v-if="articles.length" class="mt-6 grid gap-6 lg:grid-cols-3" data-testid="articleList">
-        <ArticleCard v-for="article in articles" :key="article.id" :article="article" />
-      </div>
-      <div v-else class="text-center text-gray-500 dark:text-gray-400">No articles yet!</div>
-    </div> -->
+    <div class="mt-6" v-if="planName">
+      <FwbHeading tag="h3" class="text-3xl">Active Plan: {{ planName }}</FwbHeading>
+    </div>
   </div>
 </template>
