@@ -12,19 +12,30 @@ export function fridgeContentService(db: Database) {
   return {
     async placeItemsIntoFridge(userId: number) {
       // Find active meal plan for user
-      const activeMealPlan = await mealPlanRepo.findActiveMealPlan(userId)
+      const activeMealPlanName = await mealPlanRepo.findActiveMealPlan(userId)
 
-      if (!activeMealPlan) {
+      if (!activeMealPlanName) {
         throw new TRPCError({
           code: 'NOT_FOUND',
           message: 'User has no active meal plan',
         })
       }
 
-      // Find grocery list by the active meal plan
-      const groceryList = await groceryListRepo.findByMealPlanId(
-        activeMealPlan.id
+      const activeMealPlanId = await mealPlanRepo.findByPlanName(
+        activeMealPlanName,
+        userId
       )
+
+      if (activeMealPlanId === undefined) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Error: No meal plan ID found for the active meal plan',
+        })
+      }
+
+      // Find grocery list by the active meal plan
+      const groceryList =
+        await groceryListRepo.findByMealPlanId(activeMealPlanId)
 
       if (!groceryList || groceryList.length === 0) {
         throw new TRPCError({
@@ -51,7 +62,7 @@ export function fridgeContentService(db: Database) {
           } else {
             await fridgeContentRepo.create({
               userId,
-              mealPlan: activeMealPlan.id,
+              mealPlan: activeMealPlanId,
               ingredientId: item.ingredientId,
               existingQuantity: item.quantity,
             })

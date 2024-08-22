@@ -18,12 +18,5 @@ export default authenticatedProcedure
         message: 'No active meal plan found',
       })
     }
-
-    if (data.userId !== authUser.id) {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'Not authorized to access this data',
-      })
-    }
     return data
   })

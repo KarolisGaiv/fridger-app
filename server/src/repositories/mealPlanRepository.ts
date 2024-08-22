@@ -46,15 +46,29 @@ export function mealPlanRepository(db: Database) {
         .execute()
     },
 
-    async findActiveMealPlan(
+    async findByPlanName(
+      planName: string,
       userId: number
-    ): Promise<Selectable<MealPlan> | undefined> {
-      return db
+    ): Promise<number | undefined> {
+      const res = await db
         .selectFrom('mealPlan')
-        .select(mealPlanKeysAll)
+        .select('id')
+        .where('userId', '=', userId)
+        .where('planName', '=', planName)
+        .executeTakeFirst()
+
+      return res?.id
+    },
+
+    async findActiveMealPlan(userId: number): Promise<string | undefined> {
+      const res = await db
+        .selectFrom('mealPlan')
+        .select('planName')
         .where('userId', '=', userId)
         .where('isActive', '=', true)
         .executeTakeFirst()
+
+      return res?.planName
     },
 
     async update(

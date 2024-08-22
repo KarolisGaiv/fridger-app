@@ -29,9 +29,20 @@ export function groceryListServices(db: Database) {
       }
 
       // get meal ingredients with their quantities by meal plan ID
-      const ingredients = await mealIngredientRepo.findIngredientsByMealPlanId(
-        activeMealPlan.id
+      const mealPlanId = await mealPlanRepo.findByPlanName(
+        activeMealPlan,
+        userId
       )
+
+      if (mealPlanId === undefined) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: 'Error: No meal plan ID found for the active meal plan',
+        })
+      }
+
+      const ingredients =
+        await mealIngredientRepo.findIngredientsByMealPlanId(mealPlanId)
 
       if (ingredients.length === 0) {
         throw new TRPCError({
@@ -43,7 +54,7 @@ export function groceryListServices(db: Database) {
       // transform ingredients into grocery list format
       const groceryListItems: Insertable<GroceryList>[] = ingredients.map(
         (ingredient) => ({
-          mealPlanId: activeMealPlan.id,
+          mealPlanId,
           product: ingredient.ingredientName,
           quantity: ingredient.quantity,
           ingredientId: ingredient.ingredientId,

@@ -1,7 +1,7 @@
 import { createTestDatabase } from '@tests/utils/database'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { fakeUser } from '@server/entities/tests/fakes'
-import { insertAll, selectAll } from '@tests/utils/records'
+import { insertAll } from '@tests/utils/records'
 import { mealPlanRepository } from '../mealPlanRepository'
 
 const db = await wrapInRollbacks(createTestDatabase())
@@ -226,6 +226,19 @@ describe('findActiveMealPlan', () => {
     await repository.create(secondPlan)
 
     const result = await repository.findActiveMealPlan(user.id)
-    expect(result?.planName).toBe('SECOND ACTIVE meal plan')
+    expect(result).toBe('SECOND ACTIVE meal plan')
+  })
+})
+
+describe('findByPlanName', () => {
+  it("should find meal plan by it's name", async () => {
+    const [firstPlan] = await insertAll(db, 'mealPlan', {
+      planName: 'First ACTIVE meal plan',
+      userId: user.id,
+      isActive: true,
+    })
+
+    const res = await repository.findByPlanName(firstPlan.planName, user.id)
+    expect(res).toBe(firstPlan.id)
   })
 })

@@ -36,8 +36,7 @@ describe('findActiveMealPlan', () => {
     const res = await findActiveMealPlan()
 
     // assert
-    expect(res?.planName).toBe('Second Plan')
-    expect(res?.isActive).toBe(true)
+    expect(res).toBe('Second Plan')
   })
 
   it('should throw a NOT_FOUND error if active meal plan is not found', async () => {
