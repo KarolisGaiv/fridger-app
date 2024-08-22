@@ -5,6 +5,8 @@ import { FwbButton, FwbHeading } from 'flowbite-vue'
 import { isLoggedIn } from '@/stores/user'
 import MealCard from '@/components/MealCard.vue'
 import { useRouter } from 'vue-router'
+import useErrorMessage from '@/composables/useErrorMessage'
+import AlertError from '@/components/AlertError.vue'
 
 interface Meal {
   name: string
@@ -16,15 +18,24 @@ const plannedMeals = ref<Meal[]>([])
 const hasActivePlan = ref<boolean>(false)
 const router = useRouter()
 
+// Use error handling composable for fetching data
+const [fetchActiveMealPlan, activePlanError] = useErrorMessage(async () =>
+  trpc.mealPlan.findActiveMealPlan.query()
+)
+
+const [fetchMealsByPlanName, mealsError] = useErrorMessage(async () => {
+  return await trpc.meal.findByMealPlanName.query({ planName: planName.value })
+})
+
 onMounted(async () => {
   // Fetch the active meal plan name
-  const activePlanName = await trpc.mealPlan.findActiveMealPlan.query()
+  const activePlanName = await fetchActiveMealPlan()
   if (activePlanName) {
     planName.value = activePlanName
     hasActivePlan.value = true
 
     // Fetch meals by the active meal plan name
-    plannedMeals.value = await trpc.meal.findByMealPlanName.query({ planName: activePlanName })
+    plannedMeals.value = await fetchMealsByPlanName()
   } else {
     hasActivePlan.value = false
   }
@@ -32,6 +43,10 @@ onMounted(async () => {
 
 const goToAddMealPlan = () => {
   router.push({ name: 'AddMealPlan' })
+}
+
+const goToAddMeal = () => {
+  router.push({ name: 'AddMeal' })
 }
 </script>
 
@@ -67,13 +82,14 @@ const goToAddMealPlan = () => {
       <MealCard v-for="meal in plannedMeals" :key="meal.name" :meal="meal" />
     </div>
 
-    <div v-else class="mt-6 text-center">
-      <FwbHeading tag="h3" class="text-3xl">You do not have an active meal plan.</FwbHeading>
-      <div class="mt-4">
-        <FwbButton @click="goToAddMealPlan">
-          Add Meal Plan
-        </FwbButton>
-      </div>
+    <div v-if="activePlanError" class="mt-6">
+      <AlertError :message="activePlanError" />
+      <FwbButton @click="goToAddMealPlan"> Add Meal Plan </FwbButton>
+    </div>
+
+    <div v-if="mealsError" class="mt-6">
+      <AlertError :message="mealsError" />
+      <FwbButton @click="goToAddMeal"> Add Meals </FwbButton>
     </div>
   </div>
 </template>
