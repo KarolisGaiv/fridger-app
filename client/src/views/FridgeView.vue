@@ -11,13 +11,21 @@ const fridgeItems = ref<any[]>([])
 
 const [populateFridge, errorMessage] = useErrorMessage(async () => {
     const data = await trpc.fridgeContent.populateFridge.mutate()
-    fridgeItems.value = data
-    console.log(data);
+
+    const items = await Promise.all(data.map(async item => {
+        const ingredient = await getIngredientName(item.ingredientId)
+        return {
+            ...item,
+            mealName: ingredient.name
+        }
+    }))
+    fridgeItems.value = items
 })
 
-// async function getIngredientName(ingredientId) {
-//     const data = await trpc.ingredient.
-// }
+async function getIngredientName(ingredientId: number) {
+    const data = await trpc.ingredient.findByIngredientId.query({id: ingredientId})
+    return data
+}
 
 </script>
 
@@ -35,7 +43,7 @@ const [populateFridge, errorMessage] = useErrorMessage(async () => {
     <FridgeItemCard
       v-for="item in fridgeItems"
       :key="item.id"
-      :mealName="'Meal Plan ' + item.mealPlan"
+      :mealName= "item.mealName"
       :currentQuantity="item.existingQuantity"
     />
   </div>
