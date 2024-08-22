@@ -5,7 +5,7 @@ import { useRouter } from 'vue-router'
 import { FwbButton, FwbHeading } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
-import GroceryItemCard, {type GroceryListItem} from '@/components/GroceryItemCard.vue'
+import GroceryItemCard, { type GroceryListItem } from '@/components/GroceryItemCard.vue'
 
 const activeMealPlan = ref({})
 const groceryList = ref<GroceryListItem[]>([])
@@ -30,9 +30,14 @@ const [generateGroceryList, errorMessage] = useErrorMessage(async () => {
   </div>
 
   <!-- Display grocery list items as cards -->
-   <div class="mt-6 space-y-4">
-    <GroceryItemCard v-for="item in groceryList" :key="item.ingredientId" :product="item.product" :quantity="item.quantity" />
-   </div>
+  <div class="mt-6 space-y-4">
+    <GroceryItemCard
+      v-for="item in groceryList"
+      :key="item.ingredientId"
+      :product="item.product"
+      :quantity="item.quantity"
+    />
+  </div>
 
   <AlertError :message="errorMessage" />
 </template>

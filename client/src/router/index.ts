@@ -37,10 +37,10 @@ const router = createRouter({
           component: () => import('../views/GroceryView.vue'),
         },
         {
-          path: "fridge",
-          name: "FridgeView",
-          component: () => import("../views/FridgeView.vue")
-        }
+          path: 'fridge',
+          name: 'FridgeView',
+          component: () => import('../views/FridgeView.vue'),
+        },
       ],
     },
     {
@@ -57,22 +57,22 @@ const router = createRouter({
       path: '',
       redirect: '/dashboard',
     },
-    {
-      path: '',
-      component: MainLayout,
-      children: [
-        {
-          path: 'article/:id',
-          name: 'Article',
-          component: () => import('../views/ArticleView.vue'),
-        },
-        {
-          path: '',
-          name: 'Home',
-          component: HomeView,
-        },
-      ],
-    },
+    // {
+    //   path: '',
+    //   component: MainLayout,
+    //   children: [
+    //     {
+    //       path: 'article/:id',
+    //       name: 'Article',
+    //       component: () => import('../views/ArticleView.vue'),
+    //     },
+    //     {
+    //       path: '',
+    //       name: 'Home',
+    //       component: HomeView,
+    //     },
+    //   ],
+    // },
   ],
 })
 

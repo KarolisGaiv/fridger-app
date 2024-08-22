@@ -10,23 +10,24 @@ import FridgeItemCard from '@/components/FridgeItemCard.vue'
 const fridgeItems = ref<any[]>([])
 
 const [populateFridge, errorMessage] = useErrorMessage(async () => {
-    const data = await trpc.fridgeContent.populateFridge.mutate()
+  const data = await trpc.fridgeContent.populateFridge.mutate()
 
-    const items = await Promise.all(data.map(async item => {
-        const ingredient = await getIngredientName(item.ingredientId)
-        return {
-            ...item,
-            mealName: ingredient.name
-        }
-    }))
-    fridgeItems.value = items
+  const items = await Promise.all(
+    data.map(async (item) => {
+      const ingredient = await getIngredientName(item.ingredientId)
+      return {
+        ...item,
+        mealName: ingredient.name,
+      }
+    })
+  )
+  fridgeItems.value = items
 })
 
 async function getIngredientName(ingredientId: number) {
-    const data = await trpc.ingredient.findByIngredientId.query({id: ingredientId})
-    return data
+  const data = await trpc.ingredient.findByIngredientId.query({ id: ingredientId })
+  return data
 }
-
 </script>
 
 <template>
@@ -43,7 +44,7 @@ async function getIngredientName(ingredientId: number) {
     <FridgeItemCard
       v-for="item in fridgeItems"
       :key="item.id"
-      :mealName= "item.mealName"
+      :mealName="item.mealName"
       :currentQuantity="item.existingQuantity"
     />
   </div>
