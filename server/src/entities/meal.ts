@@ -13,6 +13,14 @@ export const mealSchema = z.object({
   type: z.enum(['breakfast', 'lunch', 'dinner', 'snack']).optional(),
 })
 
+export const newMealSchema = z.object({
+  calories: z.number(),
+  name: z.string().min(1).max(60),
+  mealPlan: z.string().optional(),
+  assignedDay: z.number().min(1).max(7).optional(),
+  type: z.enum(['breakfast', 'lunch', 'dinner', 'snack']).optional(),
+})
+
 export const mealKeysAll = Object.keys(mealSchema.shape) as (keyof Meal)[]
 
 export const mealKeysPublic = ['name', 'calories', 'type'] as const
