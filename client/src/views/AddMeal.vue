@@ -14,20 +14,20 @@ const availablePlans = ref<{ value: string; name: string }[]>([])
 const mealForm = ref({
   name: '',
   calories: '0',
-  mealPlan: "",
-  assignedDay: "1",
+  mealPlan: '',
+  assignedDay: '1',
   type: '',
 })
 
 const planDays = [
-  { value: "1", name: 'Day 1' },
-  { value: "2", name: 'Day 2' },
-  { value: "3", name: 'Day 3' },
-  { value: "4", name: 'Day 4' },
-  { value:"5", name: 'Day 5' },
-  { value: "6", name: 'Day 6' },
-  { value: "7", name: 'Day 7' },
-  { value: "", name: 'No assigned day' },
+  { value: '1', name: 'Day 1' },
+  { value: '2', name: 'Day 2' },
+  { value: '3', name: 'Day 3' },
+  { value: '4', name: 'Day 4' },
+  { value: '5', name: 'Day 5' },
+  { value: '6', name: 'Day 6' },
+  { value: '7', name: 'Day 7' },
+  { value: '', name: 'No assigned day' },
 ]
 
 const mealTypes = [
@@ -46,10 +46,10 @@ onMounted(async () => {
 
   availablePlans.value = [
     { value: '', name: 'No Meal Plan' },
-    ...plans.map(plan => ({
+    ...plans.map((plan) => ({
       value: plan.planName,
-      name: plan.planName
-    }))
+      name: plan.planName,
+    })),
   ]
 
   // Set default meal plan to active one, or "No Meal Plan" if no active plan
@@ -59,16 +59,17 @@ onMounted(async () => {
 const [createMeal, errorMessage] = useErrorMessage(async () => {
   const formData = {
     name: mealForm.value.name,
-    calories: Number(mealForm.value.calories), 
-    assignedDay: mealForm.value.assignedDay ? Number(mealForm.value.assignedDay) : null,
-    type: mealForm.value.type,
-    mealPlan: mealForm.value.mealPlan || null,
+    calories: Number(mealForm.value.calories),
+    // fields will only be included if they have values
+    ...(mealForm.value.mealPlan && { mealPlan: mealForm.value.mealPlan }),
+    ...(mealForm.value.assignedDay && { assignedDay: Number(mealForm.value.assignedDay) }),
+    ...(mealForm.value.type && {
+      type: mealForm.value.type as 'breakfast' | 'lunch' | 'dinner' | 'snack',
+    }),
   }
 
-  console.log("this is the data sent to trpc to add meal into database", formData);
   // add new meal into database
   await trpc.meal.create.mutate(formData)
-  
 
   successMessage.value = 'Meal added successfully!'
   mealForm.value.name = ''
@@ -110,14 +111,22 @@ const goToDashboard = () => {
         />
       </div>
       <div class="mt-6">
-        <fwb-select v-model="mealForm.assignedDay" :options="planDays" label="Assign to specific plan day" />
+        <fwb-select
+          v-model="mealForm.assignedDay"
+          :options="planDays"
+          label="Assign to specific plan day"
+        />
       </div>
       <div class="mt-6">
         <fwb-select v-model="mealForm.type" :options="mealTypes" label="Meal type" />
       </div>
 
       <div class="mt-6">
-        <fwb-select v-model="mealForm.mealPlan" :options="availablePlans" label="Assign to specific meal plan" />
+        <fwb-select
+          v-model="mealForm.mealPlan"
+          :options="availablePlans"
+          label="Assign to specific meal plan"
+        />
       </div>
 
       <AlertError :message="errorMessage" />
