@@ -77,7 +77,7 @@ export function mealRepository(db: Database) {
     async findByMealPlanID(planID: number, userId: number) {
       return db
         .selectFrom('meal')
-        .select(['name', 'calories'])
+        .select(mealKeysPublic)
         .where('user', '=', userId)
         .where('mealPlan', '=', planID)
         .execute()
