@@ -23,6 +23,11 @@ export const newMealSchema = z.object({
 
 export const mealKeysAll = Object.keys(mealSchema.shape) as (keyof Meal)[]
 
-export const mealKeysPublic = ['name', 'calories', 'type'] as const
+export const mealKeysPublic = [
+  'name',
+  'calories',
+  'type',
+  'assignedDay',
+] as const
 
 export type MealPublic = Pick<Selectable<Meal>, (typeof mealKeysPublic)[number]>
