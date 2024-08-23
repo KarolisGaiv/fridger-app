@@ -1,12 +1,18 @@
 <script lang="ts" setup>
 import { defineProps } from 'vue'
 
+export interface Meal {
+  name: string
+  calories: number
+  type: string | null
+  assignedDay: number | null
+}
+
 const props = defineProps<{
-  meal: {
-    name: string
-    calories: number
-  }
+  meal: Meal
 }>()
+
+const meal = props.meal
 </script>
 
 <template>
