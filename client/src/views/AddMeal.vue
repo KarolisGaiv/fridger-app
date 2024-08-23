@@ -7,7 +7,7 @@ import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
 
 const router = useRouter()
-const activePlan = ref("")
+const activePlan = ref('')
 const availablePlans = ref([])
 
 // State for Meal form
@@ -16,25 +16,25 @@ const mealForm = ref({
   calories: '0',
   mealPlan: activePlan.value ? activePlan.value : null,
   assignedDay: 1,
-  type: ""
+  type: '',
 })
 
 const planDays = [
-  {value: 1, name: "Day 1"},
-  {value: 2, name: "Day 2"},
-  {value: 3, name: "Day 3"},
-  {value: 4, name: "Day 4"},
-  {value: 5, name: "Day 5"},
-  {value: 6, name: "Day 6"},
-  {value: 7, name: "Day 7"},
-  {value: null, name: "No assigned day"},
+  { value: 1, name: 'Day 1' },
+  { value: 2, name: 'Day 2' },
+  { value: 3, name: 'Day 3' },
+  { value: 4, name: 'Day 4' },
+  { value: 5, name: 'Day 5' },
+  { value: 6, name: 'Day 6' },
+  { value: 7, name: 'Day 7' },
+  { value: null, name: 'No assigned day' },
 ]
 
 const mealTypes = [
-  {value: "breakfast", name: "Breakfast"},
-  {value: "lunch", name: "Lunch"},
-  {value: "dinner", name: "Dinner"},
-  {value: "snack", name: "Snack"},
+  { value: 'breakfast', name: 'Breakfast' },
+  { value: 'lunch', name: 'Lunch' },
+  { value: 'dinner', name: 'Dinner' },
+  { value: 'snack', name: 'Snack' },
 ]
 
 const successMessage = ref<string | null>(null)
@@ -43,8 +43,6 @@ const showOptions = ref(false) // Show options after meal is added
 onMounted(async () => {
   activePlan.value = await trpc.mealPlan.findActiveMealPlan.query()
 })
-
-
 
 const [createMeal, errorMessage] = useErrorMessage(async () => {
   const formData = {
@@ -94,18 +92,10 @@ const goToDashboard = () => {
         />
       </div>
       <div class="mt-6">
-        <fwb-select
-        v-model="mealForm.assignedDay"
-        :options="planDays"
-        label="Assign to"
-        />
+        <fwb-select v-model="mealForm.assignedDay" :options="planDays" label="Assign to" />
       </div>
       <div class="mt-6">
-        <fwb-select
-        v-model="mealForm.type"
-        :options="mealTypes"
-        label="Meal type"
-        />
+        <fwb-select v-model="mealForm.type" :options="mealTypes" label="Meal type" />
       </div>
 
       <AlertError :message="errorMessage" />
