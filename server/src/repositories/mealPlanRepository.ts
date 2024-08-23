@@ -38,10 +38,10 @@ export function mealPlanRepository(db: Database) {
         .executeTakeFirst()
     },
 
-    async findByUserId(userId: number): Promise<Selectable<MealPlan>[]> {
+    async findByUserId(userId: number) {
       return db
         .selectFrom('mealPlan')
-        .select(mealPlanKeysAll)
+        .select("planName")
         .where('userId', '=', userId)
         .execute()
     },

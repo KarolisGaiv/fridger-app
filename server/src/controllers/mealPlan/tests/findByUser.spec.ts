@@ -30,9 +30,8 @@ describe('findByUserId', () => {
     // assert
     expect(result).toBeDefined()
     expect(result).toHaveLength(3)
-    expect(result[0]).toMatchObject({
+    expect(result[0]).toEqual({
       planName: 'User Plan',
-      userId: user.id,
     })
   })
 
