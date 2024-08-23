@@ -41,7 +41,7 @@ export function mealPlanRepository(db: Database) {
     async findByUserId(userId: number) {
       return db
         .selectFrom('mealPlan')
-        .select("planName")
+        .select('planName')
         .where('userId', '=', userId)
         .execute()
     },

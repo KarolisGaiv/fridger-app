@@ -126,8 +126,8 @@ describe('findByUserId', () => {
     const foundMealPlans = await repository.findByUserId(user.id)
 
     expect(foundMealPlans.length).toBe(mealPlansUser1.length)
-    expect(foundMealPlans[0]).toEqual({planName: "Plan 1"})
-    expect(foundMealPlans[1]).toEqual({planName: "Plan 2"})
+    expect(foundMealPlans[0]).toEqual({ planName: 'Plan 1' })
+    expect(foundMealPlans[1]).toEqual({ planName: 'Plan 2' })
   })
 
   it('should return an empty array if the user has no meal plans', async () => {
