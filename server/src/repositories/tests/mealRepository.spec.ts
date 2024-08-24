@@ -284,3 +284,34 @@ describe('findByMealPlanID', () => {
     expect(user2Meals).toHaveLength(2)
   })
 })
+
+describe('toogleCompletionStatus', () => {
+  it('should change meal completion status', async () => {
+    // arrange
+    const [plan1] = await insertAll(db, 'mealPlan', [
+      { ...fakeMealPlan(), userId: user.id },
+    ])
+
+    const [meal] = await insertAll(db, 'meal', [
+      {
+        ...fakeMeal(),
+        user: user.id,
+        mealPlan: plan1.id,
+      },
+    ])
+
+    expect(meal.completed).toBe(false)
+
+    // act
+    await repository.toggleCompletionStatus(meal.name, plan1.id, user.id)
+    const [updateMeal] = await selectAll(db, 'meal')
+
+    // assert
+    expect(updateMeal.completed).toBe(true)
+
+    await repository.toggleCompletionStatus(meal.name, plan1.id, user.id)
+    const [updateMeal2] = await selectAll(db, 'meal')
+
+    expect(updateMeal2.completed).toBe(false)
+  })
+})

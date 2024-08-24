@@ -31,6 +31,7 @@ export interface Ingredient {
 export interface Meal {
   assignedDay: number | null
   calories: number
+  completed: Generated<boolean>
   id: Generated<number>
   mealPlan: number | null
   name: string
@@ -48,7 +49,7 @@ export interface MealIngredient {
 
 export interface MealPlan {
   id: Generated<number>
-  isActive: Generated<boolean | null>
+  isActive: Generated<boolean>
   planName: string
   userId: number
 }

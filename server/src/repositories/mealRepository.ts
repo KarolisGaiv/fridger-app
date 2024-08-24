@@ -82,6 +82,30 @@ export function mealRepository(db: Database) {
         .where('mealPlan', '=', planID)
         .execute()
     },
+
+    async toggleCompletionStatus(
+      mealName: string,
+      mealPlan: number,
+      userId: number
+    ): Promise<void> {
+      const currentStatus = await db
+        .selectFrom('meal')
+        .select('completed')
+        .where('user', '=', userId)
+        .where('mealPlan', '=', mealPlan)
+        .where('name', '=', mealName)
+        .executeTakeFirst()
+
+      const newStatus = !currentStatus?.completed
+
+      await db
+        .updateTable('meal')
+        .set({ completed: newStatus })
+        .where('user', '=', userId)
+        .where('mealPlan', '=', mealPlan)
+        .where('name', '=', mealName)
+        .execute()
+    },
   }
 }
 

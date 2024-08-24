@@ -11,6 +11,7 @@ export const mealSchema = z.object({
   mealPlan: z.number().optional(),
   assignedDay: z.number().min(1).max(7).optional(),
   type: z.enum(['breakfast', 'lunch', 'dinner', 'snack']).optional(),
+  completed: z.boolean().optional(),
 })
 
 export const newMealSchema = z.object({
