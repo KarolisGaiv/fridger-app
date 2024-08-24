@@ -57,22 +57,6 @@ const router = createRouter({
       path: '',
       redirect: '/dashboard',
     },
-    // {
-    //   path: '',
-    //   component: MainLayout,
-    //   children: [
-    //     {
-    //       path: 'article/:id',
-    //       name: 'Article',
-    //       component: () => import('../views/ArticleView.vue'),
-    //     },
-    //     {
-    //       path: '',
-    //       name: 'Home',
-    //       component: HomeView,
-    //     },
-    //   ],
-    // },
   ],
 })
 
