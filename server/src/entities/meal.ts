@@ -29,7 +29,7 @@ export const mealKeysPublic = [
   'calories',
   'type',
   'assignedDay',
-  "completed"
+  'completed',
 ] as const
 
 export type MealPublic = Pick<Selectable<Meal>, (typeof mealKeysPublic)[number]>

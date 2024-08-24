@@ -10,6 +10,6 @@ export default authenticatedProcedure
     })
   )
   .input(mealSchema.pick({ name: true }))
-  .query(async ({ input, ctx: { authUser, repos } }) => {
+  .mutation(async ({ input, ctx: { authUser, repos } }) => {
     await repos.mealRepository.toggleCompletionStatus(input.name, authUser.id)
   })
