@@ -303,13 +303,13 @@ describe('toogleCompletionStatus', () => {
     expect(meal.completed).toBe(false)
 
     // act
-    await repository.toggleCompletionStatus(meal.name, plan1.id, user.id)
+    await repository.toggleCompletionStatus(meal.name, user.id)
     const [updateMeal] = await selectAll(db, 'meal')
 
     // assert
     expect(updateMeal.completed).toBe(true)
 
-    await repository.toggleCompletionStatus(meal.name, plan1.id, user.id)
+    await repository.toggleCompletionStatus(meal.name, user.id)
     const [updateMeal2] = await selectAll(db, 'meal')
 
     expect(updateMeal2.completed).toBe(false)

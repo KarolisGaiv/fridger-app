@@ -85,25 +85,29 @@ export function mealRepository(db: Database) {
 
     async toggleCompletionStatus(
       mealName: string,
-      mealPlan: number,
       userId: number
     ): Promise<void> {
       const currentStatus = await db
         .selectFrom('meal')
-        .select('completed')
-        .where('user', '=', userId)
-        .where('mealPlan', '=', mealPlan)
-        .where('name', '=', mealName)
+        .innerJoin('mealPlan', 'meal.mealPlan', 'mealPlan.id')
+        .select(['meal.completed', 'meal.id'])
+        .where('meal.user', '=', userId)
+        .where('meal.name', '=', mealName)
+        .where('mealPlan.isActive', '=', true)
         .executeTakeFirst()
 
-      const newStatus = !currentStatus?.completed
+      if (!currentStatus || currentStatus.id === undefined) {
+        throw new Error('Meal not found or not part of an active meal plan')
+      }
+
+      const newStatus = !currentStatus.completed
 
       await db
         .updateTable('meal')
         .set({ completed: newStatus })
         .where('user', '=', userId)
-        .where('mealPlan', '=', mealPlan)
         .where('name', '=', mealName)
+        .where('id', '=', currentStatus.id)
         .execute()
     },
   }
