@@ -44,3 +44,19 @@ it('should change meal completion status', async () => {
 
   expect(updateMeal2.completed).toBe(false)
 })
+
+it('prevents unauth user from using method', async () => {
+  // arrange
+  const { toggleCompletionStatus } = createCaller({
+    db,
+    req: {
+      // no Auth header
+      header: () => undefined,
+    } as any,
+  })
+
+  // act & assert
+  await expect(toggleCompletionStatus({ name: 'pizza' })).rejects.toThrowError(
+    /unauthenticated/i
+  )
+})
