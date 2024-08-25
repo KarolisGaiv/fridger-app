@@ -19,7 +19,7 @@ const repositories = {
   groceryListRepository,
   mealPlanRepository,
   fridgeContentRepository,
-  mealPlanScheduleRepository
+  mealPlanScheduleRepository,
 }
 
 export type RepositoriesFactories = typeof repositories
