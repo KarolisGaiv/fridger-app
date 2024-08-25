@@ -160,6 +160,7 @@ const goToDashboard = () => {
     <form aria-label="Add Meal" @submit.prevent="createMeal">
       <!-- Conditionally render meal details form or existing meal selection -->
       <div v-if="!showExistingMeals">
+        <!-- New meal form fields -->
         <div class="mt-6">
           <FwbInput
             aria-label="Meal name"
@@ -178,38 +179,59 @@ const goToDashboard = () => {
             placeholder="Calories"
           />
         </div>
+        <div class="mt-6">
+          <FwbSelect
+            v-model="mealForm.type"
+            :options="mealTypes"
+            label="Meal type"
+          />
+        </div>
+        <div class="mt-6">
+          <FwbSelect
+            v-model="mealForm.mealPlan"
+            :options="filteredAvailablePlans"
+            label="Assign to specific meal plan"
+          />
+        </div>
+        <div class="mt-6">
+          <FwbSelect
+            v-model="mealForm.assignedDay"
+            :options="filteredPlanDays"
+            label="Assign to specific plan day"
+          />
+        </div>
       </div>
 
-      <div class="mt-6">
-        <FwbSelect
-          v-model="mealForm.assignedDay"
-          :options="filteredPlanDays"
-          label="Assign to specific plan day"
-        />
-      </div>
-      <div class="mt-6">
-        <FwbSelect
-          v-model="mealForm.type"
-          :options="mealTypes"
-          label="Meal type"
-        />
-      </div>
-
-      <div class="mt-6">
-        <FwbSelect
-          v-model="mealForm.mealPlan"
-          :options="filteredAvailablePlans"
-          label="Assign to specific meal plan"
-        />
-      </div>
-
-      <!-- Display existing meals if checkbox is checked -->
-      <div v-if="showExistingMeals" class="mt-6">
-        <FwbSelect
-          v-model="mealForm.selectedMeal"
-          :options="existingMeals"
-          label="Select an existing meal"
-        />
+      <div v-if="showExistingMeals">
+        <!-- Existing meal form fields -->
+        <div class="mt-6">
+          <FwbSelect
+            v-model="mealForm.selectedMeal"
+            :options="existingMeals"
+            label="Select an existing meal"
+          />
+        </div>
+        <div class="mt-6">
+          <FwbSelect
+            v-model="mealForm.mealPlan"
+            :options="filteredAvailablePlans"
+            label="Assign to specific meal plan"
+          />
+        </div>
+        <div class="mt-6">
+          <FwbSelect
+            v-model="mealForm.type"
+            :options="mealTypes"
+            label="Meal type"
+          />
+        </div>
+        <div class="mt-6">
+          <FwbSelect
+            v-model="mealForm.assignedDay"
+            :options="filteredPlanDays"
+            label="Assign to specific plan day"
+          />
+        </div>
       </div>
 
       <AlertError :message="errorMessage" />
