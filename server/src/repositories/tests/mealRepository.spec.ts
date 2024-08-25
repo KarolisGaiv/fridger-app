@@ -27,6 +27,7 @@ describe('create', () => {
       id: meal.id,
       type: null,
       assignedDay: null,
+      completed: false
     })
   })
 
@@ -50,6 +51,7 @@ describe('create', () => {
       id: meal.id,
       type: 'lunch',
       assignedDay: meal.assignedDay,
+      completed: false
     })
 
     const fullData = (await selectAll(db, 'meal'))[0]
