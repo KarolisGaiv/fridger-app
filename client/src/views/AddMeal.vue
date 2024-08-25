@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { trpc } from '@/trpc'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { FwbButton, FwbHeading, FwbInput, FwbSelect, FwbCheckbox } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
@@ -122,6 +122,19 @@ const [createMeal, errorMessage] = useErrorMessage(async () => {
   showOptions.value = true // Show options after meal is added
 })
 
+// properties to dynamically adjust select field options
+const filteredPlanDays = computed(() => {
+  return showExistingMeals.value
+    ? planDays.filter(day => day.value !== '')
+    : planDays
+})
+
+const filteredAvailablePlans = computed(() => {
+  return showExistingMeals.value
+    ? availablePlans.value.filter(plan => plan.value !== '')
+    : availablePlans.value
+})
+
 const goToIngredientsView = () => {
   router.push({ name: 'AddIngredient' })
 }
@@ -170,7 +183,7 @@ const goToDashboard = () => {
       <div class="mt-6">
         <FwbSelect
           v-model="mealForm.assignedDay"
-          :options="planDays"
+          :options="filteredPlanDays"
           label="Assign to specific plan day"
         />
       </div>
@@ -185,7 +198,7 @@ const goToDashboard = () => {
       <div class="mt-6">
         <FwbSelect
           v-model="mealForm.mealPlan"
-          :options="availablePlans"
+          :options="filteredAvailablePlans"
           label="Assign to specific meal plan"
         />
       </div>
@@ -215,3 +228,4 @@ const goToDashboard = () => {
     </div>
   </div>
 </template>
+
