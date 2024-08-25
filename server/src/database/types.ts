@@ -59,6 +59,7 @@ export interface MealPlanSchedule {
   mealId: number
   mealPlanId: number
   type: string
+  userId: number
 }
 
 export interface User {
