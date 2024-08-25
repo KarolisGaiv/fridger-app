@@ -54,6 +54,14 @@ export interface MealPlan {
   userId: number
 }
 
+export interface MealPlanSchedule {
+  assignedDay: number
+  mealId: number
+  mealPlanId: number
+  type: string
+  userId: number
+}
+
 export interface User {
   email: string
   firstName: string
@@ -69,5 +77,6 @@ export interface DB {
   meal: Meal
   mealIngredient: MealIngredient
   mealPlan: MealPlan
+  mealPlanSchedule: MealPlanSchedule
   user: User
 }
