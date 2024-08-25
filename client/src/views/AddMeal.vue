@@ -18,8 +18,8 @@ const mealForm = ref({
   calories: '0',
   mealPlan: '',
   assignedDay: '1',
-  type: '',
-  selectedMeal: '', // Added to hold the selected existing meal ID
+  type: 'breakfast',
+  selectedMeal: '', 
 })
 
 const planDays = [
@@ -70,7 +70,6 @@ onMounted(async () => {
 const [createMeal, errorMessage] = useErrorMessage(async () => {
   // Validate that both meal type and assigned day are selected if either is provided
   if ((mealForm.value.assignedDay && !mealForm.value.type) || (!mealForm.value.assignedDay && mealForm.value.type)) {
-    errorMessage.value = 'Please select both a meal type and an assigned day before submitting.'
     return // Prevent the form from submitting
   }
 
