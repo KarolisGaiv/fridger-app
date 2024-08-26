@@ -2,14 +2,14 @@
 import { trpc } from '@/trpc'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { FwbButton, FwbHeading, FwbSelect } from 'flowbite-vue';
+import { FwbButton, FwbHeading, FwbSelect } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
 import GroceryItemCard, { type GroceryListItem } from '@/components/GroceryItemCard.vue'
 
 const availablePlans = ref<{ value: string; name: string }[]>([])
 const groceryList = ref<GroceryListItem[]>([])
-const mealPlan = ref("")
+const mealPlan = ref('')
 
 onMounted(async () => {
   const plans = await trpc.mealPlan.findByUserId.query()
@@ -22,8 +22,7 @@ onMounted(async () => {
 })
 
 const [generateGroceryList, errorMessage] = useErrorMessage(async () => {
-  const data = await trpc.groceryList.generateGroceryList.mutate({planName: mealPlan.value})
-  console.log(data);
+  const data = await trpc.groceryList.generateGroceryList.mutate({ planName: mealPlan.value })
   groceryList.value = data
 })
 </script>
