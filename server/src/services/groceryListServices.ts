@@ -1,48 +1,13 @@
-import type { Database, GroceryList } from '@server/database'
-import { mealPlanRepository } from '@server/repositories/mealPlanRepository'
+import type { Database } from '@server/database'
 import { mealIngredientRepository } from '@server/repositories/mealIngredientRepository'
 import { TRPCError } from '@trpc/server'
-import type { Insertable } from 'kysely'
 
 export function groceryListServices(db: Database) {
-  const mealPlanRepo = mealPlanRepository(db)
   const mealIngredientRepo = mealIngredientRepository(db)
 
   return {
-    async generateGroceryList(userId: number) {
-      // get user's meal plans
-      const mealPlans = await mealPlanRepo.findByUserId(userId)
-      if (mealPlans.length === 0) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'No meal plan found for user',
-        })
-      }
-      // find active meal plan
-      // const activeMealPlan = mealPlans.find((plan) => plan.isActive)
-      const activeMealPlan = await mealPlanRepo.findActiveMealPlan(userId)
-      if (!activeMealPlan) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'No active meal plan found for user',
-        })
-      }
-
-      // get meal ingredients with their quantities by meal plan ID
-      const mealPlanId = await mealPlanRepo.findByPlanName(
-        activeMealPlan,
-        userId
-      )
-
-      if (mealPlanId === undefined) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'Error: No meal plan ID found for the active meal plan',
-        })
-      }
-
-      const ingredients =
-        await mealIngredientRepo.findIngredientsByMealPlanId(mealPlanId)
+    async generateGroceryList(plannedMeals: { mealId: number }[]) {
+      const ingredients = await mealIngredientRepo.findByMealIds(plannedMeals)
 
       if (ingredients.length === 0) {
         throw new TRPCError({
@@ -52,9 +17,8 @@ export function groceryListServices(db: Database) {
       }
 
       // transform ingredients into grocery list format
-      const groceryListItems: Insertable<GroceryList>[] = ingredients.map(
+      const groceryListItems = ingredients.map(
         (ingredient) => ({
-          mealPlanId,
           product: ingredient.ingredientName,
           quantity: ingredient.quantity,
           ingredientId: ingredient.ingredientId,

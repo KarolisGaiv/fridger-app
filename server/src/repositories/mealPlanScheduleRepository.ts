@@ -45,5 +45,14 @@ export function mealPlanScheduleRepository(db: Database) {
         .values(data)
         .executeTakeFirstOrThrow()
     },
+
+    async findMealsByPlan(planId: number) {
+      const data = await db
+        .selectFrom("mealPlanSchedule")
+        .select("mealId")
+        .where("mealPlanId", "=", planId)
+        .execute()
+      return data
+    }
   }
 }
