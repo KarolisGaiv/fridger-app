@@ -9,6 +9,13 @@ import FridgeItemCard from '@/components/FridgeItemCard.vue'
 
 const fridgeItems = ref<any[]>([])
 
+onMounted(async () => {
+  // populate fridge if it's empty
+  if (fridgeItems.value.length === 0) {
+    await populateFridge()
+  }
+})
+
 const [populateFridge, errorMessage] = useErrorMessage(async () => {
   const data = await trpc.fridgeContent.populateFridge.mutate()
 
@@ -36,7 +43,7 @@ async function getIngredientName(ingredientId: number) {
   </div>
 
   <div class="mt-6">
-    <FwbButton size="lg" @click="populateFridge"> Populate fridge </FwbButton>
+    <FwbButton size="lg"> Populate fridge </FwbButton>
   </div>
 
   <!-- Display fridge items as cards -->
