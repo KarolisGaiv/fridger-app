@@ -16,12 +16,36 @@ export function groceryListServices(db: Database) {
         })
       }
 
-      // transform ingredients into grocery list format
-      const groceryListItems = ingredients.map((ingredient) => ({
-        product: ingredient.ingredientName,
-        quantity: ingredient.quantity,
-        ingredientId: ingredient.ingredientId,
-      }))
+      // Create a map to aggregate quantities by ingredientId
+      const ingredientMap = new Map<
+        number,
+        { product: string; quantity: number; ingredientId: number }
+      >()
+
+      // Aggregate quantities
+      plannedMeals.forEach(({ mealId }) => {
+        const mealIngredients = ingredients.filter(
+          (ingredient) => ingredient.mealId === mealId
+        )
+
+        mealIngredients.forEach(
+          ({ ingredientId, ingredientName, quantity }) => {
+            const existingItem = ingredientMap.get(ingredientId)
+            if (existingItem) {
+              existingItem.quantity += quantity
+            } else {
+              ingredientMap.set(ingredientId, {
+                product: ingredientName,
+                quantity,
+                ingredientId,
+              })
+            }
+          }
+        )
+      })
+
+      // Convert the map back to an array
+      const groceryListItems = Array.from(ingredientMap.values())
 
       return groceryListItems
     },
