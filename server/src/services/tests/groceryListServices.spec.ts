@@ -7,7 +7,7 @@ import {
   fakeMealIngredient,
 } from '@server/entities/tests/fakes'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables, selectAll } from '@tests/utils/records'
+import { insertAll, clearTables } from '@tests/utils/records'
 import { groceryListServices } from '@server/services/groceryListServices'
 
 const db = await wrapInRollbacks(createTestDatabase())
