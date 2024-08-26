@@ -50,14 +50,14 @@ export function mealRepository(db: Database) {
     //     .execute()
     // },
 
-    async findAll(userId: number): Promise<{name: string}[]> {
+    async findAll(userId: number): Promise<{ name: string }[]> {
       const data = await db
         .selectFrom('meal')
-        .select("name")
+        .select('name')
         .where('user', '=', userId)
         .execute()
-      
-        return data
+
+      return data
     },
 
     async updateMeal(

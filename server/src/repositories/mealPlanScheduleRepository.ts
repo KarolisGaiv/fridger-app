@@ -48,11 +48,11 @@ export function mealPlanScheduleRepository(db: Database) {
 
     async findMealsByPlan(planId: number) {
       const data = await db
-        .selectFrom("mealPlanSchedule")
-        .select("mealId")
-        .where("mealPlanId", "=", planId)
+        .selectFrom('mealPlanSchedule')
+        .select('mealId')
+        .where('mealPlanId', '=', planId)
         .execute()
       return data
-    }
+    },
   }
 }

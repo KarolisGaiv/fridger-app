@@ -89,8 +89,8 @@ export function mealIngredientRepository(db: Database) {
       mealIds: { mealId: number }[]
     ): Promise<Selectable<MealIngredientWithMealName>[]> {
       // Extract unique mealIds from the input array
-      const uniqueMealIds = [...new Set(mealIds.map(item => item.mealId))];
-    
+      const uniqueMealIds = [...new Set(mealIds.map((item) => item.mealId))]
+
       // Query the database for ingredients related to the unique mealIds
       return db
         .selectFrom('mealIngredient')
@@ -102,8 +102,8 @@ export function mealIngredientRepository(db: Database) {
           'mealIngredient.quantity',
           'mealIngredient.mealId',
         ])
-        .execute();
-    }
+        .execute()
+    },
   }
 }
 

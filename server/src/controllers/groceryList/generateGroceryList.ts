@@ -15,10 +15,10 @@ export default authenticatedProcedure
       groceryListRepository,
       mealPlanRepository,
       mealIngredientRepository,
-      mealPlanScheduleRepository
+      mealPlanScheduleRepository,
     })
   )
-  .input(mealPlanSchema.pick({planName: true}))
+  .input(mealPlanSchema.pick({ planName: true }))
   .use(
     provideServices({
       groceryListServices,
@@ -26,45 +26,51 @@ export default authenticatedProcedure
   )
   .mutation(async ({ input, ctx: { authUser, services, repos } }) => {
     // fetch meal plan id
-    const mealPlanId = await repos.mealPlanRepository.findByPlanName(input.planName, authUser.id)
+    const mealPlanId = await repos.mealPlanRepository.findByPlanName(
+      input.planName,
+      authUser.id
+    )
 
-    if(!mealPlanId) {
+    if (!mealPlanId) {
       throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Not authorized to access this meal plan"
+        code: 'FORBIDDEN',
+        message: 'Not authorized to access this meal plan',
       })
     }
 
-    // fetch planned meals for specific meal plan -> 
-    const plannedMeals = await repos.mealPlanScheduleRepository.findMealsByPlan(mealPlanId)
-    if(plannedMeals.length === 0) {
+    // fetch planned meals for specific meal plan ->
+    const plannedMeals =
+      await repos.mealPlanScheduleRepository.findMealsByPlan(mealPlanId)
+    if (plannedMeals.length === 0) {
       throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Meal plan does not have planned meals"
+        code: 'NOT_FOUND',
+        message: 'Meal plan does not have planned meals',
       })
     }
 
     // generate grocery list based on planned meals
-    const groceryList = await services.groceryListServices.generateGroceryList(plannedMeals)
+    const groceryList =
+      await services.groceryListServices.generateGroceryList(plannedMeals)
 
     // create a map to aggregate quantities by ingredientId
-    const ingredientMap = new Map();
+    const ingredientMap = new Map()
 
-    groceryList.forEach(item => {
-      const existingItem = ingredientMap.get(item.ingredientId);
+    groceryList.forEach((item) => {
+      const existingItem = ingredientMap.get(item.ingredientId)
       if (existingItem) {
         // If the ingredient already exists, sum the quantities
-        existingItem.quantity += item.quantity;
+        existingItem.quantity += item.quantity
       } else {
         // If not, add the item to the map
-        ingredientMap.set(item.ingredientId, { 
+        ingredientMap.set(item.ingredientId, {
           ...item,
-        mealPlanId });
+          mealPlanId,
+        })
       }
-    });
+    })
 
     // convert the map back to an array
-    const formattedData = Array.from(ingredientMap.values());
+    const formattedData = Array.from(ingredientMap.values())
 
     // save grocery list to the database
     const savedList = await repos.groceryListRepository.create(formattedData)

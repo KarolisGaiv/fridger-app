@@ -17,13 +17,11 @@ export function groceryListServices(db: Database) {
       }
 
       // transform ingredients into grocery list format
-      const groceryListItems = ingredients.map(
-        (ingredient) => ({
-          product: ingredient.ingredientName,
-          quantity: ingredient.quantity,
-          ingredientId: ingredient.ingredientId,
-        })
-      )
+      const groceryListItems = ingredients.map((ingredient) => ({
+        product: ingredient.ingredientName,
+        quantity: ingredient.quantity,
+        ingredientId: ingredient.ingredientId,
+      }))
 
       return groceryListItems
     },
