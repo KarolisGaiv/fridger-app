@@ -6,6 +6,8 @@ import { groceryListRepository } from '@server/repositories/groceryListRepositor
 import { mealPlanRepository } from '@server/repositories/mealPlanRepository'
 import { mealIngredientRepository } from '@server/repositories/mealIngredientRepository'
 import { groceryListServices } from '@server/services/groceryListServices'
+import { mealPlanSchema } from '@server/entities/mealPlan'
+import { mealPlanScheduleRepository } from '@server/repositories/mealPlanScheduleRepository'
 
 export default authenticatedProcedure
   .use(
@@ -13,52 +15,64 @@ export default authenticatedProcedure
       groceryListRepository,
       mealPlanRepository,
       mealIngredientRepository,
+      mealPlanScheduleRepository,
     })
   )
+  .input(mealPlanSchema.pick({ planName: true }))
   .use(
     provideServices({
       groceryListServices,
     })
   )
-  .mutation(async ({ ctx: { authUser, services, repos } }) => {
-    // Fetch all meal plans for the user
-    // const mealPlans = await repos.mealPlanRepository.findByUserId(authUser.id)
-    // if (mealPlans.length === 0) {
-    //   throw new TRPCError({
-    //     code: 'NOT_FOUND',
-    //     message: 'No meal plan found for the user.',
-    //   })
-    // }
-
-    // // Find the active meal plan
-    // const activeMealPlan = mealPlans.find((plan) => plan.isActive)
-    // if (!activeMealPlan) {
-    //   throw new TRPCError({
-    //     code: 'NOT_FOUND',
-    //     message: 'No active meal plan found for the user.',
-    //   })
-    // }
-
-    // // Perform the ownership check
-    // if (activeMealPlan.userId !== authUser.id) {
-    //   throw new TRPCError({
-    //     code: 'FORBIDDEN',
-    //     message: 'Not authorized to access this meal plan',
-    //   })
-    // }
-
-    const groceryList = await services.groceryListServices.generateGroceryList(
+  .mutation(async ({ input, ctx: { authUser, services, repos } }) => {
+    // fetch meal plan id
+    const mealPlanId = await repos.mealPlanRepository.findByPlanName(
+      input.planName,
       authUser.id
     )
 
-    // Ensure mealPlanId is either a number or null
-    const formattedGroceryList = groceryList.map((item) => ({
-      ...item,
-      mealPlanId: item.mealPlanId ?? null,
-    }))
+    if (!mealPlanId) {
+      throw new TRPCError({
+        code: 'FORBIDDEN',
+        message: 'Not authorized to access this meal plan',
+      })
+    }
 
-    const savedGroceryList =
-      await repos.groceryListRepository.create(formattedGroceryList)
+    // fetch planned meals for specific meal plan ->
+    const plannedMeals =
+      await repos.mealPlanScheduleRepository.findMealsByPlan(mealPlanId)
+    if (plannedMeals.length === 0) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Meal plan does not have planned meals',
+      })
+    }
 
-    return savedGroceryList
+    // generate grocery list based on planned meals
+    const groceryList =
+      await services.groceryListServices.generateGroceryList(plannedMeals)
+
+    // create a map to aggregate quantities by ingredientId
+    const ingredientMap = new Map()
+
+    groceryList.forEach((item) => {
+      const existingItem = ingredientMap.get(item.ingredientId)
+      if (existingItem) {
+        // If the ingredient already exists, sum the quantities
+        existingItem.quantity += item.quantity
+      } else {
+        // If not, add the item to the map
+        ingredientMap.set(item.ingredientId, {
+          ...item,
+          mealPlanId,
+        })
+      }
+    })
+
+    // convert the map back to an array
+    const formattedData = Array.from(ingredientMap.values())
+
+    // save grocery list to the database
+    const savedList = await repos.groceryListRepository.create(formattedData)
+    return savedList
   })

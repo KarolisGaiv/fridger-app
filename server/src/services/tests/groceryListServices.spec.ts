@@ -48,8 +48,14 @@ beforeAll(async () => {
   ])
 })
 
-it('should generate a grocery list for the user based on the active meal plan', async () => {
-  const groceryList = await service.generateGroceryList(user.id)
+it('should generate a grocery list for the user based on meal plan name', async () => {
+  const plannedMeals = [
+    {
+      mealId: meal1.id,
+    },
+  ]
+
+  const groceryList = await service.generateGroceryList(plannedMeals)
 
   expect(groceryList).toHaveLength(2)
   expect(groceryList).toEqual(
@@ -66,21 +72,10 @@ it('should generate a grocery list for the user based on the active meal plan', 
   )
 })
 
-it('should throw an error if no active meal plan is found for the user', async () => {
-  await clearTables(db, ['mealPlan'])
-  await insertAll(db, 'mealPlan', [
-    fakeMealPlan({ userId: user.id, isActive: false }),
-  ])
-
-  await expect(service.generateGroceryList(user.id)).rejects.toThrow(
-    /no active meal plan/i
-  )
-})
-
 it('should throw error if no meal ingredients found for the active meal plan', async () => {
   await clearTables(db, ['mealIngredient'])
 
-  await expect(service.generateGroceryList(user.id)).rejects.toThrow(
-    /no meal ingredients found/i
-  )
+  await expect(
+    service.generateGroceryList([{ mealId: meal1.id }])
+  ).rejects.toThrow(/no meal ingredients found/i)
 })

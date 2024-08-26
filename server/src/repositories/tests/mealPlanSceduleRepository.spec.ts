@@ -72,3 +72,54 @@ it('does not allow creating a new record with the same data', async () => {
     repository.create(meal.name, mealPlan.planName, assignedDay, type, user.id)
   ).rejects.toThrowError(/duplicate key value violates unique constraint/i)
 })
+
+it('should find all meals by meal plan ID', async () => {
+  // arrange
+  const [mealPlan2] = await insertAll(db, 'mealPlan', {
+    ...fakeMealPlan(),
+    userId: user.id,
+  })
+
+  const [meal2] = await insertAll(db, 'meal', {
+    ...fakeMeal(),
+    user: user.id,
+    mealPlan: mealPlan.id,
+  })
+
+  const assignedDay = 5
+  const type = 'lunch'
+
+  await repository.create(
+    meal.name,
+    mealPlan.planName,
+    assignedDay,
+    type,
+    user.id
+  )
+
+  await repository.create(
+    meal2.name,
+    mealPlan.planName,
+    assignedDay,
+    type,
+    user.id
+  )
+
+  await repository.create(
+    meal2.name,
+    mealPlan2.planName,
+    assignedDay,
+    type,
+    user.id
+  )
+
+  // act
+  const result1 = await repository.findMealsByPlan(mealPlan.id)
+  const result2 = await repository.findMealsByPlan(mealPlan2.id)
+  const result3 = await repository.findMealsByPlan(20)
+
+  // assert
+  expect(result1).toHaveLength(2)
+  expect(result2).toHaveLength(1)
+  expect(result3).toHaveLength(0)
+})

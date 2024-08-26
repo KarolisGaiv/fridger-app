@@ -18,7 +18,7 @@ const mealForm = ref({
   calories: '0',
   mealPlan: '',
   assignedDay: '1',
-  type: 'breakfast',
+  type: '',
   selectedMeal: '',
 })
 

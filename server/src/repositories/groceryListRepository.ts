@@ -6,18 +6,46 @@ import {
   groceryListKeysPublic,
   groceryListKeysAll,
 } from '@server/entities/groceryList'
-import type { Insertable, Selectable } from 'kysely'
+import { type Insertable, type Selectable } from 'kysely'
 
 export function groceryListRepository(db: Database) {
   return {
     async create(
       groceryList: Omit<GroceryList, 'id'>[]
     ): Promise<GroceryListPublic[]> {
-      return db
-        .insertInto('groceryList')
-        .values(groceryList)
-        .returning(groceryListKeysPublic)
-        .execute()
+      const result = await Promise.all(
+        groceryList.map(async (item) => {
+          // Check if the item already exists
+          const existingItem = await db
+            .selectFrom('groceryList')
+            .selectAll()
+            .where('mealPlanId', '=', item.mealPlanId)
+            .where('ingredientId', '=', item.ingredientId)
+            .executeTakeFirst()
+
+          if (existingItem) {
+            // If it exists, update the quantity
+            return db
+              .updateTable('groceryList')
+              .set({ quantity: item.quantity })
+              .where('id', '=', existingItem.id)
+              .returning(groceryListKeysPublic)
+              .executeTakeFirst()
+          }
+
+          // If it doesn't exist, insert a new item
+          return db
+            .insertInto('groceryList')
+            .values(item)
+            .returning(groceryListKeysPublic)
+            .executeTakeFirst()
+        })
+      )
+
+      // Filter out any undefined values to match the expected type
+      return result.filter(
+        (item): item is GroceryListPublic => item !== undefined
+      )
     },
 
     async findById(id: number): Promise<Selectable<GroceryList> | undefined> {

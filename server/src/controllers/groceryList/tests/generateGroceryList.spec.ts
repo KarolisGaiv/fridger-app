@@ -3,7 +3,7 @@ import { createTestDatabase } from '@tests/utils/database'
 import { authContext } from '@tests/utils/context'
 import { createCallerFactory } from '@server/trpc'
 import { wrapInRollbacks } from '@tests/utils/transactions'
-import { insertAll, clearTables } from '@tests/utils/records'
+import { insertAll } from '@tests/utils/records'
 import {
   fakeUser,
   fakeMealPlan,
@@ -101,37 +101,35 @@ describe('generateGroceryList', () => {
     // arrange
     const { generateGroceryList } = createCaller(authContext({ db }, user))
 
-    // act
-    const res = await generateGroceryList()
-
-    // assert
-    expect(res).toBeDefined()
-    expect(res).toHaveLength(4)
-  })
-
-  it('should throw error if user has no meal plans', async () => {
-    // arrange
-    const { generateGroceryList } = createCaller(authContext({ db }, user))
-    await clearTables(db, ['mealPlan'])
-
-    // assert and act
-    await expect(generateGroceryList()).rejects.toThrowError(
-      /no meal plan found for user/i
-    )
-  })
-
-  it('throws error if user has no active meal plans', async () => {
-    // arrange
-    const { generateGroceryList } = createCaller(authContext({ db }, user))
-    await clearTables(db, ['mealPlan'])
-    await insertAll(db, 'mealPlan', [
-      fakeMealPlan({ userId: user.id, isActive: false }),
+    await insertAll(db, 'mealPlanSchedule', [
+      {
+        mealId: meal1.id,
+        mealPlanId: mealPlan.id,
+        assignedDay: 2,
+        type: 'dinner',
+        userId: user.id,
+      },
+      {
+        mealId: meal2.id,
+        mealPlanId: mealPlan.id,
+        assignedDay: 2,
+        type: 'dinner',
+        userId: user.id,
+      },
+      {
+        mealId: meal3.id,
+        mealPlanId: mealPlan.id,
+        assignedDay: 2,
+        type: 'dinner',
+        userId: user.id,
+      },
     ])
 
-    // assert and act
-    await expect(generateGroceryList()).rejects.toThrowError(
-      /no active meal plan found/i
-    )
+    // act
+    const res = await generateGroceryList({ planName: mealPlan.planName })
+    // // assert
+    expect(res).toBeDefined()
+    expect(res).toHaveLength(4)
   })
 
   it('prevents unauth user from using method', async () => {
@@ -145,6 +143,8 @@ describe('generateGroceryList', () => {
     })
 
     // act & assert
-    await expect(generateGroceryList()).rejects.toThrowError(/unauthenticated/i)
+    await expect(
+      generateGroceryList({ planName: 'testing' })
+    ).rejects.toThrowError(/unauthenticated/i)
   })
 })

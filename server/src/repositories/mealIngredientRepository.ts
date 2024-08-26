@@ -84,6 +84,26 @@ export function mealIngredientRepository(db: Database) {
         .where('mealId', '=', mealId)
         .execute()
     },
+
+    async findByMealIds(
+      mealIds: { mealId: number }[]
+    ): Promise<Selectable<MealIngredientWithMealName>[]> {
+      // Extract unique mealIds from the input array
+      const uniqueMealIds = [...new Set(mealIds.map((item) => item.mealId))]
+
+      // Query the database for ingredients related to the unique mealIds
+      return db
+        .selectFrom('mealIngredient')
+        .innerJoin('ingredient', 'ingredient.id', 'mealIngredient.ingredientId')
+        .where('mealIngredient.mealId', 'in', uniqueMealIds)
+        .select([
+          'mealIngredient.ingredientId',
+          'ingredient.name as ingredientName',
+          'mealIngredient.quantity',
+          'mealIngredient.mealId',
+        ])
+        .execute()
+    },
   }
 }
 

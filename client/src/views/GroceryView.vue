@@ -2,20 +2,27 @@
 import { trpc } from '@/trpc'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { FwbButton, FwbHeading } from 'flowbite-vue'
+import { FwbButton, FwbHeading, FwbSelect } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
 import GroceryItemCard, { type GroceryListItem } from '@/components/GroceryItemCard.vue'
 
-const activeMealPlan = ref({})
+const availablePlans = ref<{ value: string; name: string }[]>([])
 const groceryList = ref<GroceryListItem[]>([])
+const mealPlan = ref('')
 
 onMounted(async () => {
-  activeMealPlan.value = await trpc.mealPlan.findActiveMealPlan.query()
+  const plans = await trpc.mealPlan.findByUserId.query()
+  availablePlans.value = [
+    ...plans.map((plan) => ({
+      value: plan.planName,
+      name: plan.planName,
+    })),
+  ]
 })
 
 const [generateGroceryList, errorMessage] = useErrorMessage(async () => {
-  const data = await trpc.groceryList.generateGroceryList.mutate()
+  const data = await trpc.groceryList.generateGroceryList.mutate({ planName: mealPlan.value })
   groceryList.value = data
 })
 </script>
@@ -24,6 +31,12 @@ const [generateGroceryList, errorMessage] = useErrorMessage(async () => {
   <div class="space-y-6">
     <FwbHeading tag="h1" class="text-3xl">Grocery List</FwbHeading>
   </div>
+
+  <form aria-label="Grocery list">
+    <div class="mt-6">
+      <FwbSelect :options="availablePlans" v-model="mealPlan" label="Select meal plan" />
+    </div>
+  </form>
 
   <div class="mt-6">
     <FwbButton size="lg" @click="generateGroceryList"> Generate grocery list </FwbButton>

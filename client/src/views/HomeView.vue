@@ -20,7 +20,8 @@ const [fetchActiveMealPlan, activePlanError] = useErrorMessage(async () =>
 )
 
 const [fetchMealsByPlanName, mealsError] = useErrorMessage(async () => {
-  return await trpc.meal.findByMealPlanName.query({ planName: planName.value })
+  return await trpc.mealPlanSchedule.find.query({ mealPlan: planName.value })
+  // return await trpc.meal.findByMealPlanName.query({ planName: planName.value })
 })
 
 onMounted(async () => {
