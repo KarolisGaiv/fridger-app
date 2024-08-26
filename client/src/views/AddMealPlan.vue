@@ -31,7 +31,7 @@ const addMeals = () => {
 }
 
 const goToDashboard = () => {
-  router.push({ name: 'Home' })
+  router.push({ name: 'DashboardHome' })
 }
 </script>
 

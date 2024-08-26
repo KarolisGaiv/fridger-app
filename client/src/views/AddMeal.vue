@@ -19,7 +19,7 @@ const mealForm = ref({
   mealPlan: '',
   assignedDay: '1',
   type: 'breakfast',
-  selectedMeal: '', 
+  selectedMeal: '',
 })
 
 const planDays = [
@@ -58,9 +58,9 @@ onMounted(async () => {
 
   // Fetch existing meals for selection
   const meals = await trpc.meal.findAll.query()
-  existingMeals.value = meals.map(meal => ({
+  existingMeals.value = meals.map((meal) => ({
     name: meal.name,
-    value: meal.name
+    value: meal.name,
   }))
 
   // Set default meal plan to active one, or "No Meal Plan" if no active plan
@@ -69,7 +69,10 @@ onMounted(async () => {
 
 const [createMeal, errorMessage] = useErrorMessage(async () => {
   // Validate that both meal type and assigned day are selected if either is provided
-  if ((mealForm.value.assignedDay && !mealForm.value.type) || (!mealForm.value.assignedDay && mealForm.value.type)) {
+  if (
+    (mealForm.value.assignedDay && !mealForm.value.type) ||
+    (!mealForm.value.assignedDay && mealForm.value.type)
+  ) {
     return // Prevent the form from submitting
   }
 
@@ -84,7 +87,6 @@ const [createMeal, errorMessage] = useErrorMessage(async () => {
 
     // Add the meal to the schedule
     await trpc.mealPlanSchedule.create.mutate(formData)
-
   } else {
     // Handle new meal creation
     const formData = {
@@ -92,7 +94,9 @@ const [createMeal, errorMessage] = useErrorMessage(async () => {
       calories: Number(mealForm.value.calories),
       ...(mealForm.value.mealPlan && { mealPlan: mealForm.value.mealPlan }),
       ...(mealForm.value.assignedDay && { assignedDay: Number(mealForm.value.assignedDay) }),
-      ...(mealForm.value.type && { type: mealForm.value.type as 'breakfast' | 'lunch' | 'dinner' | 'snack' }),
+      ...(mealForm.value.type && {
+        type: mealForm.value.type as 'breakfast' | 'lunch' | 'dinner' | 'snack',
+      }),
     }
 
     // Add new meal into the database
@@ -123,14 +127,12 @@ const [createMeal, errorMessage] = useErrorMessage(async () => {
 
 // properties to dynamically adjust select field options
 const filteredPlanDays = computed(() => {
-  return showExistingMeals.value
-    ? planDays.filter(day => day.value !== '')
-    : planDays
+  return showExistingMeals.value ? planDays.filter((day) => day.value !== '') : planDays
 })
 
 const filteredAvailablePlans = computed(() => {
   return showExistingMeals.value
-    ? availablePlans.value.filter(plan => plan.value !== '')
+    ? availablePlans.value.filter((plan) => plan.value !== '')
     : availablePlans.value
 })
 
@@ -143,12 +145,11 @@ const goToDashboard = () => {
 }
 </script>
 
-
 <template>
   <div class="space-y-6">
     <FwbHeading tag="h1" class="text-3xl">Add meal to your plan</FwbHeading>
 
-    <div class="flex items-center mb-6">
+    <div class="mb-6 flex items-center">
       <FwbCheckbox
         v-model="showExistingMeals"
         label="Select an existing meal"
@@ -179,11 +180,7 @@ const goToDashboard = () => {
           />
         </div>
         <div class="mt-6">
-          <FwbSelect
-            v-model="mealForm.type"
-            :options="mealTypes"
-            label="Meal type"
-          />
+          <FwbSelect v-model="mealForm.type" :options="mealTypes" label="Meal type" />
         </div>
         <div class="mt-6">
           <FwbSelect
@@ -218,11 +215,7 @@ const goToDashboard = () => {
           />
         </div>
         <div class="mt-6">
-          <FwbSelect
-            v-model="mealForm.type"
-            :options="mealTypes"
-            label="Meal type"
-          />
+          <FwbSelect v-model="mealForm.type" :options="mealTypes" label="Meal type" />
         </div>
         <div class="mt-6">
           <FwbSelect
@@ -249,4 +242,3 @@ const goToDashboard = () => {
     </div>
   </div>
 </template>
-
