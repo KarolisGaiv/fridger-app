@@ -242,15 +242,17 @@ describe('updateQuantity', () => {
     // Arrange
     const newQuantity = 15
     const [oldFridgeContent] = await selectAll(db, 'fridgeContent')
+    const oldQuantity = oldFridgeContent.existingQuantity!
 
     // Act
-    await repository.updateQuantity(ingredient.id, newQuantity)
+    // await repository.updateQuantity(ingredient.id, newQuantity)
+    await repository.updateQuantity(user.id, ingredient.id, newQuantity)
 
     // Assert
     const [fridgeContent] = await selectAll(db, 'fridgeContent')
     const newFridgeQuantity = fridgeContent.existingQuantity
 
     expect(oldFridgeContent.existingQuantity).not.toEqual(newFridgeQuantity)
-    expect(fridgeContent?.existingQuantity).toEqual(newQuantity)
+    expect(fridgeContent?.existingQuantity).toEqual(newQuantity + oldQuantity)
   })
 })
