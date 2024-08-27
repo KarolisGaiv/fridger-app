@@ -1,5 +1,4 @@
 import type { Database } from '@server/database'
-import type { MealPlanSchedule } from '@server/database/types'
 
 export function mealPlanScheduleRepository(db: Database) {
   return {
@@ -32,12 +31,13 @@ export function mealPlanScheduleRepository(db: Database) {
         throw new Error(`Meal Plan with name "${mealPlan}" not found`)
       }
 
-      const data: MealPlanSchedule = {
+      const data = {
         mealId: mealID.id,
         mealPlanId: mealPlanID.id,
         userId,
         assignedDay,
         type,
+        completed: false,
       }
 
       await db
