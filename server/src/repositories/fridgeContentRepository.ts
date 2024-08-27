@@ -24,7 +24,7 @@ export function fridgeContentRepository(db: Database) {
         .selectFrom('fridgeContent')
         .innerJoin("ingredient", "ingredient.id", "fridgeContent.ingredientId")
         .where("fridgeContent.userId", '=', userId)
-        .select(["ingredient.name", "fridgeContent.existingQuantity"])
+        .select(["ingredient.name", "fridgeContent.existingQuantity", "ingredient.id as ingredientId"])
         .execute()
 
       return result
