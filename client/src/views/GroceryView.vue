@@ -21,7 +21,7 @@ onMounted(async () => {
   ]
 
   const activePlan = await trpc.mealPlan.findActiveMealPlan.query()
-  groceryList.value = await trpc.groceryList.findByMealPlanId.query({ planName: activePlan })
+  groceryList.value = await trpc.groceryList.findByMealPlanName.query({ planName: activePlan })
 })
 
 const [generateGroceryList, errorMessage] = useErrorMessage(async () => {
