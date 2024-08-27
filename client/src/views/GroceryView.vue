@@ -25,6 +25,10 @@ const [generateGroceryList, errorMessage] = useErrorMessage(async () => {
   const data = await trpc.groceryList.generateGroceryList.mutate({ planName: mealPlan.value })
   groceryList.value = data
 })
+
+const [populateFridge, fridgeFuncionalityErrMessage] = useErrorMessage(async () => {
+  await trpc.fridgeContent.populateFridge.mutate()
+})
 </script>
 
 <template>
@@ -42,6 +46,10 @@ const [generateGroceryList, errorMessage] = useErrorMessage(async () => {
     <FwbButton size="lg" @click="generateGroceryList"> Generate grocery list </FwbButton>
   </div>
 
+  <div class="mt-6" v-if="groceryList.length > 0" >
+    <FwbButton size="lg" @click="populateFridge"> Transfer ingredients to the fridge </FwbButton>
+  </div>
+
   <!-- Display grocery list items as cards -->
   <div class="mt-6 space-y-4">
     <GroceryItemCard
@@ -53,4 +61,5 @@ const [generateGroceryList, errorMessage] = useErrorMessage(async () => {
   </div>
 
   <AlertError :message="errorMessage" />
+  <AlertError :message="fridgeFuncionalityErrMessage" />
 </template>
