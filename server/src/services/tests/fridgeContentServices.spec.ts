@@ -56,12 +56,32 @@ beforeAll(async () => {
 
 it('should generate fridge content based on grocery list', async () => {
   // arrange
-  const groceryList = await groceryService.generateGroceryList(user.id)
-  await insertAll(db, 'groceryList', groceryList)
+  const plannedMeals = [
+    {
+      mealId: meal1.id,
+    },
+  ]
+
+  // Generate the grocery list
+  const groceryList = await groceryService.generateGroceryList(plannedMeals)
+
+  // Insert each grocery item with the active meal plan ID
+  await Promise.all(
+    groceryList.map((item) =>
+      insertAll(db, 'groceryList', {
+        mealPlanId: activeMealPlan.id, // Ensure the meal plan ID is linked
+        ingredientId: item.ingredientId,
+        quantity: item.quantity,
+        product: item.product,
+      })
+    )
+  )
+
+  // Fetch and verify the initial state of fridge contents
   const oldFridgeContent = await selectAll(db, 'fridgeContent')
 
   // act
-  await fridgeService.placeItemsIntoFridge(user.id)
+  await fridgeService.placeItemsIntoFridge(activeMealPlan.planName, user.id)
   const fridgeContents = await selectAll(db, 'fridgeContent')
 
   // assert
