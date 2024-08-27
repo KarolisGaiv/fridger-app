@@ -105,11 +105,36 @@ describe('populateFridge', () => {
       authContext({ db }, user)
     )
     const { populateFridge } = createFridgeCaller(authContext({ db }, user))
-    const list = await generateGroceryList()
+
+    await insertAll(db, 'mealPlanSchedule', [
+      {
+        mealId: meal1.id,
+        mealPlanId: mealPlan.id,
+        assignedDay: 2,
+        type: 'dinner',
+        userId: user.id,
+      },
+      {
+        mealId: meal2.id,
+        mealPlanId: mealPlan.id,
+        assignedDay: 2,
+        type: 'dinner',
+        userId: user.id,
+      },
+      {
+        mealId: meal3.id,
+        mealPlanId: mealPlan.id,
+        assignedDay: 2,
+        type: 'dinner',
+        userId: user.id,
+      },
+    ])
+
+    const list = await generateGroceryList({ planName: mealPlan.planName })
     const previousFridgeContent = await selectAll(db, 'fridgeContent')
 
     // act
-    await populateFridge()
+    await populateFridge({ planName: mealPlan.planName })
 
     // assert
     const currentFridgeContent = await selectAll(db, 'fridgeContent')
@@ -132,6 +157,8 @@ describe('populateFridge', () => {
     })
 
     // act & assert
-    await expect(populateFridge()).rejects.toThrowError(/unauthenticated/i)
+    await expect(populateFridge({ planName: 'test' })).rejects.toThrowError(
+      /unauthenticated/i
+    )
   })
 })
