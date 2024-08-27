@@ -19,11 +19,12 @@ export function fridgeContentRepository(db: Database) {
         .executeTakeFirstOrThrow()
     },
 
-    async findByUser(userId: number): Promise<FridgeContentPublic[]> {
+    async findByUser(userId: number) {
       const result = await db
         .selectFrom('fridgeContent')
-        .where('userId', '=', userId)
-        .select(fridgeContentKeysAll)
+        .innerJoin("ingredient", "ingredient.id", "fridgeContent.ingredientId")
+        .where("fridgeContent.userId", '=', userId)
+        .select(["ingredient.name", "fridgeContent.existingQuantity"])
         .execute()
 
       return result
