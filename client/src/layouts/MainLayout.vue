@@ -12,8 +12,8 @@ const links = computed(() => [
 
   ...(isLoggedIn.value
     ? [
-        { label: 'Create Meal Plan', name: 'AddMealPlan' },
-        { label: 'Create Meal', name: 'AddMeal' },
+        { label: 'Add Meal Plan', name: 'AddMealPlan' },
+        { label: 'Edit Meal Plan', name: 'AddMeal' },
         { label: 'Grocery List', name: 'GroceryView' },
         { label: 'Fridge', name: 'FridgeView' },
       ]
