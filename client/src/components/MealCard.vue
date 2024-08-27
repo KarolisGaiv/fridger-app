@@ -18,7 +18,11 @@ const props = defineProps<{
 const meal = ref(props.meal)
 
 const toggleCompletion = async () => {
-  await trpc.mealPlanSchedule.toggleCompletionStatus.mutate({ mealName: meal.value.name, assignedDay: meal.value.assignedDay, type: meal.value.type })
+  await trpc.mealPlanSchedule.toggleCompletionStatus.mutate({
+    mealName: meal.value.name,
+    assignedDay: meal.value.assignedDay,
+    type: meal.value.type,
+  })
   meal.value.completed = !meal.value.completed
 
   await trpc.fridgeContent.updateQuantity.mutate({
