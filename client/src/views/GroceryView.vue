@@ -46,7 +46,7 @@ const [populateFridge, fridgeFuncionalityErrMessage] = useErrorMessage(async () 
     <FwbButton size="lg" @click="generateGroceryList"> Generate grocery list </FwbButton>
   </div>
 
-  <div class="mt-6" v-if="groceryList.length > 0" >
+  <div class="mt-6" v-if="groceryList.length > 0">
     <FwbButton size="lg" @click="populateFridge"> Transfer ingredients to the fridge </FwbButton>
   </div>
 

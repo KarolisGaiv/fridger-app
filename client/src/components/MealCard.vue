@@ -21,6 +21,11 @@ const toggleCompletion = async () => {
   await trpc.meal.toggleCompletionStatus.mutate({ name: meal.value.name })
 
   meal.value.completed = !meal.value.completed
+
+  await trpc.fridgeContent.updateQuantity.mutate({
+    mealName: meal.value.name,
+    completed: meal.value.completed,
+  })
 }
 </script>
 

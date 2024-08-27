@@ -4,6 +4,7 @@ import findByUser from './findByUser'
 import findByMealPlan from './findByMealPlan'
 import deleteByUser from './deleteByUser'
 import populateFridge from './populateFridge'
+import updateQuantity from './updateQuantity'
 
 export default router({
   create,
@@ -11,4 +12,5 @@ export default router({
   findByMealPlan,
   deleteByUser,
   populateFridge,
+  updateQuantity,
 })

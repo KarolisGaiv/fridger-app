@@ -5,7 +5,7 @@ import {
   fridgeContentKeysPublic,
   fridgeContentKeysAll,
 } from '@server/entities/fridgeContent'
-import type { Insertable } from 'kysely'
+import { sql, type Insertable } from 'kysely'
 
 export function fridgeContentRepository(db: Database) {
   return {
@@ -58,13 +58,17 @@ export function fridgeContentRepository(db: Database) {
     },
 
     async updateQuantity(
-      productId: number,
-      newQuantity: number
+      userId: number,
+      ingredientId: number,
+      quantityChange: number
     ): Promise<void> {
       await db
         .updateTable('fridgeContent')
-        .set({ existingQuantity: newQuantity })
-        .where('ingredientId', '=', productId)
+        .set({
+          existingQuantity: sql`${sql.ref('existingQuantity')} + ${quantityChange}`,
+        })
+        .where('userId', '=', userId)
+        .where('ingredientId', '=', ingredientId)
         .executeTakeFirstOrThrow()
     },
   }
