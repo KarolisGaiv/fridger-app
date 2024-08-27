@@ -43,11 +43,14 @@ export function fridgeContentService(db: Database) {
       )
 
       // List to hold items that need to be updated or added
-      const itemsToUpdateOrAdd: { ingredientId: number; updatedQuantity: number }[] = []
+      const itemsToUpdateOrAdd: {
+        ingredientId: number
+        updatedQuantity: number
+      }[] = []
 
       groceryList.forEach((item) => {
         const existingItem = fridgeMap.get(item.ingredientId)
-        
+
         if (existingItem) {
           // Calculate how much more of the item is needed to reach the total required quantity
           const totalNeededQuantity = item.quantity
@@ -68,7 +71,6 @@ export function fridgeContentService(db: Database) {
           })
         }
       })
-
 
       // Update or create only the necessary items
       await Promise.all(
