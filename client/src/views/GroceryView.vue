@@ -27,7 +27,7 @@ const [generateGroceryList, errorMessage] = useErrorMessage(async () => {
 })
 
 const [populateFridge, fridgeFuncionalityErrMessage] = useErrorMessage(async () => {
-  await trpc.fridgeContent.populateFridge.mutate()
+  await trpc.fridgeContent.populateFridge.mutate({ planName: mealPlan.value })
 })
 </script>
 
