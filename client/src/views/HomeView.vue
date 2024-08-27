@@ -14,14 +14,12 @@ const plannedMeals = ref<Meal[]>([])
 const hasActivePlan = ref<boolean>(false)
 const router = useRouter()
 
-// Use error handling composable for fetching data
 const [fetchActiveMealPlan, activePlanError] = useErrorMessage(async () =>
   trpc.mealPlan.findActiveMealPlan.query()
 )
 
 const [fetchMealsByPlanName, mealsError] = useErrorMessage(async () => {
   return await trpc.mealPlanSchedule.find.query({ mealPlan: planName.value })
-  // return await trpc.meal.findByMealPlanName.query({ planName: planName.value })
 })
 
 onMounted(async () => {
