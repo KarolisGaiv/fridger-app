@@ -40,13 +40,13 @@ beforeAll(async () => {
 })
 
 describe('findById', () => {
-  it('should retrieve a grocery list by meal plan ID', async () => {
+  it('should retrieve a grocery list by meal plan name', async () => {
     // arrange
     const fakeGroceryList = await createFakeGroceryList()
-    const { findByMealPlanId } = createCaller(authContext({ db }, user))
+    const { findByMealPlanName } = createCaller(authContext({ db }, user))
 
     // act
-    const result = await findByMealPlanId({ mealPlanId: mealPlan.id })
+    const result = await findByMealPlanName({ planName: mealPlan.planName })
 
     // assert
     expect(result).toEqual(
@@ -62,17 +62,16 @@ describe('findById', () => {
   })
 
   it('should throw an error if the grocery list item is not found', async () => {
-    const nonExistentId = 999 // Assuming 999 does not exist in your test data
-    const { findByMealPlanId } = createCaller(authContext({ db }, user))
+    const { findByMealPlanName } = createCaller(authContext({ db }, user))
 
     await expect(
-      findByMealPlanId({ mealPlanId: nonExistentId })
-    ).rejects.toThrow(/list not found/i)
+      findByMealPlanName({ planName: 'planDoesNotExist' })
+    ).rejects.toThrow(/do not have active meal plan/i)
   })
 
   it('prevents unauth user from using method', async () => {
     // arrange
-    const { findByMealPlanId } = createCaller({
+    const { findByMealPlanName } = createCaller({
       db,
       req: {
         // no Auth header
@@ -81,7 +80,7 @@ describe('findById', () => {
     })
 
     // act & assert
-    await expect(findByMealPlanId({ mealPlanId: 289 })).rejects.toThrowError(
+    await expect(findByMealPlanName({ planName: 'test' })).rejects.toThrowError(
       /unauthenticated/i
     )
   })

@@ -1,7 +1,7 @@
 import { router } from '@server/trpc'
 import create from './create'
 import findById from './findById'
-import findByMealPlanId from './findByMealPlanId'
+import findByMealPlanName from './findByMealPlanName'
 import update from './update'
 import deleteList from './deleteList'
 import generateGroceryList from './generateGroceryList'
@@ -9,7 +9,7 @@ import generateGroceryList from './generateGroceryList'
 export default router({
   create,
   findById,
-  findByMealPlanId,
+  findByMealPlanName,
   update,
   deleteList,
   generateGroceryList,
