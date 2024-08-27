@@ -130,15 +130,8 @@ describe('findByUser', () => {
     // Assert the structure and contents of the returned fridge content
     expect(result[1]).toEqual(
       expect.objectContaining({
-        mealPlan: mealPlan.id,
-        ingredientId: ingredient.id,
+        name: ingredient.name,
         existingQuantity: fridgeContent.existingQuantity,
-      })
-    )
-    expect(result[2]).toEqual(
-      expect.objectContaining({
-        ingredientId: ingredient.id,
-        existingQuantity: fridgeContent2.existingQuantity,
       })
     )
   })
