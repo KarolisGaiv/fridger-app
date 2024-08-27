@@ -19,6 +19,9 @@ onMounted(async () => {
       name: plan.planName,
     })),
   ]
+
+  const activePlan = await trpc.mealPlan.findActiveMealPlan.query()
+  groceryList.value = await trpc.groceryList.findByMealPlanId.query({ planName: activePlan })
 })
 
 const [generateGroceryList, errorMessage] = useErrorMessage(async () => {
