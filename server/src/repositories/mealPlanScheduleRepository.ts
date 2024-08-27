@@ -76,6 +76,7 @@ export function mealPlanScheduleRepository(db: Database) {
           'meal.calories',
           'mealPlanSchedule.type',
           'mealPlanSchedule.assignedDay',
+          'mealPlanSchedule.completed',
         ])
         .where('mealPlanSchedule.mealPlanId', '=', mealPlanID.id)
         .execute()
@@ -86,10 +87,53 @@ export function mealPlanScheduleRepository(db: Database) {
         calories: meal.calories,
         type: meal.type,
         assignedDay: meal.assignedDay,
-        completed: false,
+        completed: meal.completed,
       }))
 
       return formattedMeals
+    },
+
+    // async toggleCompletionStatus(mealId: number, userId: number) {
+    //   const currentStatus = await db
+    //     .selectFrom("mealPlanSchedule")
+    //     .select("completed")
+    //     .where("mealId", "=", mealId)
+    //     .where("userId", "=", userId)
+    //     .executeTakeFirst()
+
+    //     const newStatus = !currentStatus?.completed
+
+    //     await db
+    //     .updateTable("mealPlanSchedule")
+    //     .set({completed: newStatus})
+    //     .where("mealId", "=", mealId)
+    //     .where("userId", "=", userId)
+    //     .execute()
+    // },
+
+    async toggleCompletionStatus(mealName: string, userId: number) {
+      const currentStatus = await db
+        .selectFrom('mealPlanSchedule')
+        .innerJoin('meal', 'meal.id', 'mealPlanSchedule.mealId')
+        .select(['mealPlanSchedule.mealId', 'mealPlanSchedule.completed'])
+        .where('meal.name', '=', mealName)
+        .where('meal.user', '=', userId)
+        .where('mealPlanSchedule.userId', '=', userId)
+        .executeTakeFirst()
+
+      if (!currentStatus) {
+        throw new Error(
+          'Meal not found or not part of an active meal plan for this user'
+        )
+      }
+      const newStatus = !currentStatus?.completed
+
+      await db
+        .updateTable('mealPlanSchedule')
+        .set({ completed: newStatus })
+        .where('mealId', '=', currentStatus.mealId)
+        .where('userId', '=', userId)
+        .execute()
     },
   }
 }
