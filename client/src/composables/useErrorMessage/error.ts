@@ -39,14 +39,22 @@ export function withError<Args extends any[], Return, T extends (...args: Args) 
   return ((...args: Args) => handleError(errorMessage, () => fn(...args), doRethrow)) as T
 }
 
-function getErrorMessage(error: unknown) {
+function getErrorMessage(error: unknown): string {
   if (!(error instanceof Error)) {
     return DEFAULT_SERVER_ERROR
   }
 
-  if (!(error instanceof TRPCClientError)) {
-    return error.message
+  if (error instanceof TRPCClientError) {
+    // customize error messages based on the error's details
+    const errorMessage = error.data?.message || error.message
+
+    // customize the message for missing 'planName'
+    if (errorMessage.includes('planName')) {
+      return 'Please provide a meal plan name. It cannot be empty.'
+    }
+    return errorMessage
   }
 
-  return error.data.message || error.message
+  // Return a generic error message if not a TRPCClientError
+  return error.message
 }
