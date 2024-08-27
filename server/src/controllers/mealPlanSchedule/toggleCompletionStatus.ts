@@ -11,7 +11,13 @@ export default authenticatedProcedure
       mealRepository,
     })
   )
-  .input(mealPlanScheduleSchema.pick({ mealName: true }))
+  .input(
+    mealPlanScheduleSchema.pick({
+      mealName: true,
+      assignedDay: true,
+      type: true,
+    })
+  )
   .mutation(async ({ input, ctx: { authUser, repos } }) => {
     // const mealData = await repos.mealRepository.findByName(input.mealName, authUser.id)
 
@@ -26,6 +32,8 @@ export default authenticatedProcedure
 
     await repos.mealPlanScheduleRepository.toggleCompletionStatus(
       input.mealName,
+      input.assignedDay,
+      input.type,
       authUser.id
     )
   })

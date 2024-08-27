@@ -111,12 +111,19 @@ export function mealPlanScheduleRepository(db: Database) {
     //     .execute()
     // },
 
-    async toggleCompletionStatus(mealName: string, userId: number) {
+    async toggleCompletionStatus(
+      mealName: string,
+      assignedDay: number,
+      type: string,
+      userId: number
+    ) {
       const currentStatus = await db
         .selectFrom('mealPlanSchedule')
         .innerJoin('meal', 'meal.id', 'mealPlanSchedule.mealId')
         .select(['mealPlanSchedule.mealId', 'mealPlanSchedule.completed'])
         .where('meal.name', '=', mealName)
+        .where('mealPlanSchedule.assignedDay', '=', assignedDay)
+        .where('mealPlanSchedule.type', '=', type)
         .where('meal.user', '=', userId)
         .where('mealPlanSchedule.userId', '=', userId)
         .executeTakeFirst()
@@ -132,6 +139,8 @@ export function mealPlanScheduleRepository(db: Database) {
         .updateTable('mealPlanSchedule')
         .set({ completed: newStatus })
         .where('mealId', '=', currentStatus.mealId)
+        .where('assignedDay', '=', assignedDay)
+        .where('type', '=', type)
         .where('userId', '=', userId)
         .execute()
     },

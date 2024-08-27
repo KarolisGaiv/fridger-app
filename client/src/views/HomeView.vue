@@ -62,11 +62,6 @@ const goToAddMeal = () => {
       <div class="items-center lg:flex">
         <div class="lg:w-1/2">
           <h2 class="text-4xl font-bold text-gray-800 dark:text-gray-100">Fridger App</h2>
-          <p class="mt-4 text-gray-500 dark:text-gray-400 lg:max-w-md">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nam esse deserunt perferendis
-            reprehenderit nesciunt quis doloremque rerum dolor optio, facere fuga deleniti debitis
-            natus aperiam sit veritatis sequi cum sunt.
-          </p>
           <div class="mt-6 flex items-center gap-2">
             <FwbButton component="RouterLink" tag="router-link" href="/signup">Sign up</FwbButton>
             <FwbButton component="RouterLink" tag="router-link" color="alternative" href="/login">
