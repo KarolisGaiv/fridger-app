@@ -56,6 +56,7 @@ export interface MealPlan {
 
 export interface MealPlanSchedule {
   assignedDay: number
+  completed: Generated<boolean>
   mealId: number
   mealPlanId: number
   type: string
