@@ -141,11 +141,15 @@ const goToIngredientsView = () => {
 const goToDashboard = () => {
   router.push({ name: 'DashboardHome' })
 }
+
 </script>
 
 <template>
   <div class="space-y-6">
-    <FwbHeading tag="h1" class="text-3xl">Add meal to your plan</FwbHeading>
+    <div class="flex items-center justify-between"><FwbHeading tag="h1" class="text-3xl">Add meal to your plan</FwbHeading>
+      <FwbButton class="whitespace-nowrap" size="md" @click="goToIngredientsView" pill color="yellow">Add Ingredients</FwbButton>
+    </div>
+    
 
     <div class="mb-6 flex items-center">
       <FwbCheckbox
