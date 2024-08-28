@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import { trpc } from '@/trpc'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { FwbButton, FwbHeading, FwbInput } from 'flowbite-vue'
+import { FwbButton, FwbHeading, FwbInput, FwbToast  } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
 import type { MealPublic } from '../../../server/src/entities/meal'
 import type { IngredientPublic } from '../../../server/src/entities/ingredient'
 
-// State for meals and selected meal
-const meals = ref<MealPublic[]>([]) // Array to hold all user meals
+const meals = ref<MealPublic[]>([]) 
 const ingredients = ref<IngredientPublic[]>([])
 const selectedMealName = ref<string | null>(null)
 const selectedMealId = ref<number | null>(null)
@@ -18,21 +17,19 @@ const showIngredientFormSelection = ref<boolean>(false)
 const showSelectIngredientForm = ref<boolean>(false)
 const showAddNewIngredientForm = ref<boolean>(false)
 
-// State for Ingredients form
 const ingredientForm = ref({
   name: '',
   quantity: '',
 })
 
 const successMessage = ref<string | null>(null)
+  let successMessageTimer: ReturnType<typeof setTimeout> | null = null;
 
-// Fetch all meals when the component is mounted
 onMounted(async () => {
   meals.value = await trpc.meal.findAll.query()
 })
 
 const getMealDetails = async () => {
-  // Fetch the meal ID based on the selected meal name
   if (!selectedMealName.value) {
     console.error('No meal selected')
     return
@@ -45,14 +42,12 @@ const getMealDetails = async () => {
 }
 
 const [createIngredient, errorMessage] = useErrorMessage(async () => {
-  // Ensure selectedMealId is not null
   if (selectedMealId.value === null) {
     console.error('Meal ID is null')
     return
   }
 
   if (showAddNewIngredientForm.value) {
-    // add new ingredient to the database
     await trpc.ingredient.create.mutate({ name: ingredientForm.value.name })
   }
 
@@ -64,18 +59,23 @@ const [createIngredient, errorMessage] = useErrorMessage(async () => {
 
   successMessage.value = `${ingredientForm.value.name} added to '${selectedMealName.value}' meal successfully!`
 
-  // Reset the form
+  if (successMessageTimer) {
+    clearTimeout(successMessageTimer)
+  }
+
+  successMessageTimer = setTimeout(() => {
+    successMessage.value = null
+  }, 3000)
+
   ingredientForm.value.name = ''
   ingredientForm.value.quantity = ''
   selectedMealName.value = null
 
-  // Hide the form after adding the ingredient
   showIngredientFormSelection.value = false
   showSelectIngredientForm.value = false
   showAddNewIngredientForm.value = false
 })
 
-// Show form to select existing ingredient
 const showSelectIngredientFormHandler = async () => {
   showSelectIngredientForm.value = true
   showAddNewIngredientForm.value = false
@@ -83,13 +83,19 @@ const showSelectIngredientFormHandler = async () => {
   ingredients.value = await trpc.ingredient.findAll.query()
 }
 
-// Show form to add new ingredient
 const showAddIngredientFormHandler = () => {
   showSelectIngredientForm.value = false
   showAddNewIngredientForm.value = true
   ingredientForm.value.name = ''
   ingredientForm.value.quantity = ''
 }
+
+watch(successMessage, (newValue) => {
+  if (!newValue && successMessageTimer) {
+    clearTimeout(successMessageTimer)
+    successMessageTimer = null
+  }
+})
 </script>
 
 <template>
@@ -97,7 +103,6 @@ const showAddIngredientFormHandler = () => {
     <FwbHeading tag="h1" class="text-3xl">Add ingredients to your meal</FwbHeading>
   </div>
   <form aria-lable="User Meal">
-    <!-- Meal Selection -->
     <div class="mt-6">
       <label for="mealSelect" class="block text-sm font-medium text-gray-700">Select Meal</label>
       <select
@@ -156,7 +161,6 @@ const showAddIngredientFormHandler = () => {
       </div>
     </div>
 
-    <!-- Quantity Input Field -->
     <div class="mt-6">
       <FwbInput
         aria-label="Quantity"
@@ -168,7 +172,6 @@ const showAddIngredientFormHandler = () => {
       />
     </div>
 
-    <!-- Submit Button -->
     <div class="mt-6">
       <FwbButton size="lg" type="submit">
         {{ showAddNewIngredientForm ? 'Add New Ingredient' : 'Add Selected Ingredient' }}
@@ -176,10 +179,21 @@ const showAddIngredientFormHandler = () => {
     </div>
   </form>
 
-  <!-- Show success message -->
-  <div v-if="successMessage" class="mt-6 text-green-600">
+  <transition name="fade" class="mt-6" >
+    <fwb-toast v-if="successMessage" closable type="success">
     {{ successMessage }}
-  </div>
+  </fwb-toast>
+  </transition>
+  
 
   <AlertError :message="errorMessage" />
 </template>
+
+<style>
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+</style>
