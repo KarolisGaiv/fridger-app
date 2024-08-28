@@ -33,3 +33,6 @@ export const mealKeysPublic = [
 ] as const
 
 export type MealPublic = Pick<Selectable<Meal>, (typeof mealKeysPublic)[number]>
+
+export const updateMealSchema = mealSchema.partial()
+export type UpdateMealType = z.infer<typeof updateMealSchema>

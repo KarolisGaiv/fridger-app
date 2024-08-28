@@ -2,6 +2,7 @@ import type { Database } from '@server/database'
 import type { Meal } from '@server/database/types'
 import {
   type MealPublic,
+  type UpdateMealType,
   mealKeysAll,
   mealKeysPublic,
 } from '@server/entities/meal'
@@ -54,7 +55,7 @@ export function mealRepository(db: Database) {
     async updateMeal(
       userId: number,
       mealName: string,
-      updates: Partial<Omit<Meal, 'id'>>
+      updates: Partial<UpdateMealType>
     ): Promise<MealPublic | undefined> {
       const result = await db
         .updateTable('meal')
