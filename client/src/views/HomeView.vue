@@ -73,29 +73,40 @@ const goToAddMeal = () => {
     </div>
 
     <div v-if="isLoggedIn" class="text-4xl font-bold text-gray-800 dark:text-gray-100">
-      <FwbHeading tag="h1" class="text-3xl">Your current meal plan details</FwbHeading>
+      <FwbHeading tag="h1" class="text-3xl">Current Meal Plan Details</FwbHeading>
     </div>
 
     <div v-if="hasActivePlan" class="mt-6">
-      <FwbHeading tag="h3" class="text-3xl">Active Plan: {{ planName }}</FwbHeading>
+      <FwbHeading tag="h3" class="text-3xl text-green-400">{{ planName }}</FwbHeading>
 
       <!-- Loop through each day of the week -->
       <div v-for="day in 7" :key="day" class="mt-8">
-        <FwbHeading tag="h4" class="text-2xl">Day {{ day }}</FwbHeading>
+        <FwbHeading
+          tag="h4"
+          class="mb-4 border-b border-gray-300 pb-2 text-2xl dark:border-gray-600"
+          >Day {{ day }}</FwbHeading
+        >
 
         <!-- Group meals by type (e.g., breakfast, lunch) -->
         <div
           v-if="mealsByDay[day].length > 0"
-          class="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+          class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
         >
-          <div v-for="type in ['breakfast', 'lunch', 'dinner', 'snack']" :key="type">
-            <h5 class="text-lg font-medium">{{ type.charAt(0).toUpperCase() + type.slice(1) }}</h5>
-            <MealCard
-              v-for="meal in mealsByDay[day].filter((meal) => meal.type === type)"
-              :key="meal.name"
-              :meal="meal"
-            />
-          </div>
+          <template v-for="type in ['breakfast', 'lunch', 'dinner', 'snack']" :key="type">
+            <!-- Check if there are meals of the current type for the current day -->
+            <div v-if="mealsByDay[day].some((meal) => meal.type === type)" class="">
+              <h5
+                class="mb-4 border-b border-gray-300 pb-2 text-lg font-medium dark:border-gray-600"
+              >
+                {{ type.charAt(0).toUpperCase() + type.slice(1) }}
+              </h5>
+              <MealCard
+                v-for="meal in mealsByDay[day].filter((meal) => meal.type === type)"
+                :key="meal.name"
+                :meal="meal"
+              />
+            </div>
+          </template>
         </div>
 
         <!-- Show if there are no meals planned for this day -->

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { FwbButton } from 'flowbite-vue'
 import { trpc } from '@/trpc'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 export interface Meal {
   name: string
@@ -30,14 +30,31 @@ const toggleCompletion = async () => {
     completed: meal.value.completed,
   })
 }
+
+const cardClasses = computed(() => {
+  return meal.value.completed
+    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+    : 'bg-yellow-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+})
 </script>
 
 <template>
-  <div class="rounded-lg bg-white p-4 shadow-md dark:bg-gray-700">
-    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">{{ meal.name }}</h3>
-    <p class="text-gray-600 dark:text-gray-300">Calories: {{ meal.calories }}</p>
-    <FwbButton @click="toggleCompletion">{{
-      meal.completed ? 'Uncomplete' : 'Complete'
-    }}</FwbButton>
+  <div
+    :class="[
+      'mt-2 flex flex-col rounded-lg p-4 shadow-lg transition-transform duration-300 hover:scale-105',
+      cardClasses,
+    ]"
+  >
+    <h3 class="mb-2 text-xl font-bold">{{ meal.name }}</h3>
+    <p class="mb-2">Calories: {{ meal.calories }}</p>
+
+    <div class="flex items-center justify-between">
+      <span class="text-sm font-medium">
+        {{ meal.completed ? 'Completed' : 'Not Completed' }}
+      </span>
+      <FwbButton @click="toggleCompletion">
+        {{ meal.completed ? 'Uncomplete' : 'Complete' }}
+      </FwbButton>
+    </div>
   </div>
 </template>
