@@ -7,6 +7,7 @@ import mealIngredient from './mealIngredient'
 import groceryList from './groceryList'
 import fridgeContent from './fridgeContent'
 import mealPlanSchedule from './mealPlanSchedule'
+import aiBot from './aiBot'
 
 export const appRouter = router({
   user,
@@ -17,6 +18,7 @@ export const appRouter = router({
   groceryList,
   fridgeContent,
   mealPlanSchedule,
+  aiBot,
 })
 
 export type AppRouter = typeof appRouter

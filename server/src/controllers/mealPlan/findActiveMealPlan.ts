@@ -18,5 +18,6 @@ export default authenticatedProcedure
         message: 'No active meal plan found',
       })
     }
+
     return data
   })

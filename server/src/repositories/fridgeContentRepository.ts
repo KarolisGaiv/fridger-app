@@ -22,9 +22,13 @@ export function fridgeContentRepository(db: Database) {
     async findByUser(userId: number) {
       const result = await db
         .selectFrom('fridgeContent')
-        .innerJoin("ingredient", "ingredient.id", "fridgeContent.ingredientId")
-        .where("fridgeContent.userId", '=', userId)
-        .select(["ingredient.name", "fridgeContent.existingQuantity", "ingredient.id as ingredientId"])
+        .innerJoin('ingredient', 'ingredient.id', 'fridgeContent.ingredientId')
+        .where('fridgeContent.userId', '=', userId)
+        .select([
+          'ingredient.name',
+          'fridgeContent.existingQuantity',
+          'ingredient.id as ingredientId',
+        ])
         .execute()
 
       return result
