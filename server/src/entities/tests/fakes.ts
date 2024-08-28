@@ -45,7 +45,7 @@ export const fakeMeal = <T extends Partial<Insertable<Meal>>>(
     calories: randomId(),
     name: random.string(),
     ...overrides,
-  }) satisfies Insertable<Meal>
+  }) 
 
 export const fakeIngredient = <T extends Partial<Insertable<Ingredient>>>(
   overrides: T = {} as T
@@ -53,7 +53,7 @@ export const fakeIngredient = <T extends Partial<Insertable<Ingredient>>>(
   ({
     name: random.string(),
     ...overrides,
-  }) satisfies Insertable<Ingredient>
+  })
 
 export const fakeMealIngredient = <
   T extends Partial<Insertable<MealIngredient>>,
