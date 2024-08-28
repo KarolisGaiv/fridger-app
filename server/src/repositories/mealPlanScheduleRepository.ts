@@ -51,7 +51,7 @@ export function mealPlanScheduleRepository(db: Database) {
         .selectFrom('mealPlanSchedule')
         .select('mealId')
         .where('mealPlanId', '=', planId)
-        .where("completed", "=", false)
+        .where('completed', '=', false)
         .execute()
       return data
     },
