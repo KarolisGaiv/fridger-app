@@ -15,19 +15,7 @@ const createCaller = createCallerFactory(fridgeRouter)
 
 let ingredient: any
 let mealPlan: any
-let groceryListId: number
 let realUser: any
-
-async function createFakeGroceryList() {
-  const list = {
-    mealPlanId: mealPlan.id,
-    product: 'snake oil',
-    quantity: 30,
-    ingredientId: ingredient.id,
-  }
-  const [data] = await insertAll(db, 'groceryList', [list])
-  return data.id
-}
 
 // prepare testing setup for each test
 beforeEach(async () => {
@@ -39,7 +27,6 @@ beforeEach(async () => {
     ...fakeIngredient(),
     user: realUser.id,
   })
-  groceryListId = await createFakeGroceryList()
 })
 
 it('allows adding fridge content', async () => {
@@ -48,7 +35,6 @@ it('allows adding fridge content', async () => {
     mealPlan: mealPlan.id,
     ingredientId: ingredient.id,
     existingQuantity: 32,
-    groceryListId,
   }
   const { create } = createCaller(authContext({ db }, realUser))
 
@@ -71,7 +57,6 @@ it('prevents unauthenticated user from adding fridge content', async () => {
     mealPlan: mealPlan.id,
     ingredientId: ingredient.id,
     existingQuantity: 32,
-    groceryListId,
   }
   const { create } = createCaller({
     db,

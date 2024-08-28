@@ -6,7 +6,6 @@ import { idSchema } from './shared'
 export const fridgeContentSchema = z.object({
   id: idSchema,
   userId: idSchema,
-  groceryListId: idSchema,
   ingredientId: idSchema,
   mealPlan: idSchema,
   existingQuantity: z.number(),

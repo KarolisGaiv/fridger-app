@@ -36,7 +36,6 @@ async function insertMealPlanWithFridgeContent(quantity: number) {
   ])
   const fridgeContent = {
     userId: user.id,
-    groceryListId,
     ingredientId: ingredient.id,
     mealPlan: mealPlan.id,
     existingQuantity: quantity,
@@ -66,7 +65,6 @@ beforeAll(async () => {
   const fridgeContents = [
     {
       userId: user.id,
-      groceryListId,
       ingredientId: ingredient.id,
       mealPlan: mealPlan.id,
       existingQuantity: 10,
@@ -80,7 +78,6 @@ describe('create', () => {
   it('should create new fridge content', async () => {
     const fridgeContent = {
       userId: user.id,
-      groceryListId,
       ingredientId: ingredient.id,
       mealPlan: mealPlan.id,
       existingQuantity: 10,
@@ -107,7 +104,6 @@ describe('findByUser', () => {
   it('should return fridge content for a specific user', async () => {
     const fridgeContent = {
       userId: user.id,
-      groceryListId,
       ingredientId: ingredient.id,
       mealPlan: mealPlan.id,
       existingQuantity: 10,
@@ -115,7 +111,6 @@ describe('findByUser', () => {
 
     const fridgeContent2 = {
       userId: user.id,
-      groceryListId,
       ingredientId: ingredient.id,
       mealPlan: mealPlan.id,
       existingQuantity: 30,
@@ -199,7 +194,6 @@ describe('findByUserAndProduct', () => {
     const [mealPlanFromDatabase] = await selectAll(db, 'mealPlan')
     const fridgeContent = {
       userId: user.id,
-      groceryListId,
       ingredientId: ingredient.id,
       mealPlan: mealPlanFromDatabase.id,
       existingQuantity: 10,
