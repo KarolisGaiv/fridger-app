@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import { trpc } from '@/trpc'
 import { ref, onMounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { FwbButton, FwbHeading, FwbInput, FwbToast  } from 'flowbite-vue'
+import { FwbButton, FwbHeading, FwbInput, FwbToast } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
 import type { MealPublic } from '../../../server/src/entities/meal'
 import type { IngredientPublic } from '../../../server/src/entities/ingredient'
 
-const meals = ref<MealPublic[]>([]) 
+const meals = ref<MealPublic[]>([])
 const ingredients = ref<IngredientPublic[]>([])
 const selectedMealName = ref<string | null>(null)
 const selectedMealId = ref<number | null>(null)
 const showIngredientFormSelection = ref<boolean>(false)
+const showIngredients = ref<boolean>(false)
 
 const showSelectIngredientForm = ref<boolean>(false)
 const showAddNewIngredientForm = ref<boolean>(false)
@@ -23,7 +23,7 @@ const ingredientForm = ref({
 })
 
 const successMessage = ref<string | null>(null)
-  let successMessageTimer: ReturnType<typeof setTimeout> | null = null;
+let successMessageTimer: ReturnType<typeof setTimeout> | null = null
 
 onMounted(async () => {
   meals.value = await trpc.meal.findAll.query()
@@ -49,6 +49,10 @@ const [createIngredient, errorMessage] = useErrorMessage(async () => {
 
   if (showAddNewIngredientForm.value) {
     await trpc.ingredient.create.mutate({ name: ingredientForm.value.name })
+
+    ingredients.value.push({
+      name: ingredientForm.value.name,
+    })
   }
 
   const ingredientId = (await trpc.ingredient.findByName.query({ name: ingredientForm.value.name }))
@@ -80,7 +84,10 @@ const showSelectIngredientFormHandler = async () => {
   showSelectIngredientForm.value = true
   showAddNewIngredientForm.value = false
   ingredientForm.value.quantity = ''
-  ingredients.value = await trpc.ingredient.findAll.query()
+
+  if (ingredients.value.length === 0) {
+    ingredients.value = await trpc.ingredient.findAll.query()
+  }
 }
 
 const showAddIngredientFormHandler = () => {
@@ -88,6 +95,14 @@ const showAddIngredientFormHandler = () => {
   showAddNewIngredientForm.value = true
   ingredientForm.value.name = ''
   ingredientForm.value.quantity = ''
+}
+
+const toggleShowIngredients = async () => {
+  if (ingredients.value.length === 0) {
+    ingredients.value = await trpc.ingredient.findAll.query()
+  }
+
+  showIngredients.value = !showIngredients.value
 }
 
 watch(successMessage, (newValue) => {
@@ -99,8 +114,17 @@ watch(successMessage, (newValue) => {
 </script>
 
 <template>
-  <div class="space-y-6">
-    <FwbHeading tag="h1" class="text-3xl">Add ingredients to your meal</FwbHeading>
+  <div class="flex items-center justify-between space-y-6">
+    <FwbHeading tag="h1" class="text-3xl">Add Ingredients To Meal</FwbHeading>
+    <FwbButton
+      size="lg"
+      class="whitespace-nowrap"
+      pill
+      color="yellow"
+      @click="toggleShowIngredients"
+    >
+      {{ showIngredients ? 'Hide Ingredients' : 'Show Ingredients' }}
+    </FwbButton>
   </div>
   <form aria-lable="User Meal">
     <div class="mt-6">
@@ -179,21 +203,32 @@ watch(successMessage, (newValue) => {
     </div>
   </form>
 
-  <transition name="fade" class="mt-6" >
+  <transition name="fade" class="mt-6">
     <fwb-toast v-if="successMessage" closable type="success">
-    {{ successMessage }}
-  </fwb-toast>
+      {{ successMessage }}
+    </fwb-toast>
   </transition>
-  
 
   <AlertError :message="errorMessage" />
+
+  <div v-if="showIngredients" class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div
+      v-for="ingredient in ingredients"
+      :key="ingredient.name"
+      class="rounded-lg border border-gray-300 bg-white p-4 shadow-sm transition duration-150 ease-in-out hover:bg-gray-50"
+    >
+      <h3 class="text-lg font-medium">{{ ingredient.name }}</h3>
+    </div>
+  </div>
 </template>
 
 <style>
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s ease;
 }
-.fade-enter, .fade-leave-to {
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 </style>

@@ -149,7 +149,7 @@ const goToDashboard = () => {
       <FwbHeading tag="h1" class="text-3xl">Add meal to your plan</FwbHeading>
       <FwbButton
         class="whitespace-nowrap"
-        size="md"
+        size="lg"
         @click="goToIngredientsView"
         pill
         color="yellow"
