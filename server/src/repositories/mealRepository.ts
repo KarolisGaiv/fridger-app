@@ -41,15 +41,6 @@ export function mealRepository(db: Database) {
       return meal
     },
 
-    // async findAll(userId: number): Promise<MealPublic[]> {
-    //   return db
-    //     .selectFrom('meal')
-    //     .select(mealKeysAll)
-    //     .orderBy('id', 'asc')
-    //     .where('user', '=', userId)
-    //     .execute()
-    // },
-
     async findAll(userId: number): Promise<{ name: string }[]> {
       const data = await db
         .selectFrom('meal')

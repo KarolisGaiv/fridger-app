@@ -3,7 +3,6 @@ import { TRPCError } from '@trpc/server'
 import provideRepos from '@server/trpc/provideRepos'
 import { groceryListRepository } from '@server/repositories/groceryListRepository'
 import { mealPlanRepository } from '@server/repositories/mealPlanRepository'
-import { groceryListSchema } from '@server/entities/groceryList'
 import { mealPlanSchema } from '@server/entities/mealPlan'
 
 export default authenticatedProcedure
