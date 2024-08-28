@@ -2,7 +2,6 @@ import { authenticatedProcedure } from '@server/trpc/authenticateProcedure'
 import provideRepos from '@server/trpc/provideRepos'
 import { mealPlanRepository } from '@server/repositories/mealPlanRepository'
 import { TRPCError } from '@trpc/server'
-import { generateResponse } from '@server/services/aiBot'
 
 export default authenticatedProcedure
   .use(
@@ -19,9 +18,6 @@ export default authenticatedProcedure
         message: 'No active meal plan found',
       })
     }
-
-    // const aiResponse = await generateResponse()
-    // console.log(aiResponse);
 
     return data
   })

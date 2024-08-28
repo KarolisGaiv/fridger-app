@@ -24,19 +24,23 @@ const MealPlanSchema = z.object({
   ),
 })
 
-export async function generateResponse() {
+export async function generateAIResponse(fridgeContent, preferences) {
+  // Convert fridgeContent and preferences to strings
+  const fridgeContentString = JSON.stringify(fridgeContent).replace(/"/g, '\\"')
+
+  const preferencesString = JSON.stringify(preferences).replace(/"/g, '\\"')
+
   const completion = await openai.chat.completions.create({
     model: 'gpt-4o-mini',
     messages: [
       {
         role: 'system',
         content:
-          "You are a meal planner. Given a list of ingredients in the user's fridge and the number and types of meals they need, generate meal suggestions. Please ensure that all quantities are provided in metric units (grams, liters, milliliters). Respond with only the generated meal plans in the specified JSON format.",
+          "You are a meal planner. Given a list of ingredients in the user's fridge, generate meal suggestions that only use those ingredients. Ensure that all quantities are provided in metric units (grams, liters, milliliters). Respond with only the generated meal plans in the specified JSON format.",
       },
       {
         role: 'user',
-        content:
-          'const fridgeContent = [ { ingredient: "eggs", quantity: 6 }, { ingredient: "flour", quantity: 300 } ]; const mealPreferences = [ { type: "lunch", number: 2 }, { type: "dinner", number: 4 } ]',
+        content: `Ingredients in my fridge: ${fridgeContentString}. I would like to have the following meals: ${preferencesString}. Suggest meals using only these ingredients.`,
       },
     ],
     response_format: zodResponseFormat(MealPlanSchema, 'meal_plans'),
@@ -48,5 +52,7 @@ export async function generateResponse() {
     return mealPlans.refusal
   }
 
-  return mealPlans.content
+  // Parse the response content to JSON
+  const jsonResponse = JSON.parse(mealPlans.content!)
+  return jsonResponse
 }
