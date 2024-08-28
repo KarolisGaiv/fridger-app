@@ -3,10 +3,18 @@ import provideRepos from '@server/trpc/provideRepos'
 import { fridgeContentRepository } from '@server/repositories/fridgeContentRepository'
 import { generateAIResponse } from '@server/services/aiBot'
 
-function formatInput(fridgeContent) {
+function formatInput(fridgeContent: any[]) {
   return fridgeContent.map((item) => ({
     ingredient: item.name,
     quantity: item.existingQuantity,
+  }))
+}
+
+function formatIngredients(ingredients: any[]) {
+  return ingredients.map((ingredient) => ({
+    ingredient: ingredient.ingredient,
+    quantity: ingredient.quantity,
+    unit: ingredient.unit,
   }))
 }
 
@@ -33,8 +41,24 @@ export default authenticatedProcedure
       formattedFridgeContent,
       testPreferences
     )
-    console.log(aiResponse.meals)
-    console.log(aiResponse.meals[0].ingredients)
 
-    // 4. format received response
+    // 5. format received response
+    const formattedMeals = aiResponse.meals.map(
+      (meal: {
+        type: string
+        name: string
+        calories: number
+        ingredients: any[]
+      }) => ({
+        type: meal.type,
+        name: meal.name,
+        calories: meal.calories,
+        ingredients: formatIngredients(meal.ingredients),
+      })
+    )
+
+    // 4.
+    return {
+      meals: formattedMeals,
+    }
   })

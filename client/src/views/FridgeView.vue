@@ -9,17 +9,26 @@ import FridgeItemCard from '@/components/FridgeItemCard.vue'
 
 const fridgeItems = ref<any[]>([])
 
-onMounted(async() => {
+onMounted(async () => {
   // const activePlan = await trpc.mealPlan.findActiveMealPlan.query()
   fridgeItems.value = await trpc.fridgeContent.findByUser.query()
 })
 
+const testAI = async () => {
+  const test = await trpc.aiBot.create.query()
+  console.log(test)
+}
 </script>
 
 <template>
   <div class="space-y-6">
     <FwbHeading tag="h1" class="text-3xl">Fridge Content</FwbHeading>
   </div>
+
+  <div class="mt-6">
+    <FwbButton size="lg" @click="testAI"> TEST </FwbButton>
+  </div>
+
   <!-- Display fridge items as cards -->
   <div class="mt-6 space-y-4">
     <FridgeItemCard
