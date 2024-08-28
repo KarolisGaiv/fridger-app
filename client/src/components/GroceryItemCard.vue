@@ -20,9 +20,11 @@ defineProps({
 
 <template>
   <div
-    class="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow dark:border-gray-700 dark:bg-gray-800"
+    class="flex flex-col items-start justify-between p-4 border border-gray-200 rounded-lg shadow-md bg-white hover:shadow-lg transition-shadow duration-300 ease-in-out"
   >
-    <p class="text-lg font-semibold">{{ product }}</p>
-    <p class="text-sm text-gray-500">Quantity: {{ quantity }}g</p>
+    <div class="flex items-center justify-between w-full mb-2">
+      <p class="text-xl font-semibold text-gray-900">{{ product }}</p>
+      <span class="text-lg font-medium text-gray-700">{{ quantity }}</span>
+    </div>
   </div>
 </template>

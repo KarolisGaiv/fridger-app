@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { trpc } from '@/trpc'
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { FwbButton, FwbHeading, FwbSelect } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
@@ -53,8 +52,7 @@ const [populateFridge, fridgeFuncionalityErrMessage] = useErrorMessage(async () 
     <FwbButton size="lg" @click="populateFridge"> Transfer ingredients to the fridge </FwbButton>
   </div>
 
-  <!-- Display grocery list items as cards -->
-  <div class="mt-6 space-y-4">
+  <div class="mt-6 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     <GroceryItemCard
       v-for="item in groceryList"
       :key="item.ingredientId"
