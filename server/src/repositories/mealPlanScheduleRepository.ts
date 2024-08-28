@@ -14,6 +14,7 @@ export function mealPlanScheduleRepository(db: Database) {
         .selectFrom('meal')
         .select('id')
         .where('name', '=', mealName)
+        .where('user', '=', userId)
         .executeTakeFirst()
 
       if (!mealID) {
@@ -25,6 +26,7 @@ export function mealPlanScheduleRepository(db: Database) {
         .selectFrom('mealPlan')
         .select('id')
         .where('planName', '=', mealPlan)
+        .where('userId', '=', userId)
         .executeTakeFirst()
 
       if (!mealPlanID) {
@@ -56,12 +58,13 @@ export function mealPlanScheduleRepository(db: Database) {
       return data
     },
 
-    async fetchPlannedMeals(planName: string) {
+    async fetchPlannedMeals(planName: string, userId: number) {
       // Step 1: Get meal plan ID based on meal plan name
       const mealPlanID = await db
         .selectFrom('mealPlan')
         .select('id')
         .where('planName', '=', planName)
+        .where('userId', '=', userId)
         .executeTakeFirst()
 
       if (!mealPlanID) {

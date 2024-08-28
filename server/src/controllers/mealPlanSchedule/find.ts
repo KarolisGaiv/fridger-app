@@ -8,7 +8,8 @@ export default authenticatedProcedure
   .input(mealPlanScheduleSchema.pick({ mealPlan: true }))
   .query(async ({ input, ctx: { authUser, repos } }) => {
     const data = await repos.mealPlanScheduleRepository.fetchPlannedMeals(
-      input.mealPlan
+      input.mealPlan,
+      authUser.id
     )
 
     return data

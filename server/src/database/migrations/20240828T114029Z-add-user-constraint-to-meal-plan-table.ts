@@ -13,7 +13,7 @@ export async function up(db: Kysely<any>) {
       'meal_plan_id',
       'assigned_day',
       'type',
-      'user_id', 
+      'user_id',
     ])
     .execute()
 }
