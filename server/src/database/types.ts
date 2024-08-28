@@ -7,10 +7,10 @@ export type Generated<T> =
 
 export interface FridgeContent {
   existingQuantity: number | null
-  groceryListId: number | null
   id: Generated<number>
   ingredientId: number
   mealPlan: number
+  reservedQuantity: Generated<number>
   userId: number
 }
 
