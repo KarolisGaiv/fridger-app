@@ -30,7 +30,6 @@ const planDays = [
   { value: '5', name: 'Day 5' },
   { value: '6', name: 'Day 6' },
   { value: '7', name: 'Day 7' },
-  { value: '', name: 'No assigned day' },
 ]
 
 const mealTypes = [
@@ -49,7 +48,6 @@ onMounted(async () => {
   const plans = await trpc.mealPlan.findByUserId.query()
 
   availablePlans.value = [
-    { value: '', name: 'No Meal Plan' },
     ...plans.map((plan) => ({
       value: plan.planName,
       name: plan.planName,
