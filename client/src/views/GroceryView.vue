@@ -52,7 +52,7 @@ const [populateFridge, fridgeFuncionalityErrMessage] = useErrorMessage(async () 
     <FwbButton size="lg" @click="populateFridge"> Transfer ingredients to the fridge </FwbButton>
   </div>
 
-  <div class="mt-6 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+  <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     <GroceryItemCard
       v-for="item in groceryList"
       :key="item.ingredientId"

@@ -72,6 +72,16 @@ export function ingredientRepository(db: Database) {
         .where('name', '=', name)
         .execute()
     },
+
+    async createMultipleIngredients(
+      ingredients: { name: string; user: number }[]
+    ) {
+      return db
+        .insertInto('ingredient')
+        .values(ingredients)
+        .returning(ingredientKeys)
+        .execute()
+    },
   }
 }
 

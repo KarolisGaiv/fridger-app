@@ -23,6 +23,16 @@ export function mealIngredientRepository(db: Database) {
         .executeTakeFirstOrThrow()
     },
 
+    async createMultipleMealIngredients(
+      mealIngredients: Insertable<MealIngredient>[]
+    ): Promise<MealIngredientPublic[]> {
+      return db
+        .insertInto('mealIngredient')
+        .values(mealIngredients)
+        .returning(mealIngredientKeysPublic)
+        .execute()
+    },
+
     async findMealIngredientById(
       id: number
     ): Promise<Selectable<MealIngredientPublic> | undefined> {

@@ -40,20 +40,18 @@ export const fakeAuthUser = <T extends Partial<AuthUser>>(
 
 export const fakeMeal = <T extends Partial<Insertable<Meal>>>(
   overrides: T = {} as T
-) =>
-  ({
-    calories: randomId(),
-    name: random.string(),
-    ...overrides,
-  }) 
+) => ({
+  calories: randomId(),
+  name: random.string(),
+  ...overrides,
+})
 
 export const fakeIngredient = <T extends Partial<Insertable<Ingredient>>>(
   overrides: T = {} as T
-) =>
-  ({
-    name: random.string(),
-    ...overrides,
-  })
+) => ({
+  name: random.string(),
+  ...overrides,
+})
 
 export const fakeMealIngredient = <
   T extends Partial<Insertable<MealIngredient>>,

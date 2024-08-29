@@ -28,7 +28,7 @@ const testAI = async () => {
     <FwbButton size="lg" @click="testAI"> TEST </FwbButton>
   </div>
 
-  <div class="mt-6 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+  <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
     <FridgeItemCard
       v-for="item in fridgeItems"
       :key="item.id"
