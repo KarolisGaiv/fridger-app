@@ -6,6 +6,7 @@ import updateMeal from './updateMeal'
 import deleteMeal from './deleteMeal'
 import findByMealPlanName from './findByMealPlanName'
 import toggleCompletionStatus from './toggleCompletionStatus'
+import createAIMeal from './createAIMeal'
 
 export default router({
   create,
@@ -15,4 +16,5 @@ export default router({
   deleteMeal,
   findByMealPlanName,
   toggleCompletionStatus,
+  createAIMeal,
 })

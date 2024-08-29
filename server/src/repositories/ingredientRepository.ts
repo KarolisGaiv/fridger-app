@@ -72,6 +72,16 @@ export function ingredientRepository(db: Database) {
         .where('name', '=', name)
         .execute()
     },
+
+    async createMultipleIngredients(
+      ingredients: Insertable<Ingredient>[]
+    ): Promise<IngredientPublic[]> {
+      return db
+        .insertInto('ingredient')
+        .values(ingredients)
+        .returning(ingredientKeyPublic)
+        .execute()
+    },
   }
 }
 
