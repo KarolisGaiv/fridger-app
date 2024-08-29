@@ -10,11 +10,11 @@ import type { Insertable, Selectable } from 'kysely'
 
 export function mealRepository(db: Database) {
   return {
-    async create(meal: Insertable<Meal>): Promise<MealPublic> {
+    async create(meal: Insertable<Meal>) {
       return db
         .insertInto('meal')
         .values(meal)
-        .returning(mealKeysPublic)
+        .returning(mealKeysAll)
         .executeTakeFirstOrThrow()
     },
 

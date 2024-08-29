@@ -74,12 +74,12 @@ export function ingredientRepository(db: Database) {
     },
 
     async createMultipleIngredients(
-      ingredients: Insertable<Ingredient>[]
-    ): Promise<IngredientPublic[]> {
+      ingredients: { name: string; user: number }[]
+    ) {
       return db
         .insertInto('ingredient')
         .values(ingredients)
-        .returning(ingredientKeyPublic)
+        .returning(ingredientKeys)
         .execute()
     },
   }

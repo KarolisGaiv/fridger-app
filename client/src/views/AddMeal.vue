@@ -2,7 +2,15 @@
 import { trpc } from '@/trpc'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { FwbButton, FwbHeading, FwbInput, FwbSelect, FwbCheckbox, FwbModal } from 'flowbite-vue'
+import {
+  FwbButton,
+  FwbHeading,
+  FwbInput,
+  FwbSelect,
+  FwbCheckbox,
+  FwbModal,
+  FwbSpinner,
+} from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
 
@@ -14,6 +22,7 @@ const existingMeals = ref<{ value: string; name: string }[]>([])
 const isShowAIModal = ref(false)
 const isMealGenerated = ref(false)
 const generatedMeal = ref<any>(null)
+const isLoading = ref(false)
 
 const mealForm = ref({
   name: '',
@@ -143,6 +152,7 @@ function closeAIModal() {
 }
 
 const generateAiMeal = async () => {
+  isLoading.value = true
   const type = aiMealForm.value.type as 'breakfast' | 'lunch' | 'dinner' | 'snack'
   const calories = parseInt(aiMealForm.value.calories, 10)
 
@@ -154,13 +164,20 @@ const generateAiMeal = async () => {
     console.error('Error generating meal:', error)
     generatedMeal.value = null
     isMealGenerated.value = false
+  } finally {
+    isLoading.value = false
   }
 }
 
-function addAIGeneratedMeal() {
-  // 1. save generated meal and ingredients into databa
-  // 2. save this meal into plan schedule
-  // await trpc.mealPlanSchedule.create.mutate(scheduleFormData)
+async function addAIGeneratedMeal() {
+  const batchedData = {
+    ...generatedMeal.value,
+    type: aiMealForm.value.type,
+    mealPlan: mealForm.value.mealPlan,
+    assignedDay: mealForm.value.assignedDay,
+  }
+  await trpc.meal.createAIMeal.mutate(batchedData)
+  closeAIModal()
 }
 
 const goToIngredientsView = () => {
@@ -291,11 +308,15 @@ const goToDashboard = () => {
             />
           </div>
           <div class="mt-6 flex justify-end">
-            <FwbButton size="lg" type="submit">Generate Meal</FwbButton>
+            <FwbButton size="lg" type="submit" :disabled="isLoading">Generate Meal</FwbButton>
           </div>
         </form>
 
-        <div v-if="isMealGenerated" class="rounded-lg bg-white p-6 shadow-md">
+        <div v-if="isLoading" class="my-4 flex justify-center">
+          <fwb-spinner size="10" color="blue" aria-label="Generating meal..." />
+        </div>
+
+        <div v-if="isMealGenerated && !isLoading" class="rounded-lg bg-white p-6 shadow-md">
           <h3 class="mb-4 text-xl font-semibold">Generated Meal Details</h3>
 
           <table class="mb-4 w-full border-collapse">
@@ -341,7 +362,9 @@ const goToDashboard = () => {
           </div>
 
           <div class="mt-6 flex justify-end space-x-4">
-            <FwbButton color="green" size="lg">Add Meal to Plan</FwbButton>
+            <FwbButton color="green" size="lg" @click="addAIGeneratedMeal"
+              >Add Meal to Plan</FwbButton
+            >
             <FwbButton color="pink" size="lg" @click="closeAIModal">Close</FwbButton>
           </div>
         </div>
