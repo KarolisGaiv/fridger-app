@@ -24,7 +24,7 @@ const mealForm = ref({
 
 const aiMealForm = ref({
   type: '',
-  calories: '',
+  calories: "",
 })
 
 const planDays = [
@@ -139,7 +139,11 @@ function closeAIModal() {
 }
 
 const generateAiMeal = async () => {
-  // Handle AI meal generation here
+  const type = aiMealForm.value.type as 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  const calories = parseInt(aiMealForm.value.calories, 10);
+
+  const generatedMeal = await trpc.aiBot.generateMeal.query({ type, calories });
+  console.log(generatedMeal);
   // For example, make an API call with aiMealForm.value data
   // isShowAIModal.value = false
 }

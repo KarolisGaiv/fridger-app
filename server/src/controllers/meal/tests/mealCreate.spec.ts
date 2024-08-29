@@ -20,7 +20,7 @@ it('should create and save new meal', async () => {
   const { create } = createCaller(authContext({ db }, user))
 
   // act
-  const response = await create({calories: meal.calories, name: meal.name})
+  const response = await create({ calories: meal.calories, name: meal.name })
 
   // assert
   expect(response.mealCreated).toMatchObject({
@@ -40,5 +40,7 @@ it('prevents unauth user from using method', async () => {
   })
 
   // act & assert
-  await expect(create({calories: 13, name: "test"})).rejects.toThrowError(/unauthenticated/i)
+  await expect(create({ calories: 13, name: 'test' })).rejects.toThrowError(
+    /unauthenticated/i
+  )
 })
