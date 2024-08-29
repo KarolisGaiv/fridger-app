@@ -7,3 +7,10 @@ export const mealPlanScheduleSchema = z.object({
   type: z.enum(['breakfast', 'lunch', 'dinner', 'snack']),
   completed: z.boolean().optional(),
 })
+
+export const mealToDeleteFromPlanSchema = z.object({
+  mealName: z.string(),
+  mealPlan: z.string(),
+  assignedDay: z.number().min(1).max(7),
+  type: z.enum(['breakfast', 'lunch', 'dinner', 'snack']),
+})

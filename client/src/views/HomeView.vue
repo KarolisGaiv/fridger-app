@@ -104,6 +104,7 @@ const goToAddMeal = () => {
                 v-for="meal in mealsByDay[day].filter((meal) => meal.type === type)"
                 :key="meal.name"
                 :meal="meal"
+                :planName="planName"
               />
             </div>
           </template>
