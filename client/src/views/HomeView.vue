@@ -54,6 +54,10 @@ const goToAddMealPlan = () => {
 const goToAddMeal = () => {
   router.push({ name: 'AddMeal' })
 }
+
+const handleMealDeleted = (deletedMeal: Meal) => {
+  plannedMeals.value = plannedMeals.value.filter(meal => meal.name !== deletedMeal.name)
+}
 </script>
 
 <template>
@@ -105,6 +109,7 @@ const goToAddMeal = () => {
                 :key="meal.name"
                 :meal="meal"
                 :planName="planName"
+                @meal-deleted="handleMealDeleted"
               />
             </div>
           </template>

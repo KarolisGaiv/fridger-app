@@ -16,6 +16,10 @@ const props = defineProps<{
   planName: string
 }>()
 
+const emit = defineEmits<{
+  (e: 'meal-deleted', meal: Meal): void
+}>()
+
 const meal = ref(props.meal)
 
 const toggleCompletion = async () => {
@@ -33,13 +37,13 @@ const toggleCompletion = async () => {
 }
 
 async function deleteMeal() {
-  // console.log(meal.value);
   await trpc.mealPlanSchedule.removeMealFromSchedule.mutate({
     assignedDay: meal.value.assignedDay!,
     type: meal.value.type!,
     mealName: meal.value.name,
     mealPlan: props.planName,
   })
+  emit('meal-deleted', meal.value) 
 }
 
 const cardClasses = computed(() => {
