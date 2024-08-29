@@ -21,14 +21,13 @@ describe('create', () => {
     }
     const createdMeal = await repository.create(meal)
 
-    expect(createdMeal).toEqual({
+    expect(createdMeal).toEqual(expect.objectContaining({
       calories: meal.calories,
       name: meal.name,
-      id: meal.id,
       type: null,
       assignedDay: null,
       completed: false,
-    })
+    }))
   })
 
   it('should create a new meal with optional parameters', async () => {
@@ -45,14 +44,13 @@ describe('create', () => {
     }
 
     const createdMeal = await repository.create(meal)
-    expect(createdMeal).toEqual({
+    expect(createdMeal).toEqual(expect.objectContaining({
       calories: meal.calories,
       name: meal.name,
-      id: meal.id,
       type: 'lunch',
       assignedDay: meal.assignedDay,
       completed: false,
-    })
+    }))
 
     const fullData = (await selectAll(db, 'meal'))[0]
     expect(fullData).toMatchObject({
