@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import { createTestDatabase } from '@tests/utils/database'
 import { wrapInRollbacks } from '@tests/utils/transactions'
 import { fakeMeal, fakeMealPlan, fakeUser } from '@server/entities/tests/fakes'
@@ -122,4 +123,208 @@ it('should find all meals by meal plan ID', async () => {
   expect(result1).toHaveLength(2)
   expect(result2).toHaveLength(1)
   expect(result3).toHaveLength(0)
+})
+
+describe('fetchPlannedMeals', () => {
+  it('should find all planned meals by plan name', async () => {
+    // arrange
+    const [mealPlan2] = await insertAll(db, 'mealPlan', {
+      ...fakeMealPlan(),
+      userId: user.id,
+    })
+
+    const [meal2] = await insertAll(db, 'meal', {
+      ...fakeMeal(),
+      user: user.id,
+      mealPlan: mealPlan.id,
+    })
+
+    const assignedDay = 5
+    const type = 'lunch'
+
+    await repository.create(
+      meal.name,
+      mealPlan.planName,
+      assignedDay,
+      type,
+      user.id
+    )
+
+    await repository.create(
+      meal2.name,
+      mealPlan.planName,
+      assignedDay,
+      type,
+      user.id
+    )
+
+    await repository.create(
+      meal2.name,
+      mealPlan2.planName,
+      assignedDay,
+      type,
+      user.id
+    )
+
+    // act
+    const result = await repository.fetchPlannedMeals(
+      mealPlan.planName,
+      user.id
+    )
+
+    expect(result).toHaveLength(2)
+  })
+
+  it('should throw error if provided meal plan does not exist', async () => {
+    // arrange
+    await insertAll(db, 'mealPlan', {
+      ...fakeMealPlan(),
+      userId: user.id,
+    })
+
+    await insertAll(db, 'meal', {
+      ...fakeMeal(),
+      user: user.id,
+      mealPlan: mealPlan.id,
+    })
+
+    const assignedDay = 5
+    const type = 'lunch'
+
+    await repository.create(
+      meal.name,
+      mealPlan.planName,
+      assignedDay,
+      type,
+      user.id
+    )
+
+    await expect(
+      repository.fetchPlannedMeals('no plan', user.id)
+    ).rejects.toThrowError(/Meal Plan with name "no plan" not found/)
+  })
+})
+
+describe('toggleCompletionStatus', () => {
+  it('should change meal completion status', async () => {
+    // arrange
+    const [mealPlan2] = await insertAll(db, 'mealPlan', {
+      ...fakeMealPlan(),
+      userId: user.id,
+    })
+
+    const [meal2] = await insertAll(db, 'meal', {
+      ...fakeMeal(),
+      user: user.id,
+      mealPlan: mealPlan.id,
+    })
+
+    const assignedDay = 5
+    const type = 'lunch'
+
+    await repository.create(
+      meal.name,
+      mealPlan.planName,
+      assignedDay,
+      type,
+      user.id
+    )
+
+    await repository.create(
+      meal2.name,
+      mealPlan.planName,
+      assignedDay,
+      type,
+      user.id
+    )
+
+    await repository.create(
+      meal2.name,
+      mealPlan2.planName,
+      assignedDay,
+      type,
+      user.id
+    )
+
+    const dataBefore = await repository.fetchPlannedMeals(
+      mealPlan.planName,
+      user.id
+    )
+
+    let meal1Data = dataBefore[0]
+    expect(meal1Data.completed).toBe(false)
+
+    // act
+    await repository.toggleCompletionStatus(
+      meal1Data.name,
+      meal1Data.assignedDay,
+      meal1Data.type,
+      user.id
+    )
+
+    const dataAfter = await repository.fetchPlannedMeals(
+      mealPlan.planName,
+      user.id
+    )
+    meal1Data = dataAfter[0]
+    expect(meal1Data.completed).toBe(true)
+  })
+})
+
+describe('removeMealFromPlan', () => {
+  it('should remove meal from meal plan schedule table', async () => {
+    // arrange
+    const [mealPlan2] = await insertAll(db, 'mealPlan', {
+      ...fakeMealPlan(),
+      userId: user.id,
+    })
+
+    const [meal2] = await insertAll(db, 'meal', {
+      ...fakeMeal(),
+      user: user.id,
+      mealPlan: mealPlan.id,
+    })
+
+    const assignedDay = 5
+    const type = 'lunch'
+
+    await repository.create(
+      meal.name,
+      mealPlan.planName,
+      assignedDay,
+      type,
+      user.id
+    )
+
+    await repository.create(
+      meal2.name,
+      mealPlan.planName,
+      assignedDay,
+      type,
+      user.id
+    )
+
+    await repository.create(
+      meal2.name,
+      mealPlan2.planName,
+      assignedDay,
+      type,
+      user.id
+    )
+
+    const dataBefore = await selectAll(db, 'mealPlanSchedule')
+
+    expect(dataBefore).toHaveLength(3)
+
+    await repository.removeMealFromPlan(
+      meal.name,
+      mealPlan.planName,
+      user.id,
+      assignedDay,
+      type
+    )
+
+    const dataAfter = await selectAll(db, 'mealPlanSchedule')
+    expect(dataAfter).toHaveLength(2)
+  })
 })

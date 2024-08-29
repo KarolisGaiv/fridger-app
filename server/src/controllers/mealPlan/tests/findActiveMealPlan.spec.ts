@@ -15,20 +15,31 @@ let mealPlan2: any
 
 beforeEach(async () => {
   ;[user] = await insertAll(db, 'user', [fakeUser()])
-  ;[mealPlan] = await insertAll(db, 'mealPlan', {
-    userId: user.id,
-    planName: 'First Plan',
-    isActive: false,
-  })
-  ;[mealPlan2] = await insertAll(db, 'mealPlan', {
-    userId: user.id,
-    planName: 'Second Plan',
-    isActive: true,
-  })
 })
 
 describe('findActiveMealPlan', () => {
+  it('should throw a NOT_FOUND error if active meal plan is not found', async () => {
+    // arrange
+    const { findActiveMealPlan } = createCaller(authContext({ db }, user))
+
+    // Act & Assert
+    await expect(findActiveMealPlan()).rejects.toThrowError(
+      /no active meal plan found/i
+    )
+  })
+
   it('should find meal plan with active status', async () => {
+    ;[mealPlan] = await insertAll(db, 'mealPlan', {
+      userId: user.id,
+      planName: 'First Plan',
+      isActive: false,
+    })
+    ;[mealPlan2] = await insertAll(db, 'mealPlan', {
+      userId: user.id,
+      planName: 'Second Plan',
+      isActive: true,
+    })
+
     // arrange
     const { findActiveMealPlan } = createCaller(authContext({ db }, user))
 
@@ -37,17 +48,6 @@ describe('findActiveMealPlan', () => {
 
     // assert
     expect(res).toBe('Second Plan')
-  })
-
-  it('should throw a NOT_FOUND error if active meal plan is not found', async () => {
-    // arrange
-    const { findActiveMealPlan } = createCaller(authContext({ db }, user))
-    await clearTables(db, ['mealPlan'])
-
-    // Act & Assert
-    await expect(findActiveMealPlan()).rejects.toThrowError(
-      /no active meal plan found/i
-    )
   })
 
   it('prevents unauth user from using method', async () => {

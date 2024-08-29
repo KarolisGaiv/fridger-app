@@ -19,17 +19,6 @@ export default authenticatedProcedure
     })
   )
   .mutation(async ({ input, ctx: { authUser, repos } }) => {
-    // const mealData = await repos.mealRepository.findByName(input.mealName, authUser.id)
-
-    // if (mealData?.user !== authUser.id) {
-    //     throw new TRPCError({
-    //         code: "FORBIDDEN",
-    //         message: "You are not allowed to change this"
-    //     })
-    // }
-
-    // await repos.mealPlanScheduleRepository.toggleCompletionStatus(mealData.id, authUser.id)
-
     await repos.mealPlanScheduleRepository.toggleCompletionStatus(
       input.mealName,
       input.assignedDay,
