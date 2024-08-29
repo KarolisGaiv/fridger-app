@@ -2,7 +2,7 @@
 import { trpc } from '@/trpc'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { FwbButton, FwbHeading, FwbInput, FwbSelect, FwbCheckbox } from 'flowbite-vue'
+import { FwbButton, FwbHeading, FwbInput, FwbSelect, FwbCheckbox, FwbModal } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
 
@@ -11,8 +11,8 @@ const showExistingMeals = ref(false)
 const activePlan = ref('')
 const availablePlans = ref<{ value: string; name: string }[]>([])
 const existingMeals = ref<{ value: string; name: string }[]>([])
+const isShowAIModal = ref(false)
 
-// State for Meal form
 const mealForm = ref({
   name: '',
   calories: '0',
@@ -20,6 +20,11 @@ const mealForm = ref({
   assignedDay: '1',
   type: '',
   selectedMeal: '',
+})
+
+const aiMealForm = ref({
+  type: '',
+  calories: '',
 })
 
 const planDays = [
@@ -40,9 +45,8 @@ const mealTypes = [
 ]
 
 const successMessage = ref<string | null>(null)
-const showOptions = ref(false) // Show options after meal is added
+const showOptions = ref(false)
 
-// Initialize data when component is mounted
 onMounted(async () => {
   activePlan.value = await trpc.mealPlan.findActiveMealPlan.query()
   const plans = await trpc.mealPlan.findByUserId.query()
@@ -54,19 +58,16 @@ onMounted(async () => {
     })),
   ]
 
-  // Fetch existing meals for selection
   const meals = await trpc.meal.findAll.query()
   existingMeals.value = meals.map((meal) => ({
     name: meal.name,
     value: meal.name,
   }))
 
-  // Set default meal plan to active one, or "No Meal Plan" if no active plan
   mealForm.value.mealPlan = activePlan.value ? activePlan.value : ''
 })
 
 const [createMeal, errorMessage] = useErrorMessage(async () => {
-  // Validate that both meal type and assigned day are selected if either is provided
   if (
     (mealForm.value.assignedDay && !mealForm.value.type) ||
     (!mealForm.value.assignedDay && mealForm.value.type)
@@ -75,7 +76,6 @@ const [createMeal, errorMessage] = useErrorMessage(async () => {
   }
 
   if (showExistingMeals.value) {
-    // If selecting an existing meal
     const formData = {
       mealName: mealForm.value.selectedMeal,
       mealPlan: mealForm.value.mealPlan,
@@ -83,10 +83,8 @@ const [createMeal, errorMessage] = useErrorMessage(async () => {
       type: mealForm.value.type as 'breakfast' | 'lunch' | 'dinner' | 'snack',
     }
 
-    // Add the meal to the schedule
     await trpc.mealPlanSchedule.create.mutate(formData)
   } else {
-    // Handle new meal creation
     const formData = {
       name: mealForm.value.name,
       calories: Number(mealForm.value.calories),
@@ -97,7 +95,6 @@ const [createMeal, errorMessage] = useErrorMessage(async () => {
       }),
     }
 
-    // Add new meal into the database
     await trpc.meal.create.mutate(formData)
 
     // If a day is assigned, also add the meal to the schedule
@@ -117,13 +114,12 @@ const [createMeal, errorMessage] = useErrorMessage(async () => {
   mealForm.value.name = ''
   mealForm.value.calories = '0'
   mealForm.value.mealPlan = activePlan.value ? activePlan.value : ''
-  mealForm.value.selectedMeal = '' // Reset the selected meal
-  mealForm.value.assignedDay = '1' // Reset assigned day
-  mealForm.value.type = '' // Reset meal type
-  showOptions.value = true // Show options after meal is added
+  mealForm.value.selectedMeal = ''
+  mealForm.value.assignedDay = '1'
+  mealForm.value.type = ''
+  showOptions.value = true
 })
 
-// properties to dynamically adjust select field options
 const filteredPlanDays = computed(() => {
   return showExistingMeals.value ? planDays.filter((day) => day.value !== '') : planDays
 })
@@ -133,6 +129,20 @@ const filteredAvailablePlans = computed(() => {
     ? availablePlans.value.filter((plan) => plan.value !== '')
     : availablePlans.value
 })
+
+function showAIModal() {
+  isShowAIModal.value = true
+}
+
+function closeAIModal() {
+  isShowAIModal.value = false
+}
+
+const generateAiMeal = async () => {
+  // Handle AI meal generation here
+  // For example, make an API call with aiMealForm.value data
+  // isShowAIModal.value = false
+}
 
 const goToIngredientsView = () => {
   router.push({ name: 'AddIngredient' })
@@ -163,12 +173,13 @@ const goToDashboard = () => {
         label="Select an existing meal"
         aria-label="Select existing meal"
       />
+      <FwbButton class="ml-6 whitespace-nowrap" size="md" @click="showAIModal" pill color="green"
+        >Generate AI Meal</FwbButton
+      >
     </div>
 
     <form aria-label="Add Meal" @submit.prevent="createMeal">
-      <!-- Conditionally render meal details form or existing meal selection -->
       <div v-if="!showExistingMeals">
-        <!-- New meal form fields -->
         <div class="mt-6">
           <FwbInput
             aria-label="Meal name"
@@ -207,7 +218,6 @@ const goToDashboard = () => {
       </div>
 
       <div v-if="showExistingMeals">
-        <!-- Existing meal form fields -->
         <div class="mt-6">
           <FwbSelect
             v-model="mealForm.selectedMeal"
@@ -240,6 +250,33 @@ const goToDashboard = () => {
         <FwbButton size="lg" type="submit">Add meal</FwbButton>
       </div>
     </form>
+
+    <fwb-modal v-if="isShowAIModal" @close="closeAIModal" size="lg">
+      <template #header>
+        <div class="flex items-center text-lg">Use AI To Generate Meal</div>
+      </template>
+      <template #body>
+        <form @submit.prevent="generateAiMeal">
+          <FwbSelect
+            v-model="aiMealForm.type"
+            :options="mealTypes"
+            label="Choose meal type to generate"
+          />
+          <div class="mt-6">
+            <FwbInput
+              aria-label="Calories"
+              v-model="aiMealForm.calories"
+              type="number"
+              label="Number of calories"
+              placeholder="Calories"
+            />
+          </div>
+          <div class="mt-6 flex justify-end">
+            <FwbButton size="lg" type="submit">Generate Meal</FwbButton>
+          </div>
+        </form>
+      </template>
+    </fwb-modal>
 
     <div v-if="successMessage" class="mt-6 text-green-600">
       {{ successMessage }}
