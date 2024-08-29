@@ -157,6 +157,12 @@ const generateAiMeal = async () => {
   }
 }
 
+function addAIGeneratedMeal() {
+  // 1. save generated meal and ingredients into databa
+  // 2. save this meal into plan schedule
+  // await trpc.mealPlanSchedule.create.mutate(scheduleFormData)
+}
+
 const goToIngredientsView = () => {
   router.push({ name: 'AddIngredient' })
 }
@@ -323,6 +329,14 @@ const goToDashboard = () => {
               v-model="mealForm.mealPlan"
               :options="filteredAvailablePlans"
               label="Assign to specific meal plan"
+            />
+          </div>
+
+          <div class="mt-6">
+            <FwbSelect
+              v-model="mealForm.assignedDay"
+              :options="filteredPlanDays"
+              label="Assign to specific day"
             />
           </div>
 
