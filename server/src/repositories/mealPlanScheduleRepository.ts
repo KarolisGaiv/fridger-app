@@ -200,23 +200,6 @@ export function mealPlanScheduleRepository(db: Database) {
         .where('userId', '=', userId)
         .where('existingQuantity', '=', 0)
         .execute()
-
-      // Adjust the fridge content
-      // await db
-      //   .updateTable('fridgeContent')
-      //   .set({
-      //     reservedQuantity: sql`reservedQuantity - (SELECT quantity FROM mealIngredient WHERE mealIngredient.mealId = ${mealID!.id} AND mealIngredient.ingredientId = fridgeContent.ingredientId)`,
-      //   })
-      //   .where('userId', '=', userId)
-      //   .where('reservedQuantity', '>', 0)
-      //   .execute();
-
-      // Remove any fridge content where reserved quantity is now zero
-      // await db
-      // .deleteFrom('fridgeContent')
-      // .where('userId', '=', userId)
-      // .where('reservedQuantity', '=', 0)
-      // .execute();
     },
   }
 }
