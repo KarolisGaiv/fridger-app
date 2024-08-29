@@ -327,8 +327,8 @@ const goToDashboard = () => {
           </div>
 
           <div class="mt-6 flex justify-end space-x-4">
-            <FwbButton size="lg">Add Meal to Plan</FwbButton>
-            <FwbButton size="lg" @click="closeAIModal">Close</FwbButton>
+            <FwbButton color="green" size="lg">Add Meal to Plan</FwbButton>
+            <FwbButton color="pink" size="lg" @click="closeAIModal">Close</FwbButton>
           </div>
         </div>
       </template>
