@@ -6,13 +6,18 @@ import { computed, ref } from 'vue'
 export interface Meal {
   name: string
   calories: number
-  type: string | null
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack' | null
   assignedDay: number | null
   completed: boolean
 }
 
 const props = defineProps<{
   meal: Meal
+  planName: string
+}>()
+
+const emit = defineEmits<{
+  (e: 'meal-deleted', meal: Meal): void
 }>()
 
 const meal = ref(props.meal)
@@ -29,6 +34,16 @@ const toggleCompletion = async () => {
     mealName: meal.value.name,
     completed: meal.value.completed,
   })
+}
+
+async function deleteMeal() {
+  await trpc.mealPlanSchedule.removeMealFromSchedule.mutate({
+    assignedDay: meal.value.assignedDay!,
+    type: meal.value.type!,
+    mealName: meal.value.name,
+    mealPlan: props.planName,
+  })
+  emit('meal-deleted', meal.value) 
 }
 
 const cardClasses = computed(() => {
@@ -55,6 +70,7 @@ const cardClasses = computed(() => {
       <FwbButton @click="toggleCompletion">
         {{ meal.completed ? 'Uncomplete' : 'Complete' }}
       </FwbButton>
+      <FwbButton @click="deleteMeal" color="red"> Delete Meal </FwbButton>
     </div>
   </div>
 </template>
