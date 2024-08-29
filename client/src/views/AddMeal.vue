@@ -12,6 +12,8 @@ const activePlan = ref('')
 const availablePlans = ref<{ value: string; name: string }[]>([])
 const existingMeals = ref<{ value: string; name: string }[]>([])
 const isShowAIModal = ref(false)
+const isMealGenerated = ref(false)
+const generatedMeal = ref<any>(null)
 
 const mealForm = ref({
   name: '',
@@ -24,7 +26,7 @@ const mealForm = ref({
 
 const aiMealForm = ref({
   type: '',
-  calories: "",
+  calories: '',
 })
 
 const planDays = [
@@ -136,16 +138,23 @@ function showAIModal() {
 
 function closeAIModal() {
   isShowAIModal.value = false
+  isMealGenerated.value = false
+  aiMealForm.value = { type: '', calories: '' }
 }
 
 const generateAiMeal = async () => {
-  const type = aiMealForm.value.type as 'breakfast' | 'lunch' | 'dinner' | 'snack';
-  const calories = parseInt(aiMealForm.value.calories, 10);
+  const type = aiMealForm.value.type as 'breakfast' | 'lunch' | 'dinner' | 'snack'
+  const calories = parseInt(aiMealForm.value.calories, 10)
 
-  const generatedMeal = await trpc.aiBot.generateMeal.query({ type, calories });
-  console.log(generatedMeal);
-  // For example, make an API call with aiMealForm.value data
-  // isShowAIModal.value = false
+  try {
+    const response = await trpc.aiBot.generateMeal.query({ type, calories })
+    generatedMeal.value = response
+    isMealGenerated.value = true
+  } catch (error) {
+    console.error('Error generating meal:', error)
+    generatedMeal.value = null
+    isMealGenerated.value = false
+  }
 }
 
 const goToIngredientsView = () => {
@@ -260,7 +269,7 @@ const goToDashboard = () => {
         <div class="flex items-center text-lg">Use AI To Generate Meal</div>
       </template>
       <template #body>
-        <form @submit.prevent="generateAiMeal">
+        <form v-if="!isMealGenerated" @submit.prevent="generateAiMeal">
           <FwbSelect
             v-model="aiMealForm.type"
             :options="mealTypes"
@@ -279,6 +288,49 @@ const goToDashboard = () => {
             <FwbButton size="lg" type="submit">Generate Meal</FwbButton>
           </div>
         </form>
+
+        <div v-if="isMealGenerated" class="rounded-lg bg-white p-6 shadow-md">
+          <h3 class="mb-4 text-xl font-semibold">Generated Meal Details</h3>
+
+          <table class="mb-4 w-full border-collapse">
+            <tbody>
+              <tr class="border-b">
+                <td class="pr-4 font-semibold">Type:</td>
+                <td>{{ generatedMeal.type }}</td>
+              </tr>
+              <tr class="border-b">
+                <td class="pr-4 font-semibold">Name:</td>
+                <td>{{ generatedMeal.name }}</td>
+              </tr>
+              <tr class="border-b">
+                <td class="pr-4 font-semibold">Calories:</td>
+                <td>{{ generatedMeal.calories }}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="mt-6">
+            <h4 class="mb-2 text-lg font-semibold">Ingredients:</h4>
+            <ul class="list-disc space-y-1 pl-5">
+              <li v-for="ingredient in generatedMeal.ingredients" :key="ingredient.ingredient">
+                {{ ingredient.quantity }} {{ ingredient.unit }} of {{ ingredient.ingredient }}
+              </li>
+            </ul>
+          </div>
+
+          <div class="mt-6">
+            <FwbSelect
+              v-model="mealForm.mealPlan"
+              :options="filteredAvailablePlans"
+              label="Assign to specific meal plan"
+            />
+          </div>
+
+          <div class="mt-6 flex justify-end space-x-4">
+            <FwbButton size="lg">Add Meal to Plan</FwbButton>
+            <FwbButton size="lg" @click="closeAIModal">Close</FwbButton>
+          </div>
+        </div>
       </template>
     </fwb-modal>
 
