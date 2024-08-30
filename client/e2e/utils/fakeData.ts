@@ -1,4 +1,4 @@
-import type { Article, Comment, User } from '@server/shared/types'
+import type { User } from '@server/shared/types'
 import type { Insertable } from 'kysely'
 import { Chance } from 'chance'
 
@@ -21,13 +21,13 @@ export const fakeUser = <T extends Insertable<User>>(overrides: Partial<T> = {} 
   ...overrides,
 })
 
-export const fakeArticle = <T extends Partial<Insertable<Article>>>(overrides: T = {} as T) => ({
-  title: random.sentence({ words: 5 }),
-  content: random.paragraph(),
-  ...overrides,
-})
+// export const fakeArticle = <T extends Partial<Insertable<Article>>>(overrides: T = {} as T) => ({
+//   title: random.sentence({ words: 5 }),
+//   content: random.paragraph(),
+//   ...overrides,
+// })
 
-export const fakeComment = <T extends Partial<Insertable<Comment>>>(overrides: T = {} as T) => ({
-  content: random.sentence({ words: 10 }),
-  ...overrides,
-})
+// export const fakeComment = <T extends Partial<Insertable<Comment>>>(overrides: T = {} as T) => ({
+//   content: random.sentence({ words: 10 }),
+//   ...overrides,
+// })

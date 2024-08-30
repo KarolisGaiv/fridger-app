@@ -35,7 +35,7 @@ export async function loginNewUser(
   userLogin: UserLogin = fakeUser()
 ): Promise<UserLoginAuthed> {
   try {
-    await trpc.user.signup.mutate(userLogin)
+    await trpc.user.register.mutate(userLogin)
   } catch (error) {
     // ignore cases when user already exists
   }
