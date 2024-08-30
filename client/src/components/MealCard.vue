@@ -43,7 +43,7 @@ async function deleteMeal() {
     mealName: meal.value.name,
     mealPlan: props.planName,
   })
-  emit('meal-deleted', meal.value) 
+  emit('meal-deleted', meal.value)
 }
 
 const cardClasses = computed(() => {

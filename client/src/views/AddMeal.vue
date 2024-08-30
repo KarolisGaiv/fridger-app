@@ -158,7 +158,7 @@ const generateAiMeal = async () => {
 
   try {
     const response = await trpc.aiBot.generateMeal.query({ type, calories })
-    console.log(response);
+    console.log(response)
     generatedMeal.value = response
     isMealGenerated.value = true
   } catch (error) {
