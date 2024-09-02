@@ -90,7 +90,7 @@ export function mealPlanScheduleRepository(db: Database) {
       const formattedMeals = meals.map((meal) => ({
         name: meal.name,
         calories: meal.calories,
-        type: meal.type,
+        type: meal.type as 'breakfast' | 'lunch' | 'dinner' | 'snack' | null,
         assignedDay: meal.assignedDay,
         completed: meal.completed,
       }))

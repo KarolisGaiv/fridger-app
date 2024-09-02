@@ -25,8 +25,8 @@ const meal = ref(props.meal)
 const toggleCompletion = async () => {
   await trpc.mealPlanSchedule.toggleCompletionStatus.mutate({
     mealName: meal.value.name,
-    assignedDay: meal.value.assignedDay,
-    type: meal.value.type,
+    assignedDay: meal.value.assignedDay!,
+    type: meal.value.type!,
   })
   meal.value.completed = !meal.value.completed
 

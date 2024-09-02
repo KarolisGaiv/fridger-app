@@ -4,10 +4,13 @@ import { ref, onMounted, watch } from 'vue'
 import { FwbButton, FwbHeading, FwbInput, FwbToast } from 'flowbite-vue'
 import useErrorMessage from '@/composables/useErrorMessage'
 import AlertError from '@/components/AlertError.vue'
-import type { MealPublic } from '../../../server/src/entities/meal'
 import type { IngredientPublic } from '../../../server/src/entities/ingredient'
 
-const meals = ref<MealPublic[]>([])
+interface MealNameOnly {
+  name: string
+}
+
+const meals = ref<MealNameOnly[]>([])
 const ingredients = ref<IngredientPublic[]>([])
 const selectedMealName = ref<string | null>(null)
 const selectedMealId = ref<number | null>(null)

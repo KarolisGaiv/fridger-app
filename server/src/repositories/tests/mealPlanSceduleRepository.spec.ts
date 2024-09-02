@@ -258,7 +258,7 @@ describe('toggleCompletionStatus', () => {
     await repository.toggleCompletionStatus(
       meal1Data.name,
       meal1Data.assignedDay,
-      meal1Data.type,
+      meal1Data.type!,
       user.id
     )
 
