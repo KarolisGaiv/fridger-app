@@ -170,7 +170,7 @@ jobs:
               "environment": {
                 "NODE_ENV": "production",
                 "PORT": "3000",
-                "DATABASE_URL": "${{ secrets.PROD_DATABASE_URL }}",
+                "DATABASE_URL": "${{ secrets.DATABASE_URL }}",
                 "TEST_DATABASE_URL": "${{ secrets.TEST_DATABASE_URL }}",
                 "TOKEN_KEY": "${{ secrets.TOKEN_KEY }}",
                 "OPENAI_API_KEY": "${{ secrets.OPENAI_API_KEY }}"
