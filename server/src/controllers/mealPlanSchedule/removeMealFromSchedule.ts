@@ -8,7 +8,6 @@ export default authenticatedProcedure
   .input(mealToDeleteFromPlanSchema)
   .mutation(async ({ input, ctx: { authUser, repos } }) => {
     const { mealName, mealPlan, assignedDay, type } = input
-    // console.log(input);
 
     await repos.mealPlanScheduleRepository.removeMealFromPlan(
       mealName,
@@ -18,12 +17,3 @@ export default authenticatedProcedure
       type
     )
   })
-
-//   .query(async ({ input, ctx: { authUser, repos } }) => {
-//     const data = await repos.mealPlanScheduleRepository.fetchPlannedMeals(
-//       input.mealPlan,
-//       authUser.id
-//     )
-
-//     return data
-//   })

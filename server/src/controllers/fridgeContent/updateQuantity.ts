@@ -31,7 +31,6 @@ export default authenticatedProcedure
     // 2. get ingredients related to the meal
     const ingredients =
       await repos.mealIngredientRepository.findIngredientsByMealId(meal.id)
-    // console.log(ingredients);
 
     // 3. Determine quantity change based on completed status
     const quantityChange = completed

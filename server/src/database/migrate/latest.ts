@@ -62,12 +62,6 @@ const pathToThisFile = path.resolve(fileURLToPath(import.meta.url))
 const pathPassedToNode = path.resolve(process.argv[1])
 const isFileRunDirectly = pathToThisFile.includes(pathPassedToNode)
 
-// if (isFileRunDirectly) {
-//   const db = createDatabase(config.database)
-//   console.log('Start production database migration')
-//   await migrateLatest(db)
-// }
-
 if (isFileRunDirectly) {
   const db = createDatabase(config.database)
   console.log('Start production database migration')
