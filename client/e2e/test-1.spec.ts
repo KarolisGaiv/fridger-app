@@ -133,6 +133,46 @@ test.describe.serial("new user journey", () => {
     await expect(page.locator('div').filter({ hasText: 'test ingredient' }).nth(3)).toBeVisible()
     await expect(page.getByRole('heading', { name: 'test ingredient' })).toBeVisible()
   })
+
+  test("generate grocery list", async({page}) => {
+    await page.goto('http://localhost:5173/');
+    await page.goto('http://localhost:5173/login');
+    await page.locator('input[type="email"]').click();
+    await page.locator('input[type="email"]').fill(user.email);
+    await page.locator('input[type="email"]').press('Tab');
+    await page.locator('input[name="password"]').fill(user.password);
+    await page.getByRole('button', { name: 'Log in' }).click();
+
+    
+    await page.getByRole('link', { name: 'Grocery List' }).click();
+    await page.getByLabel('Select meal planPlease select').selectOption('e2e meal plan');
+    await page.getByRole('button', { name: 'Generate grocery list' }).click();
+
+    await expect(page.locator('div').filter({ hasText: 'test ingredient123' }).nth(3)).toBeVisible()
+    await expect(page.getByText('test ingredient')).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Transfer ingredients to the' })).toBeVisible()
+  })
+
+  test("transfer greocery list ingredients to gridge", async({page}) => {
+    await page.goto('http://localhost:5173/');
+    await page.goto('http://localhost:5173/login');
+    await page.locator('input[type="email"]').click();
+    await page.locator('input[type="email"]').fill(user.email);
+    await page.locator('input[type="email"]').press('Tab');
+    await page.locator('input[name="password"]').fill(user.password);
+    await page.getByRole('button', { name: 'Log in' }).click();
+
+    await page.getByRole('link', { name: 'Grocery List' }).click();
+    await page.getByLabel('Select meal planPlease select').selectOption('e2e meal plan');
+    await page.getByRole('button', { name: 'Generate grocery list' }).click();
+    await page.getByRole('button', { name: 'Transfer ingredients to the' }).click();
+    await page.getByRole('link', { name: 'Fridge' }).click();
+
+    await expect(page.getByText('test ingredientQuantity:')).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'test ingredient' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'test ingredient' })).toBeVisible()
+    await expect(page.getByText('Quantity:')).toBeVisible()
+  })
 })
 
 
