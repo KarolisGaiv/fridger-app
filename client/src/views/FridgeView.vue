@@ -1,10 +1,6 @@
 <script setup lang="ts">
 import { trpc } from '@/trpc'
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { FwbButton, FwbHeading } from 'flowbite-vue'
-// import useErrorMessage from '@/composables/useErrorMessage'
-// import AlertError from '@/components/AlertError.vue'
 import FridgeItemCard from '@/components/FridgeItemCard.vue'
 
 const fridgeItems = ref<any[]>([])
