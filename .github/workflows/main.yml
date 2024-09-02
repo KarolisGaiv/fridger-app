@@ -54,11 +54,11 @@ jobs:
       # - name: Test client (unit)
       #   run: npm run test:unit -w=client
 
-      # - name: Run server database migrations (test)
-      #   run: npm run migrate:latest -w=server
+      - name: Run server database migrations
+        run: npm run migrate:latest -w=server
 
-      # - name: Test server
-      #   run: npm run test -w=server
+      - name: Test server
+        run: npm run test -w=server
 
       # Add more browsers here if you want to test on more/different browsers
       # - name: Install Playwright Browsers
