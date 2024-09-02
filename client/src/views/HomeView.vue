@@ -56,7 +56,7 @@ const goToAddMeal = () => {
 }
 
 const handleMealDeleted = (deletedMeal: Meal) => {
-  plannedMeals.value = plannedMeals.value.filter(meal => meal.name !== deletedMeal.name)
+  plannedMeals.value = plannedMeals.value.filter((meal) => meal.name !== deletedMeal.name)
 }
 </script>
 
