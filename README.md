@@ -3,6 +3,7 @@
 ## Project Description
 
 The main goal of application is: make following meal plan easier. User can add weekly meal plan into this app with specific quantities of each meal. After inserting all this data, a grocery list will be generated accordingly and all food will be “placed” into “digital” fridge. When the user completes a meal, he ticks a box that meal was completed and fridge content is adjusted accordingly. 
+Additional feature - AI generated meal suggestion. User can implement AI to generate a meal suggestion based on meal type and calories.
 
 ## !!This is a minimum viable product version!!
 So far user can add meals, meal plans, ingredients to meals. Generate grocery list based on current active meal plan and populate fridge content.
