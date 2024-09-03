@@ -37,9 +37,11 @@ So far user can add meals, meal plans, ingredients to meals. Generate grocery li
    npm run gen:types
 
 ## Running the Application
-5. **Start The Server**
+5. **Start the servers separate terminals (recommended)**
    ```sh
-   npm run dev
+   npm run dev -w server
+   npm run dev -w client
+   ```
 6. **Run tests**
     *IMPORTANT⚠️. To properly run the test suite it is _recommended_ to use safe mode. It will take longer to run all tests, but it is guaranteed that there will be no errors due to test base setups. Otherwise you can run regular test script:
    ```sh
@@ -48,7 +50,7 @@ So far user can add meals, meal plans, ingredients to meals. Generate grocery li
    npm run test:safe
    
 ## Using application's front-end locally
-To interact with the application after you run 
+After you start both servers (server/client) visit http://localhost:5173/
 
 ## Using Controller methods in the back-end
 To interact with the controller methods it is recommended to you http://localhost:3000/api/v1/trpc-panel in your browser. Or you can use tools like Postman or any similar API testing tool. If you choose to use tRPC-panel make sure that:
