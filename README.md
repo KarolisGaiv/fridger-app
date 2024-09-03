@@ -1,4 +1,5 @@
 # Fridger App
+[Link to the application](https://mealer.3iavgloqklubq.eu-central-1.cs.amazonlightsail.com/)
 
 ## Project Description
 
@@ -40,11 +41,16 @@ So far user can add meals, meal plans, ingredients to meals. Generate grocery li
    ```sh
    npm run dev
 6. **Run tests**
-    *IMPORTANT⚠️. To properly run the test suite it is recommended to use safe mode. It will take longer to run all tests, but it is guaranteed that there will be no errors due to test base setups.
+    *IMPORTANT⚠️. To properly run the test suite it is _recommended_ to use safe mode. It will take longer to run all tests, but it is guaranteed that there will be no errors due to test base setups. Otherwise you can run regular test script:
    ```sh
+   npm run test
+   or
    npm run test:safe
+   
+## Using application's front-end locally
+To interact with the application after you run 
 
-## Using Controller methods
+## Using Controller methods in the back-end
 To interact with the controller methods it is recommended to you http://localhost:3000/api/v1/trpc-panel in your browser. Or you can use tools like Postman or any similar API testing tool. If you choose to use tRPC-panel make sure that:
 1. After logging in as user copy received token key
 2. In the top right corner press "Headers"
