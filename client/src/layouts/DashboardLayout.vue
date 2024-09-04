@@ -6,6 +6,8 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+const links = [{ label: 'Add New Meal', name: 'AddMeal' }]
+
 function logoutUser() {
   logout()
   router.push({ name: 'Login' })

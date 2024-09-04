@@ -153,7 +153,7 @@ test.describe.serial("new user journey", () => {
     await expect(page.getByRole('button', { name: 'Transfer ingredients to the' })).toBeVisible()
   })
 
-  test("transfer greocery list ingredients to gridge", async({page}) => {
+  test("transfer grocery list ingredients to fridge", async({page}) => {
     await page.goto('http://localhost:5173/');
     await page.goto('http://localhost:5173/login');
     await page.locator('input[type="email"]').click();
@@ -168,10 +168,29 @@ test.describe.serial("new user journey", () => {
     await page.getByRole('button', { name: 'Transfer ingredients to the' }).click();
     await page.getByRole('link', { name: 'Fridge' }).click();
 
-    await expect(page.getByText('test ingredientQuantity:')).toBeVisible()
-    await expect(page.getByRole('heading', { name: 'test ingredient' })).toBeVisible()
+    await expect(page.getByText('test ingredientQuantity: 123g')).toBeVisible()
     await expect(page.getByRole('heading', { name: 'test ingredient' })).toBeVisible()
     await expect(page.getByText('Quantity:')).toBeVisible()
+  })
+
+  test("complete meal", async({page}) => {
+    await page.goto('http://localhost:5173/');
+    await page.goto('http://localhost:5173/login');
+    await page.locator('input[type="email"]').click();
+    await page.locator('input[type="email"]').fill(user.email);
+    await page.locator('input[type="email"]').press('Tab');
+    await page.locator('input[name="password"]').fill(user.password);
+    await page.getByRole('button', { name: 'Log in' }).click();
+
+    await page.getByRole('link', { name: 'Fridge' }).click();
+
+    await expect(page.getByText('Quantity: 123g')).toBeVisible()
+
+    await page.getByRole('link', { name: 'Dashboard' }).click();
+    await page.getByRole('button', { name: 'Complete' }).click();
+    await page.getByRole('link', { name: 'Fridge' }).click();
+    
+    await expect(page.getByText('Quantity: 0g')).toBeVisible()
   })
 })
 
