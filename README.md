@@ -60,3 +60,6 @@ To interact with the controller methods it is recommended to you http://localhos
 5. Add Value = your received token key
 6. Press "Save Headers" and "Confirm"
 7. Explore various methods.
+
+## Current Database structure
+![image](https://github.com/user-attachments/assets/877b2479-b8ea-404c-a694-bb7827972bf1)
