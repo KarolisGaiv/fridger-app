@@ -10,6 +10,6 @@ defineProps<Props>()
 <template>
   <div class="rounded-lg bg-white p-4 shadow-md">
     <h3 class="text-xl font-bold">{{ mealName }}</h3>
-    <p class="text-gray-700">Quantity: {{ currentQuantity }}</p>
+    <p class="text-gray-700">Quantity: {{ currentQuantity }}g</p>
   </div>
 </template>

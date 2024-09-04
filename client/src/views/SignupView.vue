@@ -5,7 +5,6 @@ import PageForm from '@/components/PageForm.vue'
 import { FwbAlert, FwbButton, FwbInput } from 'flowbite-vue'
 import { DEFAULT_SERVER_ERROR } from '@/consts'
 import AlertError from '@/components/AlertError.vue'
-// import useErrorMessage from '@/composables/useErrorMessage'
 
 const userForm = ref({
   email: '',
@@ -16,32 +15,18 @@ const userForm = ref({
 
 const hasSucceeded = ref(false)
 
-// Wrap our signup call in a try/catch block to catch any errors.
-// Set the error message if there is an error.
 const errorMessage = ref('')
 async function submitSignup() {
   try {
     await signup(userForm.value)
 
-    // clear error
     errorMessage.value = ''
 
-    // display success message
     hasSucceeded.value = true
   } catch (error) {
-    // set error, which will be automatically displayed
     errorMessage.value = error instanceof Error ? error.message : DEFAULT_SERVER_ERROR
   }
 }
-
-// Or, if we move the generic error handling to a separate composable
-// function, which creates an error message ref for us and handles
-// the try/catch block, we can simplify our submitSignup function to:
-// const [submitSignup, errorMessage] = useErrorMessage(async () => {
-//   await signup(userForm.value)
-
-//   hasSucceeded.value = true
-// })
 </script>
 
 <template>
