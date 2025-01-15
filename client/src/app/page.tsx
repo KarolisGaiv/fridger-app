@@ -3,5 +3,5 @@ export default function Home() {
     <div>
       <h1>Testing this</h1>
     </div>
-  );
+  )
 }
