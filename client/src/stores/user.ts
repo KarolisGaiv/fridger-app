@@ -6,6 +6,7 @@ import {
   storeAccessToken,
 } from '@/utils/auth'
 import { trpc } from '@/trpc'
+import Cookies from 'js-cookie'
 
 export const useAuth = () => {
   const [authToken, setAuthToken] = useState<string | null>(null)
@@ -28,6 +29,14 @@ export const useAuth = () => {
   // Functions for login, logout, and signup
   const login = useCallback(async (userLogin: { email: string; password: string }) => {
     const { accessToken } = await trpc.user.login.mutate(userLogin)
+
+    // store token in cookies - this is for SRS authentication middleware purpose.
+    Cookies.set('token', accessToken, {
+      secure: true,
+      sameSite: 'strict',
+      expires: 7,
+    })
+
     setAuthToken(accessToken)
     storeAccessToken(localStorage, accessToken)
   }, [])

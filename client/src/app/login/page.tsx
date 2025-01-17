@@ -1,40 +1,55 @@
-import { cookies } from 'next/headers'
+'use client'
 
-const LoginPage = async () => {
-  const cookieStore = await cookies()
-  const token = cookieStore.get('token')
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/stores/user'
 
-  if (token) {
-    return {
-      redirect: {
-        destination: '/dashboard',
-        permanent: false,
-      },
-    }
-  }
-
-  return {
-    props: {},
-  }
-
+const Login = () => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
   const router = useRouter()
 
-  const handleLogin = async (event: React.FormEvent) => {
-    event.preventDefault()
-    console.log(router)
-    // document.cookie = "token=exampleToken; path=/;"
-    // router.push('/dashboard')
+  // get login function from useAuth hook
+  const { login } = useAuth()
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+
+    try {
+      await login({ email, password })
+      router.push('/dashboard')
+    } catch (error) {
+      let message
+      if (error instanceof Error) message = error.message
+      console.error(message)
+      setError(message || 'Something went wrong')
+    }
   }
 
   return (
     <div>
       <h1>Login</h1>
       <form onSubmit={handleLogin}>
-        {/* Your login form fields */}
+        <div>
+          <label>Email</label>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        </div>
+        <div>
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
         <button type="submit">Login</button>
       </form>
+      {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   )
 }
 
-export default LoginPage
+export default Login
