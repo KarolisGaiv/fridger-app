@@ -46,11 +46,17 @@ export const useAuth = () => {
     clearStoredAccessToken(localStorage)
   }, [])
 
-  //   const signup = useCallback(async (userSignup: { email: string; password: string }) => {
-  //     await trpc.user.register.mutate(userSignup)
-  //   }, [])
-
-  const signup = trpc.user.register.mutate
+  const signup = useCallback(
+    async (userSignup: {
+      email: string
+      password: string
+      firstName: string
+      lastName: string
+    }) => {
+      await trpc.user.register.mutate(userSignup)
+    },
+    []
+  )
 
   return {
     authToken,
