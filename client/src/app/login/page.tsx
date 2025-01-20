@@ -47,6 +47,12 @@ const Login = () => {
         </div>
         <button type="submit">Login</button>
       </form>
+      <div>
+        Not a member?{' '}
+        <button type="button" onClick={() => router.push('/register')}>
+          Register
+        </button>
+      </div>
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>
   )
