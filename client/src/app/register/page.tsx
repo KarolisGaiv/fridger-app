@@ -37,19 +37,38 @@ const Register = () => {
             id="firstName"
             required
             onChange={(e) => setFirstName(e.target.value)}
+            value={firstName}
           />
         </div>
         <div>
           <label htmlFor="lastName">Last Name</label>
-          <input type="text" id="lastName" required onChange={(e) => setLastName(e.target.value)} />
+          <input
+            type="text"
+            id="lastName"
+            required
+            onChange={(e) => setLastName(e.target.value)}
+            value={lastName}
+          />
         </div>
         <div>
           <label htmlFor="email">Email</label>
-          <input type="text" id="email" required onChange={(e) => setEmail(e.target.value)} />
+          <input
+            type="text"
+            id="email"
+            required
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
+          />
         </div>
         <div>
           <label htmlFor="password">Password</label>
-          <input type="text" id="password" required onChange={(e) => setPassword(e.target.value)} />
+          <input
+            type="text"
+            id="password"
+            required
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+          />
         </div>
         <button type="submit">Register</button>
       </form>
