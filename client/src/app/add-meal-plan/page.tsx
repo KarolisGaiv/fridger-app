@@ -1,8 +1,10 @@
 'use client'
 import React, { useState } from 'react'
 import { trpc } from '@/trpc'
+import { useRouter } from 'next/navigation'
 
 export default function AddMealPlan() {
+  const router = useRouter()
   const [planName, setPlanName] = useState('')
   const [isPlanActive, setIsPlanActive] = useState(false)
 
@@ -11,6 +13,9 @@ export default function AddMealPlan() {
 
     try {
       await trpc.mealPlan.create.mutate({ isActive: isPlanActive, planName })
+      if (isPlanActive) {
+        router.push('/plan-details')
+      }
       setPlanName('')
       setIsPlanActive(false)
     } catch (error) {
