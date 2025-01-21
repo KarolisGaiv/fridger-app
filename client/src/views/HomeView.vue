@@ -18,6 +18,8 @@ const [fetchActiveMealPlan, activePlanError] = useErrorMessage(async () =>
   trpc.mealPlan.findActiveMealPlan.query()
 )
 
+console.log('test')
+
 const [fetchMealsByPlanName, mealsError] = useErrorMessage(async () => {
   return await trpc.mealPlanSchedule.find.query({ mealPlan: planName.value })
 })
