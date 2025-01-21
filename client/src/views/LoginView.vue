@@ -8,6 +8,8 @@ import useErrorMessage from '@/composables/useErrorMessage'
 
 const router = useRouter()
 
+console.log("hello");
+
 const userForm = ref({
   email: '',
   password: '',
