@@ -18,7 +18,17 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* Node.js Types */
+    "types": ["node"]
   },
-  "include": ["vite.config.ts"]
+  "include": [
+    "vite.config.ts", // Include Vite config file
+    "vitest.config.ts", // Include Vitest config file
+    "cypress.config.ts", // Include Cypress config file
+    "nightwatch.conf.ts", // Include Nightwatch config file
+    "playwright.config.ts", // Include Playwright config file
+    "postcss.config.ts" // Include PostCSS config file
+  ]
 }
