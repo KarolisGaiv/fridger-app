@@ -6,5 +6,8 @@
   "workspaces": [
     "client",
     "server"
-  ]
+  ],
+  "devDependencies": {
+    "kysely": "^0.27.5"
+  }
 }
