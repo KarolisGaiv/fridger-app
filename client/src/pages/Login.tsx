@@ -16,9 +16,7 @@ export default function Login() {
 
     try {
       await login({ email, password })
-      console.log('user logged in')
       navigate('/dashboard')
-      console.log('redirected to dashboard')
     } catch (error) {
       let message
       if (error instanceof Error) message = error.message
