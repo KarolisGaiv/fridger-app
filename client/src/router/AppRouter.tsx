@@ -4,15 +4,20 @@ import { RequireAuth } from './guards'
 import MainLayout from '@/layouts/MainLayout'
 
 // Lazy loading the components
-const Dashboard = React.lazy(() => import('@/pages/DashboardPage'))
-const LoginPage = React.lazy(() => import('@/pages/LoginPage'))
-const RegisterPage = React.lazy(() => import('@/pages/RegisterPage'))
+const Dashboard = React.lazy(() => import('@/pages/Dashboard'))
+const LoginPage = React.lazy(() => import('@/pages/Login'))
+const RegisterPage = React.lazy(() => import('@/pages/Register'))
+const AddMealPlanPage = React.lazy(() => import('@/pages/AddMealPlan'))
 
 const AppRouter: React.FC = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
-        {/* Protected routes within MainLayout */}
+        {/* Public routes */}
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+
+        {/* Protected routes */}
         <Route
           path="/dashboard"
           element={
@@ -22,16 +27,16 @@ const AppRouter: React.FC = () => {
           }
         >
           <Route index element={<Dashboard />} />
-          {/* <Route path="add-meal-plan" element={<AddMealPlan />} />
-          <Route path="add-meal" element={<AddMeal />} />
-          <Route path="add-ingredient" element={<AddIngredient />} />
-          <Route path="grocery" element={<GroceryView />} />
-          <Route path="fridge" element={<FridgeView />} /> */}
         </Route>
 
-        {/* Public routes */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
+        <Route
+          path="/add-meal-plan"
+          element={
+            <RequireAuth>
+              <AddMealPlanPage />
+            </RequireAuth>
+          }
+        />
 
         {/* Redirect root to dashboard */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
