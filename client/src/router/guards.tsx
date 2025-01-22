@@ -1,18 +1,12 @@
-import React from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
-import { useAuth } from '@/stores/user'
+import { Navigate } from 'react-router-dom'
+import { useUserStore } from '@/stores/user'
 
-type RequireAuthProps = {
-  children: React.ReactNode
-}
-
-export const RequireAuth = ({ children }: RequireAuthProps) => {
-  const { isLoggedIn } = useAuth()
-  const location = useLocation()
+export const RequireAuth = ({ children }: { children: React.ReactNode }) => {
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn)
 
   if (!isLoggedIn) {
-    return <Navigate to="/login" state={{ from: location }} replace />
+    return <Navigate to="/login" replace />
   }
 
-  return children
+  return <>{children}</>
 }
