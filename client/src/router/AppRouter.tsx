@@ -6,6 +6,7 @@ import MainLayout from '@/layouts/MainLayout'
 // Lazy loading the components
 const Dashboard = React.lazy(() => import('@/pages/DashboardPage'))
 const LoginPage = React.lazy(() => import('@/pages/LoginPage'))
+const RegisterPage = React.lazy(() => import('@/pages/RegisterPage'))
 
 const AppRouter: React.FC = () => {
   return (
@@ -30,7 +31,7 @@ const AppRouter: React.FC = () => {
 
         {/* Public routes */}
         <Route path="/login" element={<LoginPage />} />
-        {/* <Route path="/signup" element={<SignupView />} /> */}
+        <Route path="/register" element={<RegisterPage />} />
 
         {/* Redirect root to dashboard */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
