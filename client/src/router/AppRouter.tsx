@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { RequireAuth } from './guards'
 import MainLayout from '@/layouts/MainLayout'
 
-// Lazy loading the components
 const Dashboard = React.lazy(() => import('@/pages/Dashboard'))
 const LoginPage = React.lazy(() => import('@/pages/Login'))
 const RegisterPage = React.lazy(() => import('@/pages/Register'))
