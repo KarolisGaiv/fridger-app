@@ -7,6 +7,7 @@ const Dashboard = React.lazy(() => import('@/pages/Dashboard'))
 const LoginPage = React.lazy(() => import('@/pages/Login'))
 const RegisterPage = React.lazy(() => import('@/pages/Register'))
 const AddMealPlanPage = React.lazy(() => import('@/pages/AddMealPlan'))
+const EditPlanPage = React.lazy(() => import('@/pages/EditPlan'))
 
 const AppRouter: React.FC = () => {
   return (
@@ -37,6 +38,17 @@ const AppRouter: React.FC = () => {
           }
         >
           <Route index element={<AddMealPlanPage />} />
+        </Route>
+
+        <Route
+          path="/edit-plan"
+          element={
+            <RequireAuth>
+              <MainLayout />
+            </RequireAuth>
+          }
+        >
+          <Route index element={<EditPlanPage />} />
         </Route>
 
         {/* Redirect root to dashboard */}

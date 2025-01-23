@@ -3,7 +3,7 @@ import { Link, Outlet } from 'react-router-dom'
 const MainLayout = () => {
   return (
     <div className="main-layout flex min-h-screen flex-col">
-      <header className="bg-blue-500 py-4 text-white">
+      <header className="bg-teal-500 py-4 text-white">
         <nav className="container mx-auto flex justify-center">
           <ul className="flex space-x-4">
             <li>
@@ -13,18 +13,13 @@ const MainLayout = () => {
             </li>
 
             <li>
-              <Link to="/add-meal" className="hover:text-gray-300">
-                Add Meal
+              <Link to="/edit-plan" className="hover:text-gray-300">
+                Edit Meal Plan
               </Link>
             </li>
             <li>
               <Link to="/grocery-list" className="hover:text-gray-300">
                 Grocery List
-              </Link>
-            </li>
-            <li>
-              <Link to="/fridge" className="hover:text-gray-300">
-                Fridge
               </Link>
             </li>
           </ul>
