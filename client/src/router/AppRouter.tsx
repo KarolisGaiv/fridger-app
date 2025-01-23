@@ -32,10 +32,12 @@ const AppRouter: React.FC = () => {
           path="/add-meal-plan"
           element={
             <RequireAuth>
-              <AddMealPlanPage />
+              <MainLayout />
             </RequireAuth>
           }
-        />
+        >
+          <Route index element={<AddMealPlanPage />} />
+        </Route>
 
         {/* Redirect root to dashboard */}
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
