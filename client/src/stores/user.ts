@@ -7,7 +7,7 @@ import {
 } from '@/utils/auth'
 import { trpc } from '@/trpc'
 
-type UserState = {
+export type UserState = {
   authToken: string | null
   authUserId: number | null
   isLoggedIn: boolean

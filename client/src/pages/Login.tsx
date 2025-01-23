@@ -1,13 +1,15 @@
-import { useUserStore } from '@/stores/user'
+// import { useUserStore } from '@/stores/user'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useLogin } from '@/stores/useLogin'
 
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
 
-  const login = useUserStore((state) => state.login)
+  // const login = useUserStore((state) => state.login)
+  const { login } = useLogin()
   const navigate = useNavigate()
 
   const handleLogin = async (e: React.FormEvent) => {
