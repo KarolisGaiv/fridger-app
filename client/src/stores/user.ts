@@ -19,12 +19,15 @@ export type UserState = {
     firstName: string
     lastName: string
   }) => Promise<void>
+  activePlan: string | null
+  getActiveMealPlan: () => Promise<string>
 }
 
 export const useUserStore = create<UserState>((set) => ({
   authToken: getStoredAccessToken(localStorage),
   authUserId: null,
   isLoggedIn: !!getStoredAccessToken(localStorage),
+  activePlan: null,
 
   // login action
   login: async (userLogin) => {
@@ -50,5 +53,13 @@ export const useUserStore = create<UserState>((set) => ({
 
   signup: async (userSignup) => {
     await trpc.user.register.mutate(userSignup)
+  },
+
+  getActiveMealPlan: async () => {
+    const planName = await trpc.mealPlan.findActiveMealPlan.query()
+    set({
+      activePlan: planName,
+    })
+    return planName
   },
 }))

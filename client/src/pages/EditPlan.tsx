@@ -1,21 +1,12 @@
-import { trpc } from '@/trpc'
-import { useEffect, useState } from 'react'
+import useActiveMealPlan from '@/stores/useActiveMealPlan '
 
 export default function EditPlanPage() {
-  const [planName, setPlanName] = useState('')
-
-  useEffect(() => {
-    async function getActiveMealPlanName() {
-      const res = await trpc.mealPlan.findActiveMealPlan.query()
-      setPlanName(res)
-    }
-    getActiveMealPlanName()
-  }, [])
+  const { activePlan } = useActiveMealPlan()
 
   return (
     <div>
       <h1>Edit Plan</h1>
-      <h2>Current active meal plan: {planName}</h2>
+      <h2>Current active meal plan: {activePlan}</h2>
     </div>
   )
 }
