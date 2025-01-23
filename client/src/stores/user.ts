@@ -7,6 +7,14 @@ import {
 } from '@/utils/auth'
 import { trpc } from '@/trpc'
 
+type Meal = {
+  name: string
+  calories: number
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snack' | null
+  assignedDay: number
+  completed: boolean
+}
+
 export type UserState = {
   authToken: string | null
   authUserId: number | null
@@ -21,6 +29,8 @@ export type UserState = {
   }) => Promise<void>
   activePlan: string | null
   getActiveMealPlan: () => Promise<string>
+  plannedMeals: Meal[]
+  getPlannedMeals: () => Promise<void>
 }
 
 export const useUserStore = create<UserState>((set) => ({
@@ -28,16 +38,27 @@ export const useUserStore = create<UserState>((set) => ({
   authUserId: null,
   isLoggedIn: !!getStoredAccessToken(localStorage),
   activePlan: null,
+  plannedMeals: [],
 
   // login action
   login: async (userLogin) => {
     const { accessToken } = await trpc.user.login.mutate(userLogin)
     storeAccessToken(localStorage, accessToken)
 
+    const authUserId = getUserIdFromToken(accessToken)
+
+    // Fetch active meal plan
+    const activePlan = await trpc.mealPlan.findActiveMealPlan.query()
+
+    // Fetch planned meals for the active meal plan
+    const meals = await trpc.mealPlanSchedule.find.query({ mealPlan: activePlan })
+
     set({
       authToken: accessToken,
-      authUserId: getUserIdFromToken(accessToken),
+      authUserId,
       isLoggedIn: true,
+      activePlan,
+      plannedMeals: meals,
     })
   },
 
@@ -48,6 +69,8 @@ export const useUserStore = create<UserState>((set) => ({
       authToken: null,
       authUserId: null,
       isLoggedIn: false,
+      activePlan: null,
+      plannedMeals: [],
     })
   },
 
@@ -61,5 +84,19 @@ export const useUserStore = create<UserState>((set) => ({
       activePlan: planName,
     })
     return planName
+  },
+
+  getPlannedMeals: async () => {
+    try {
+      const activePlan = useUserStore.getState().activePlan
+      if (!activePlan) {
+        throw new Error('No active meal plan is set.')
+      }
+      const meals = await trpc.mealPlanSchedule.find.query({ mealPlan: activePlan })
+      set({ plannedMeals: meals })
+    } catch (error) {
+      console.error('Error fetching planned meals:', error)
+      throw error
+    }
   },
 }))
