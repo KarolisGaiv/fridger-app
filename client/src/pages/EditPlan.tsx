@@ -5,8 +5,6 @@ export default function EditPlanPage() {
   const { activePlan } = useActiveMealPlan()
   const { plannedMeals } = usePlannedMeals()
 
-  console.log(plannedMeals)
-
   return (
     <div>
       <h1>Edit Your Plan Here</h1>
