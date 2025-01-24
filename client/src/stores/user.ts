@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import {
   clearStoredAccessToken,
   getStoredAccessToken,
@@ -33,70 +34,89 @@ export type UserState = {
   getPlannedMeals: () => Promise<void>
 }
 
-export const useUserStore = create<UserState>((set) => ({
-  authToken: getStoredAccessToken(localStorage),
-  authUserId: null,
-  isLoggedIn: !!getStoredAccessToken(localStorage),
-  activePlan: null,
-  plannedMeals: [],
+export const useUserStore = create<UserState>()(
+  persist(
+    (set, get) => {
+      // Get the stored access token
+      const storedToken = getStoredAccessToken(localStorage)
 
-  // login action
-  login: async (userLogin) => {
-    const { accessToken } = await trpc.user.login.mutate(userLogin)
-    storeAccessToken(localStorage, accessToken)
+      return {
+        authToken: storedToken,
+        authUserId: storedToken ? getUserIdFromToken(storedToken) : null,
+        isLoggedIn: !!storedToken,
+        activePlan: null,
+        plannedMeals: [],
 
-    const authUserId = getUserIdFromToken(accessToken)
+        // login action
+        login: async (userLogin) => {
+          const { accessToken } = await trpc.user.login.mutate(userLogin)
+          storeAccessToken(localStorage, accessToken)
 
-    // Fetch active meal plan
-    const activePlan = await trpc.mealPlan.findActiveMealPlan.query()
+          const authUserId = getUserIdFromToken(accessToken)
 
-    // Fetch planned meals for the active meal plan
-    const meals = await trpc.mealPlanSchedule.find.query({ mealPlan: activePlan })
+          // Fetch active meal plan
+          const activePlan = await trpc.mealPlan.findActiveMealPlan.query()
 
-    set({
-      authToken: accessToken,
-      authUserId,
-      isLoggedIn: true,
-      activePlan,
-      plannedMeals: meals,
-    })
-  },
+          // Fetch planned meals for the active meal plan
+          const meals = await trpc.mealPlanSchedule.find.query({ mealPlan: activePlan })
 
-  // logout action
-  logout: () => {
-    clearStoredAccessToken(localStorage)
-    set({
-      authToken: null,
-      authUserId: null,
-      isLoggedIn: false,
-      activePlan: null,
-      plannedMeals: [],
-    })
-  },
+          set({
+            authToken: accessToken,
+            authUserId,
+            isLoggedIn: true,
+            activePlan,
+            plannedMeals: meals,
+          })
+        },
 
-  signup: async (userSignup) => {
-    await trpc.user.register.mutate(userSignup)
-  },
+        // logout action
+        logout: () => {
+          clearStoredAccessToken(localStorage)
+          set({
+            authToken: null,
+            authUserId: null,
+            isLoggedIn: false,
+            activePlan: null,
+            plannedMeals: [],
+          })
+        },
 
-  getActiveMealPlan: async () => {
-    const planName = await trpc.mealPlan.findActiveMealPlan.query()
-    set({
-      activePlan: planName,
-    })
-    return planName
-  },
+        signup: async (userSignup) => {
+          await trpc.user.register.mutate(userSignup)
+        },
 
-  getPlannedMeals: async () => {
-    try {
-      const activePlan = useUserStore.getState().activePlan
-      if (!activePlan) {
-        throw new Error('No active meal plan is set.')
+        getActiveMealPlan: async () => {
+          const planName = await trpc.mealPlan.findActiveMealPlan.query()
+          set({
+            activePlan: planName,
+          })
+          return planName
+        },
+
+        getPlannedMeals: async () => {
+          try {
+            const activePlan = get().activePlan
+            if (!activePlan) {
+              throw new Error('No active meal plan is set.')
+            }
+            const meals = await trpc.mealPlanSchedule.find.query({ mealPlan: activePlan })
+            set({ plannedMeals: meals })
+          } catch (error) {
+            console.error('Error fetching planned meals:', error)
+            throw error
+          }
+        },
       }
-      const meals = await trpc.mealPlanSchedule.find.query({ mealPlan: activePlan })
-      set({ plannedMeals: meals })
-    } catch (error) {
-      console.error('Error fetching planned meals:', error)
-      throw error
+    },
+    {
+      name: 'user-store', // Key in localStorage
+      partialize: (state) => ({
+        authToken: state.authToken,
+        authUserId: state.authUserId,
+        isLoggedIn: state.isLoggedIn,
+        activePlan: state.activePlan,
+        plannedMeals: state.plannedMeals,
+      }),
     }
-  },
-}))
+  )
+)
