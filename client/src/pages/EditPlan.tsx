@@ -1,5 +1,6 @@
 import useActiveMealPlan from '@/stores/useActiveMealPlan '
 import usePlannedMeals from '@/stores/usePlannedMeals'
+import MealCalendar from '@/components/MealCalendar'
 
 export default function EditPlanPage() {
   const { activePlan } = useActiveMealPlan()
@@ -12,15 +13,7 @@ export default function EditPlanPage() {
 
       <></>
       <h3>Your plan</h3>
-      <ul>
-        {plannedMeals.map((meal, index) => {
-          return (
-            <li key={index}>
-              {meal.name} - {meal.completed ? 'Completed' : 'Not Completed'}
-            </li>
-          )
-        })}
-      </ul>
+      <MealCalendar plannedMeals={plannedMeals} />
     </div>
   )
 }
