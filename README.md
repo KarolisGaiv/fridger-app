@@ -1,5 +1,4 @@
 # Fridger App
-[Link to the application](https://mealer.3iavgloqklubq.eu-central-1.cs.amazonlightsail.com/)
 
 ## Project Description
 
