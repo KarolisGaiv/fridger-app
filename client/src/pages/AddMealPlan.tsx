@@ -7,6 +7,7 @@ export default function AddMealPlan() {
 
   async function handleMealPlanCreation(e: React.FormEvent) {
     e.preventDefault()
+    console.log('test')
 
     try {
       await trpc.mealPlan.create.mutate({ isActive: isPlanActive, planName })
